@@ -290,9 +290,6 @@ ELSE ( FETCH_ONLY )
         LOG_INSTALL 1
         )
 
-    set( _OLDPATH $ENV{PATH} )
-    set( _NEWPATH ${PROJECT_SOURCE_DIR}\\bin ${_OLDPATH} )
-    set( ENV{PATH} "${_NEWPATH}" )
     # OpenSSL requires some extra effort
     if( WIN32 )
         if( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # 64-bit
@@ -300,50 +297,60 @@ ELSE ( FETCH_ONLY )
             set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_win64a.bat" )
             if( MSVC )
                 if( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
-                    set( OPENSSL_CONFIGURE_COMMAND "perl Configure VC-WIN64A --prefix=${PROJECT_SOURCE_DIR}" )
+                    set( OPENSSL_CONFIGURE_COMMAND perl Configure VC-WIN64A --prefix=${PROJECT_SOURCE_DIR} )
                     set( OPENSSL_BUILD_COMMAND nmake -f ms/ntdll.mak )
                 elseif( CMAKE_SYSTEM_PROCESSOR STREQUAL IA64 )
-                    set( OPENSSL_CONFIGURE_COMMAND "perl Configure VC-WIN64I --prefix=${PROJECT_SOURCE_DIR}" )
+                    set( OPENSSL_CONFIGURE_COMMAND perl Configure VC-WIN64I --prefix=${PROJECT_SOURCE_DIR} )
                     set( OPENSSL_BUILD_COMMAND nmake -f ms/ntdll.mak )
                 endif( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
             else(MSVC) # Cygwin and MinGW, there is no Borland 64-bit support in OpenSSL :-?
-                set( OPENSSL_CONFIGURE_COMMAND "./config --prefix=${PROJECT_SOURCE_DIR}" )
+                set( OPENSSL_CONFIGURE_COMMAND ./config --prefix=${PROJECT_SOURCE_DIR} )
                 set( OPENSSL_BUILD_COMMAND make )
             endif( MSVC )
 
         else( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # 32-bit
         
             if( MSVC )
-                set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_nasm.bat" )
-                set( OPENSSL_CONFIGURE_COMMAND perl Configure VC-WIN32 --prefix=${PROJECT_SOURCE_DIR} )
+                set( OPENSSL_GENASM_COMMAND ms\\\\\\\\do_nasm.bat )
+                set( OPENSSL_CONFIGURE_COMMAND "perl Configure VC-WIN32 --prefix=${PROJECT_SOURCE_DIR}" )
                 set( OPENSSL_BUILD_COMMAND nmake -f ms/ntdll.mak )
             elseif( BORLAND )
-                set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_nasm.bat" )
-                set( OPENSSL_CONFIGURE_COMMAND "perl Configure BC-32 no-asm --prefix=${PROJECT_SOURCE_DIR}" )
+                set( OPENSSL_GENASM_COMMAND ms\\\\\\\\do_nasm.bat )
+                set( OPENSSL_CONFIGURE_COMMAND perl Configure BC-32 no-asm --prefix=${PROJECT_SOURCE_DIR} )
                 set( OPENSSL_BUILD_COMMAND make -f ms\\\\\\\\bcb.mak )
             else(MSVC) #Cygwin and MinGW
                 set( OPENSSL_GENASM_COMMAND )
-                set( OPENSSL_CONFIGURE_COMMAND "./config --prefix=${PROJECT_SOURCE_DIR}" )
+                set( OPENSSL_CONFIGURE_COMMAND ./config --prefix=${PROJECT_SOURCE_DIR} )
                 set( OPENSSL_BUILD_COMMAND make )
             endif( MSVC )
             
         endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
     else( WIN32 )
         set( OPENSSL_GENASM_COMMAND )
-        set( OPENSSL_CONFIGURE_COMMAND "./config --prefix=${PROJECT_SOURCE_DIR}" )
+        set( OPENSSL_CONFIGURE_COMMAND ./config --prefix=${PROJECT_SOURCE_DIR} )
     endif( WIN32 )
 
+    set( _OLDPATH $ENV{PATH} )
+#    FILE( TO_NATIVE_PATH ${PROJECT_SOURCE_DIR}/bin LOCALBINDIR )
+#    set( _NEWPATH ${LOCALBINDIR} ${_OLDPATH} )
+    set( _NEWPATH ${PROJECT_SOURCE_DIR}/bin ${_OLDPATH})
+    set( ENV{PATH} "${_NEWPATH}" )
+    #message( STATUS "PATH = $ENV{PATH}" )
     ExternalProject_Add( openssl
         DEPENDS zlib perl patch nasm
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${openssl_URL}
         URL_MD5 ff8fb85610aef328315a9decbb2712e4
-        UPDATE_COMMAND ${OPENSSL_CONFIGURE_COMMAND}
+        #UPDATE_COMMAND ${OPENSSL_CONFIGURE_COMMAND}
+        UPDATE_COMMAND ${CMAKE_COMMAND} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_CONFIGURE_COMMAND=${OPENSSL_CONFIGURE_COMMAND} -P ${PROJECT_SOURCE_DIR}/configure-openssl.cmake
    #    PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/openssl-1.0.0c.patch
-        CONFIGURE_COMMAND ${OPENSSL_GENASM_COMMAND}
-        BUILD_COMMAND ${OPENSSL_BUILD_COMMAND}
+   #     CONFIGURE_COMMAND ${OPENSSL_GENASM_COMMAND}
+        CONFIGURE_COMMAND ${CMAKE_COMMAND} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_GENASM_COMMAND=${OPENSSL_GENASM_COMMAND} -P ${PROJECT_SOURCE_DIR}/genasm-openssl.cmake
+        #BUILD_COMMAND ${OPENSSL_BUILD_COMMAND}
+        BUILD_COMMAND ${CMAKE_COMMAND} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_BUILD_COMMAND=${OPENSSL_BUILD_COMMAND} -P ${PROJECT_SOURCE_DIR}/build-openssl.cmake
         BUILD_IN_SOURCE 1
-        INSTALL_COMMAND ${OPENSSL_BUILD_COMMAND} install
+        #INSTALL_COMMAND ${OPENSSL_BUILD_COMMAND} install
+        INSTALL_COMMAND ${CMAKE_COMMAND} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_BUILD_COMMAND=${OPENSSL_BUILD_COMMAND} -DOPENSSL_INSTALL_COMMAND=${OPENSSL_BUILD_COMMAND} install -P ${PROJECT_SOURCE_DIR}/install-openssl.cmake
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
