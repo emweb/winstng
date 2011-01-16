@@ -41,7 +41,7 @@ rem @echo OFF
 :WGET
 @echo Downloading wget...
 
-IF EXIST downloads\%WGET_FILENAME% GOTO DOWNLOAD
+@IF EXIST downloads\%WGET_FILENAME% GOTO DOWNLOAD
 @echo open %WGET_FTP_SITE% >> downloads\curl.ftp
 @echo anonymous >> downloads\curl.ftp
 @echo pass ano@nymo.us >> downloads\curl.ftp
@@ -63,22 +63,21 @@ IF EXIST downloads\%WGET_FILENAME% GOTO DOWNLOAD
 
 :DOWNLOADCMAKE
 @echo Downloading CMake...
-REM @IF EXIST %CMAKE_ZIP% GOTO SETUP
-@IF EXIST %CMAKE_ZIP% GOTO SETUP
+@IF EXIST %CMAKE_ZIP% GOTO INSTALLSTEP
 @wget -N -c %CMAKE_FULLURL%
 
-:SETUP
+:INSTALLSTEP
 @cd ..\devutil
 @IF NOT [%1]==[] (
-@IF /I %1=="fetch" GOTO BOOTSTRAP
+@IF /I "%1"=="fetch" GOTO BOOTSTRAP
 )
 
-:SETUPUNZIP
+:INSTALLUNZIP
 @echo Setting up unzip...
-@IF EXIST unzip.exe GOTO SETUPCMAKE
+@IF EXIST unzip.exe GOTO INSTALLCMAKE
 @..\downloads\%UNZIP_SFX% -o
 
-:SETUPCMAKE
+:INSTALLCMAKE
 @echo Setting up CMake...
 @IF EXIST ..\bin\cmake.exe GOTO BOOTSTRAP
 @unzip ..\downloads\%CMAKE_ZIP%
@@ -90,13 +89,26 @@ REM @IF EXIST %CMAKE_ZIP% GOTO SETUP
 
 @echo on
 @IF NOT [%1]==[] (
-@IF /I "%1"=="fetch" (SHIFT
-cd ..\build
-..\bin\cmake -DFETCH_ONLY:BOOL=1 %* ..) ELSE (
-@IF EXIST ..\build\fetch-only (
-@rd /q /s ..\build
-@mkdir ..\build
+    @IF /I "%1"=="fetch" ( 
+        SHIFT
+        cd ..\build
+        ..\bin\cmake -DFETCH_ONLY:BOOL=1 %* ..
+    ) ELSE (
+        @IF EXIST ..\build\fetch-only (
+            @rd /q /s ..\build
+            @mkdir ..\build
+            @cd ..\build
+            ..\bin\cmake %* ..
+        ) ELSE (
+            @echo There is something wrong with your build directory, please remove it and start again
+        )
+    )
+) ELSE (
+    @IF EXIST ..\build\fetch-only (
+        @rd /q /s ..\build
+        @mkdir ..\build
+    )
+
+    @cd ..\build
+    ..\bin\cmake %* ..
 )
-)
-@cd ..\build
-..\bin\cmake %* ..)
