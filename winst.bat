@@ -2,28 +2,30 @@
 @echo *                  Wt bootstrapper                    *
 @echo *******************************************************
 
-@echo OFF
+rem @echo OFF
 
-@IF "%1%"=="/?" ( 
+@IF NOT !%1!==!! (
+@IF "%1"=="/?" ( 
 @echo.
 @echo Usage: 
 @echo   %0 /?                   This help
 @echo   %0 [CMake parameters]   Download and build Wt and its dependencies. CMake parameters are optional.
-@echo   %0 fetch                Download dependencies, do not build anything (for later usage)
+@echo   %0 fetch                Download dependencies, do not build anything now [for later usage]
+@GOTO:EOF
+)
 )
 
-SET WGET_FILENAME=wget.exe
-SET WGET_FTP_SITE=ftp.kfki.hu
-SET WGET_FTP_DIRECTORY=/pub/w2
+@SET WGET_FILENAME=wget.exe
+@SET WGET_FTP_SITE=ftp.kfki.hu
+@SET WGET_FTP_DIRECTORY=/pub/w2
 
-SET UNZIP_SFX=unz600xn.exe
-SET UNZIP_FULLURL=ftp://ftp.info-zip.org/pub/infozip/win32/%UNZIP_SFX%
+@SET UNZIP_SFX=unz600xn.exe
+@SET UNZIP_FULLURL=ftp://ftp.info-zip.org/pub/infozip/win32/%UNZIP_SFX%
 
-SET WGET_FTP_PATH=%WGET_FTP_DIRECTORY%/%WGET_FILENAME%
-SET CMAKE_ZIPFILENAME=cmake-2.8.3.20110115-gf8614-win32-x86.zip
-SET CMAKE_FULLURL=http://www.cmake.org/files/vCVS/%CMAKE_ZIPFILENAME%
-rem SET CMAKE_DIRECTORY=cmake-2.8.4-rc1-win32-x86
-SET CMAKE_DIRECTORY=cmake-2.8.3.20110115-gf8614-win32-x86
+@SET WGET_FTP_PATH=%WGET_FTP_DIRECTORY%/%WGET_FILENAME%
+@SET CMAKE_ZIP=cmake-2.8.3.20110115-gf8614-win32-x86.zip
+@SET CMAKE_FULLURL=http://www.cmake.org/files/vCVS/%CMAKE_ZIP%
+@SET CMAKE_DIRECTORY=cmake-2.8.3.20110115-gf8614-win32-x86
 
 @IF EXIST devutil GOTO MKDIRDOWNLOADS
 @mkdir devutil
@@ -56,17 +58,20 @@ IF EXIST downloads\%WGET_FILENAME% GOTO DOWNLOAD
 
 :DOWNLOADUNZIP
 @echo Downloading unzip...
-IF EXIST %UNZIP_SFX% GOTO DOWNLOADCMAKE
+@IF EXIST %UNZIP_SFX% GOTO DOWNLOADCMAKE
 @wget -N -c %UNZIP_FULLURL%
 
 :DOWNLOADCMAKE
 @echo Downloading CMake...
-IF EXIST %CMAKE_ZIPFILENAME% GOTO UNPACK
+REM @IF EXIST %CMAKE_ZIP% GOTO SETUP
+@IF EXIST %CMAKE_ZIP% GOTO SETUP
 @wget -N -c %CMAKE_FULLURL%
 
-:UNPACK
+:SETUP
 @cd ..\devutil
-@IF %1=="fetch" GOTO :BOOTSTRAP
+@IF NOT [%1]==[] (
+@IF /I %1=="fetch" GOTO BOOTSTRAP
+)
 
 :SETUPUNZIP
 @echo Setting up unzip...
@@ -76,7 +81,7 @@ IF EXIST %CMAKE_ZIPFILENAME% GOTO UNPACK
 :SETUPCMAKE
 @echo Setting up CMake...
 @IF EXIST ..\bin\cmake.exe GOTO BOOTSTRAP
-@unzip ..\downloads\%CMAKE_ZIPFILENAME%
+@unzip ..\downloads\%CMAKE_ZIP%
 @xcopy /Y /S %CMAKE_DIRECTORY%\*.* ..
 @rd /q /s %CMAKE_DIRECTORY%
 
@@ -84,12 +89,14 @@ IF EXIST %CMAKE_ZIPFILENAME% GOTO UNPACK
 @echo Bootstrapping...
 
 @echo on
-@IF "%1"=="fetch" (SHIFT
+@IF NOT [%1]==[] (
+@IF /I "%1"=="fetch" (SHIFT
 cd ..\build
 ..\bin\cmake -DFETCH_ONLY:BOOL=1 %* ..) ELSE (
 @IF EXIST ..\build\fetch-only (
-rd /q /s ..\build
-mkdir ..\build
+@rd /q /s ..\build
+@mkdir ..\build
 )
-cd ..\build
+)
+@cd ..\build
 ..\bin\cmake %* ..)
