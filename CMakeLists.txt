@@ -9,14 +9,10 @@ set(CMAKE_PREFIX_PATH ${PROJECT_SOURCE_DIR} )
 
 # Files to download
 
-#set( zlib_URL http://prdownloads.sourceforge.net/libpng/zlib125.zip )
-#set( zlib_MD5 d6f1eef40a2dd3f17c63d24d8ca402c8 )
 set( zlib_URL http://prdownloads.sourceforge.net/libpng/zlib-1.2.5.tar.bz2 )
 set( zlib_MD5 be1e89810e66150f5b0327984d8625a0 )
 set( _PACKAGES ${_PACKAGES} zlib )
 
-#set( libpng_URL http://prdownloads.sourceforge.net/libpng/lpng150.zip )
-#set( libpng_MD5 ee737ab0064e68b9b214ff96daa0d747 )
 set( libpng_URL http://prdownloads.sourceforge.net/libpng/libpng-1.5.0.tar.gz )
 set( libpng_MD5 32a9f9c8f7f020bf7867a453d81fcb51 )
 set( _PACKAGES ${_PACKAGES} libpng )
@@ -177,7 +173,7 @@ ELSE ( FETCH_ONLY )
                 LOG_INSTALL 1
                 )
                     
-    else( APPLE )
+    else( WIN32 )
 
         find_program( PATCH_EXECUTABLE patch )
         if( NOT PATCH_EXECUTABLE )
@@ -204,11 +200,14 @@ ELSE ( FETCH_ONLY )
             LOG_TEST 1
             LOG_INSTALL 1
             )
-            
+
+        if( APPLE )
         # TODO PostgreSQL
 #        message( ERROR "Mac support to come, please build manually" )
 
-    else( UNIX )
+        elseif( UNIX )
+        
+        endif(APPLE)
 
  #       message( ERROR "Unix support to come, please build manually" )
         
@@ -315,12 +314,12 @@ ELSE ( FETCH_ONLY )
         
             if( MSVC )
                 set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_nasm.bat" )
-                set( OPENSSL_CONFIGURE_COMMAND perl Configure VC-WIN32 --prefix=${PROJECT_SOURCE_DIR} )
+                set( OPENSSL_CONFIGURE_COMMAND "perl Configure VC-WIN32 --prefix=${PROJECT_SOURCE_DIR}" )
                 set( OPENSSL_BUILD_COMMAND "nmake -f ms/ntdll.mak" )
                 set( OPENSSL_INSTALL_COMMAND "nmake -f ms/ntdll.mak install" )
             elseif( BORLAND )
                 set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_nasm.bat" )
-                set( OPENSSL_CONFIGURE_COMMAND perl Configure BC-32 no-asm --prefix=${PROJECT_SOURCE_DIR} )
+                set( OPENSSL_CONFIGURE_COMMAND "perl Configure BC-32 no-asm --prefix=${PROJECT_SOURCE_DIR}" )
                 set( OPENSSL_BUILD_COMMAND "make -f ms\\\\\\\\bcb.mak" )
                 set( OPENSSL_INSTALL_COMMAND "make -f ms\\\\\\\\bcb.mak install" )
             else(MSVC) #Cygwin and MinGW
@@ -339,22 +338,16 @@ ELSE ( FETCH_ONLY )
     set( _OLDPATH $ENV{PATH} )
     set( _NEWPATH ${PROJECT_SOURCE_DIR}\\bin ${_OLDPATH} )
     set( ENV{PATH} "${_NEWPATH}" )
-    message( STATUS "Before ExternalProject_Add - OPENSSL_BUILD_COMMAND = ${OPENSSL_BUILD_COMMAND}")
-    message( STATUS Before ExternalProject_Add - OPENSSL_BUILD_COMMAND (no quotes) = ${OPENSSL_BUILD_COMMAND})
-#    message( STATUS "PATH = $ENV{PATH}")
     ExternalProject_Add( openssl
         DEPENDS zlib perl patch nasm
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${openssl_URL}
         URL_MD5 ff8fb85610aef328315a9decbb2712e4
-        UPDATE_COMMAND ${OPENSSL_CONFIGURE_COMMAND}
+        UPDATE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${PROJECT_SOURCE_DIR} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_CONFIGURE_COMMAND=${OPENSSL_CONFIGURE_COMMAND} -P ${PROJECT_SOURCE_DIR}/configure-openssl.cmake
    #    PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/openssl-1.0.0c.patch
-#        CONFIGURE_COMMAND ${OPENSSL_GENASM_COMMAND}
         CONFIGURE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${PROJECT_SOURCE_DIR} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_GENASM_COMMAND=${OPENSSL_GENASM_COMMAND} -P ${PROJECT_SOURCE_DIR}/genasm-openssl.cmake
-#        BUILD_COMMAND ${OPENSSL_BUILD_COMMAND}
         BUILD_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${PROJECT_SOURCE_DIR} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_BUILD_COMMAND=${OPENSSL_BUILD_COMMAND} -P ${PROJECT_SOURCE_DIR}/build-openssl.cmake
         BUILD_IN_SOURCE 1
-        #INSTALL_COMMAND ${OPENSSL_BUILD_COMMAND} install
         INSTALL_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${PROJECT_SOURCE_DIR} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_INSTALL_COMMAND=${OPENSSL_INSTALL_COMMAND} -P ${PROJECT_SOURCE_DIR}/install-openssl.cmake
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
