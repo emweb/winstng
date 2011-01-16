@@ -4,20 +4,21 @@ cmake_minimum_required(VERSION 2.8)
 
 include (ExternalProject)
 
+# Make sure we use bootstrapped dependencies
 set(CMAKE_PREFIX_PATH ${PROJECT_SOURCE_DIR} )
-
-set( _OLDPATH $ENV{PATH} )
-set( _NEWPATH ${PROJECT_SOURCE_DIR}\\bin ${_OLDPATH} )
-set( ENV{PATH} "${_NEWPATH}" )
 
 # Files to download
 
-set( zlib_URL http://prdownloads.sourceforge.net/libpng/zlib125.zip )
-set( zlib_MD5 d6f1eef40a2dd3f17c63d24d8ca402c8 )
+#set( zlib_URL http://prdownloads.sourceforge.net/libpng/zlib125.zip )
+#set( zlib_MD5 d6f1eef40a2dd3f17c63d24d8ca402c8 )
+set( zlib_URL http://prdownloads.sourceforge.net/libpng/zlib-1.2.5.tar.bz2 )
+set( zlib_MD5 be1e89810e66150f5b0327984d8625a0 )
 set( _PACKAGES ${_PACKAGES} zlib )
 
-set( libpng_URL http://prdownloads.sourceforge.net/libpng/lpng150.zip )
-set( libpng_MD5 ee737ab0064e68b9b214ff96daa0d747 )
+#set( libpng_URL http://prdownloads.sourceforge.net/libpng/lpng150.zip )
+#set( libpng_MD5 ee737ab0064e68b9b214ff96daa0d747 )
+set( libpng_URL http://prdownloads.sourceforge.net/libpng/libpng-1.5.0.tar.gz )
+set( libpng_MD5 32a9f9c8f7f020bf7867a453d81fcb51 )
 set( _PACKAGES ${_PACKAGES} libpng )
 
 set( libjpeg_URL http://www.ijg.org/files/jpegsrc.v8b.tar.gz )
@@ -47,6 +48,12 @@ set( _PACKAGES ${_PACKAGES} boost )
 set( wt_URL http://prdownloads.sourceforge.net/witty/wt-3.1.7a.tar.gz )
 set( wt_MD5 5725e1f45ed64811c3153f1e0e283b7d )
 set( _PACKAGES ${_PACKAGES} wt )
+
+if( NOT MSVC )
+    set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/GraphicsMagick-1.3.12.tar.bz2 )
+    set( graphicsmagick_MD5 55182f371f82d5f9367bce04e59bbf25 )
+    set( _PACKAGES ${_PACKAGES} graphicsmagick )
+endif( NOT MSVC )
 
 if( WIN32 )
 
@@ -89,18 +96,22 @@ if( WIN32 )
 
 else( WIN32 )
 
-# Unix
+    # Unix
+    set( nasm_URL http://www.nasm.us/pub/nasm/releasebuilds/2.10rc3/nasm-2.10rc3.tar.bz2 )
+    set( nasm_MD5 d5073fba836533a3f2bfa62f0fca98b2 )
+    set( _PACKAGES ${_PACKAGES} nasm )
 
 endif( WIN32 )
 
 # If in fetch mode, only download and set a "fetch-only" indicator
 if (FETCH_ONLY )
     foreach( pkg ${_PACKAGES} )
-        get_filename_component( filename ${pkg} NAME )
-        file( DOWNLOAD ${${pkg}_URL} ${PROJECT_SOURCE_DIR}/downloads/${filename} EXPECTED_MD5 ${${pkg}_MD5} SHOW_PROGRESS )
+        get_filename_component( fn ${${pkg}_URL} NAME )
+        file( DOWNLOAD ${${pkg}_URL} ${PROJECT_SOURCE_DIR}/downloads/${fn} EXPECTED_MD5 ${${pkg}_MD5} SHOW_PROGRESS )
     endforeach(pkg)
     
     file( WRITE ${PROJECT_BINARY_DIR}/fetch-only "" )
+    
 ELSE ( FETCH_ONLY )
 
     if( WIN32 )
@@ -119,6 +130,7 @@ ELSE ( FETCH_ONLY )
             LOG_TEST 1
             LOG_INSTALL 1
             )
+        set( PATCH_EXECUTABLE ${PROJECT_SOURCE_DIR}\\bin\\patch.exe )
 
         ExternalProject_Add( nasm
             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
@@ -167,16 +179,44 @@ ELSE ( FETCH_ONLY )
                     
     else( APPLE )
 
-        message( ERROR "Mac support to come, please build manually" )
+        find_program( PATCH_EXECUTABLE patch )
+        if( NOT PATCH_EXECUTABLE )
+            message( ERROR "GNU patch is required" )
+        endif( NOT PATCH_EXECUTABLE )
+
+        find_program( PERL_FOUND perl )
+        if( NOT PERL_FOUND )
+            message( ERROR "Perl is required" )
+        endif( NOT PERL_FOUND )
+        
+        ExternalProjectAdd( nasm
+            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
+            URL ${nasm_URL}
+            URL_MD5 ${nasm_MD5}
+            CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
+            BUILD_COMMAND make
+            BUILD_IN_SOURCE 1
+            INSTALL_COMMAND make install
+            LOG_DOWNLOAD 1
+            LOG_UPDATE 1
+            LOG_CONFIGURE 1
+            LOG_BUILD 1
+            LOG_TEST 1
+            LOG_INSTALL 1
+            )
+            
+        # TODO PostgreSQL
+#        message( ERROR "Mac support to come, please build manually" )
 
     else( UNIX )
 
-        message( ERROR "Unix support to come, please build manually" )
+ #       message( ERROR "Unix support to come, please build manually" )
         
     endif( WIN32 )
 
-    # Build step
-
+#
+# Build step
+#
     ExternalProject_Add( zlib
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${zlib_URL}
@@ -210,7 +250,7 @@ ELSE ( FETCH_ONLY )
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${libjpeg_URL}
         URL_MD5 ${libjpeg_MD5}
-        PATCH_COMMAND ${PROJECT_SOURCE_DIR}/bin/patch.exe -p1 < ${PROJECT_SOURCE_DIR}/jpeg8.patch
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/jpeg8.patch
         CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -219,14 +259,13 @@ ELSE ( FETCH_ONLY )
         LOG_TEST 1
         LOG_INSTALL 1
         )
-     
-    #TODO Update to 2.4.4
+        
     ExternalProject_Add( freetype
         DEPENDS zlib libpng patch
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${freetype_URL}
         URL_MD5 ${freetype_MD5}
-        PATCH_COMMAND ${PROJECT_SOURCE_DIR}/bin/patch.exe -p1 < ${PROJECT_SOURCE_DIR}/freetype-2.3.12.patch
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/freetype-2.3.12.patch
         CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -241,7 +280,7 @@ ELSE ( FETCH_ONLY )
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${libgd2_URL}
         URL_MD5 ${libgd2_MD5}
-        PATCH_COMMAND ${PROJECT_SOURCE_DIR}/bin/patch.exe -p1 < ${PROJECT_SOURCE_DIR}/gd.patch
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/gd.patch
         CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -251,7 +290,10 @@ ELSE ( FETCH_ONLY )
         LOG_INSTALL 1
         )
 
-    #OpenSSL requires some extra effort
+    set( _OLDPATH $ENV{PATH} )
+    set( _NEWPATH ${PROJECT_SOURCE_DIR}\\bin ${_OLDPATH} )
+    set( ENV{PATH} "${_NEWPATH}" )
+    # OpenSSL requires some extra effort
     if( WIN32 )
         if( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # 64-bit
         
@@ -297,7 +339,7 @@ ELSE ( FETCH_ONLY )
         URL ${openssl_URL}
         URL_MD5 ff8fb85610aef328315a9decbb2712e4
         UPDATE_COMMAND ${OPENSSL_CONFIGURE_COMMAND}
-    #    PATCH_COMMAND ${PROJECT_SOURCE_DIR}/bin/patch.exe -p1 < ${PROJECT_SOURCE_DIR}/openssl-1.0.0c.patch
+   #    PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/openssl-1.0.0c.patch
         CONFIGURE_COMMAND ${OPENSSL_GENASM_COMMAND}
         BUILD_COMMAND ${OPENSSL_BUILD_COMMAND}
         BUILD_IN_SOURCE 1
@@ -315,7 +357,7 @@ ELSE ( FETCH_ONLY )
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${libharu_URL}
         URL_MD5 ${libharu_MD5}
-        PATCH_COMMAND ${PROJECT_SOURCE_DIR}/bin/patch.exe -p1 < ${PROJECT_SOURCE_DIR}/libharu-2.2.1-cmake.patch
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/libharu-2.2.1-cmake.patch
         CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -325,9 +367,24 @@ ELSE ( FETCH_ONLY )
         LOG_INSTALL 1
         )
 
-    # TODO GraphicsMagick
-    # GM seems impossible to build silently with Visual C++ :-/
-
+    # TODO GM seems impossible to build silently with Visual C++ :-/
+    if( NOT MSVC )
+        ExternalProject_Add( graphicsmagick
+            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
+            URL ${graphicsmagick_URL}
+            URL_MD5 ${graphicsmagick_MD5}
+            CONFIGURE_COMMAND ./configure
+            BUILD_COMMAND make
+            BUILD_IN_SOURCE 1
+            INSTALL_COMMAND make install
+            LOG_DOWNLOAD 1
+            LOG_UPDATE 1
+            LOG_CONFIGURE 1
+            LOG_BUILD 1
+            LOG_TEST 1
+            LOG_INSTALL 1
+            )
+    endif( NOT MSVC )
 
     ExternalProject_Add( boost
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
