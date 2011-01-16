@@ -62,7 +62,6 @@ IF EXIST %UNZIP_SFX% GOTO DOWNLOADCMAKE
 :DOWNLOADCMAKE
 @echo Downloading CMake...
 IF EXIST %CMAKE_ZIPFILENAME% GOTO UNPACK
-REM @wget -N -c http://www.cmake.org/files/v2.8/cmake-2.8.4-rc1-win32-x86.zip
 @wget -N -c %CMAKE_FULLURL%
 
 :UNPACK
@@ -82,16 +81,15 @@ REM @wget -N -c http://www.cmake.org/files/v2.8/cmake-2.8.4-rc1-win32-x86.zip
 @rd /q /s %CMAKE_DIRECTORY%
 
 :BOOTSTRAP
-cd ..\build
 @echo Bootstrapping...
 
-REM IF ""%1""=="" GOTO NOGENERATOR
-
 @echo on
-REM Fails if %1=="fetch"
 @IF "%1"=="fetch" (SHIFT
-..\bin\cmake -DFETCH_ONLY:BOOL=1 %* ..) ELSE (..\bin\cmake %* ..)
-
-REM :NOGENERATOR
-REM @echo on
-REM ..\bin\cmake ..
+cd ..\build
+..\bin\cmake -DFETCH_ONLY:BOOL=1 %* ..) ELSE (
+@IF EXIST ..\build\fetch-only (
+rd /q /s ..\build
+mkdir ..\build
+)
+cd ..\build
+..\bin\cmake %* ..)
