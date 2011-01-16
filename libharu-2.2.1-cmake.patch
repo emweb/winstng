@@ -1,0 +1,603 @@
+diff -rupdN libharu-2.2.1.orig/CMakeLists.txt libharu-2.2.1/CMakeLists.txt
+--- libharu-2.2.1.orig/CMakeLists.txt	Thu Jan  1 01:00:00 1970
++++ libharu-2.2.1/CMakeLists.txt	Fri Jan 14 16:40:07 2011
+@@ -0,0 +1,200 @@
++# CMakeLists.txt
++#
++# Copyright (C) 2008  Werner Smekal
++#
++# Process this file with cmake to produce Makefiles or project files
++# for your specific compiler tool set
++#
++# TODO:
++# - shared and static library
++# - packaging
++# - devpackage
++# =======================================================================
++# libharu project
++# =======================================================================
++project(libharu C)
++
++# determine compiler name
++set(COMPILER_LABEL "unknown")
++if(CMAKE_COMPILER_IS_GNUCC)
++  set(COMPILER_LABEL "gcc")
++endif(CMAKE_COMPILER_IS_GNUCC)
++if(MSVC)
++  set(COMPILER_LABEL "vc")
++endif(MSVC)
++
++# information about libharu
++set(LIBHARU_MAJOR 2)
++set(LIBHARU_MINOR 2)
++set(LIBHARU_PATCH 1)
++set(LIBHARU_VERSION ${LIBHARU_MAJOR}.${LIBHARU_MINOR}.${LIBHARU_PATCH})
++set(LIBHARU_DESCRIPTION "libHaru is a free, cross platform, open source library for generating PDF files.")
++set(LIBHARU_PACKAGE_NAME "libHaru-${LIBHARU_VERSION}-${COMPILER_LABEL}")
++
++# we want cmake version 2.4.8 at least
++cmake_minimum_required(VERSION 2.4.8 FATAL_ERROR)
++
++# Location where the haru cmake build system first looks for cmake modules
++set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
++
++# set library name, msvc does not append 'lib' automatically
++if(MSVC)
++ set(LIBHARU_NAME lib)
++ set(CMAKE_DEBUG_POSTFIX "d")
++endif(MSVC)
++set(LIBHARU_NAME ${LIBHARU_NAME}hpdf)
++set(LIBHARU_NAME_STATIC ${LIBHARU_NAME}s)
++
++# =======================================================================
++# command line options
++# =======================================================================
++option(LIBHARU_SHARED "Build shared lib" YES)
++option(LIBHARU_STATIC "Build static lib" YES)
++option(LIBHARU_EXAMPLES "Build libharu examples" NO)
++#option(DEVPAK "Create DevPackage" NO)
++
++#if(DEVPAK AND NOT WIN32)
++#  message( STATUS "DevPackage only available for Win32. Set DEVPAK to OFF." )
++#  set(DEVPAK OFF)
++#endif(DEVPAK AND NOT WIN32)
++#if(DEVPAK AND LIBHARU_EXAMPLES)
++#  message( STATUS "Examples are not build for DevPackage. Set LIBHARU_EXAMPLES to OFF." )
++#  set(LIBHARU_EXAMPLES OFF)
++#endif(DEVPAK AND LIBHARU_EXAMPLES)
++
++if(BUILD_SHARED_LIBS)
++  set(LIBHARU_SHARED ON)
++endif(BUILD_SHARED_LIBS)
++
++# =======================================================================
++# look for headers and libraries
++# =======================================================================
++include(haru)
++include(summary)
++
++# check zlib availibility
++find_package(ZLIB)
++if(ZLIB_FOUND)
++  set(HAVE_LIBZ ON)
++  include_directories(${ZLIB_INCLUDE_DIR})
++  set(ADDITIONAL_LIBRARIES ${ZLIB_LIBRARIES})
++else(ZLIB_FOUND)
++  set(HPDF_NOZLIB ON)  
++endif(ZLIB_FOUND)
++  
++# check png availibility
++find_package(PNG)
++if(PNG_FOUND)
++  set(HAVE_LIBPNG ON)
++  include_directories(${PNG_INCLUDE_DIR})
++  add_definitions(${PNG_DEFINITIONS})
++  set(ADDITIONAL_LIBRARIES ${ADDITIONAL_LIBRARIES} ${PNG_LIBRARIES})
++else(PNG_FOUND)
++  set(HPDF_NOPNGLIB ON)  
++endif(PNG_FOUND)
++
++# =======================================================================
++# configure header files, add compiler flags
++# =======================================================================
++# add definitions and directories to include
++#if(CMAKE_COMPILER_IS_GNUCC)
++#  add_definitions("-Wall")
++#endif(CMAKE_COMPILER_IS_GNUCC)
++if(MSVC_VERSION GREATER 1399)
++  add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_NO_DEPRECATE)
++endif(MSVC_VERSION GREATER 1399)
++include_directories(${CMAKE_SOURCE_DIR}/include)
++
++# create hpdf_config.h
++configure_file(
++  ${CMAKE_SOURCE_DIR}/include/hpdf_config.h.cmake
++  ${CMAKE_BINARY_DIR}/include/hpdf_config.h
++)
++include_directories(${CMAKE_BINARY_DIR}/include)
++
++# create DevPackage file
++#if(DEVPAK)
++#  configure_file(
++#    ${CMAKE_SOURCE_DIR}/libharu.DevPackage.cmake
++#    ${CMAKE_BINARY_DIR}/libharu.DevPackage
++#  )
++#endif(DEVPAK)
++# =======================================================================
++# create library and demos
++# =======================================================================
++add_subdirectory(src)
++
++# =======================================================================
++# installation configuration
++# =======================================================================
++set(
++  haru_HDRS
++    include/hpdf.h
++    include/hpdf_types.h
++    include/hpdf_consts.h 
++    include/hpdf_version.h
++    include/hpdf_annotation.h
++    include/hpdf_catalog.h
++    include/hpdf_conf.h
++    include/hpdf_destination.h
++    include/hpdf_doc.h
++    include/hpdf_encoder.h
++    include/hpdf_encrypt.h
++    include/hpdf_encryptdict.h
++    include/hpdf_error.h
++    include/hpdf_ext_gstate.h
++    include/hpdf_font.h
++    include/hpdf_fontdef.h
++    include/hpdf_gstate.h
++    include/hpdf_image.h
++    include/hpdf_info.h
++    include/hpdf_list.h
++    include/hpdf_mmgr.h
++    include/hpdf_objects.h
++    include/hpdf_outline.h
++    include/hpdf_pages.h
++    include/hpdf_page_label.h
++    include/hpdf_streams.h
++    include/hpdf_u3d.h
++    include/hpdf_utils.h
++    include/hpdf_pdfa.h
++    ${CMAKE_BINARY_DIR}/include/hpdf_config.h
++)
++
++# install header files
++install(FILES ${haru_HDRS} DESTINATION include)
++
++# install various files
++install(FILES README README_cmake INSTALL DESTINATION .)
++#install(DIRECTORY doc DESTINATION .)
++#if(NOT DEVPAK)
++#  install(DIRECTORY if DESTINATION .)
++#endif(NOT DEVPAK)
++#if(DEVPAK)
++#  install(FILES ${CMAKE_BINARY_DIR}/libharu.DevPackage DESTINATION .)
++#endif(DEVPAK)
++# =======================================================================
++# print out some information
++# =======================================================================
++summary()
++
++# =======================================================================
++# packing stuff
++# =======================================================================
++set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${LIBHARU_DESCRIPTION})
++set(CPACK_PACKAGE_VENDOR "Werner Smekal")
++set(CPACK_PACKAGE_DESCRIPTION_FILE ${CMAKE_CURRENT_SOURCE_DIR}/README)
++set(CPACK_PACKAGE_VERSION_MAJOR "${LIBHARU_MAJOR}")
++set(CPACK_PACKAGE_VERSION_MINOR "${LIBHARU_MINOR}")
++set(CPACK_PACKAGE_VERSION_PATCH "${LIBHARU_PATCH}")
++set(CPACK_PACKAGE_FILE_NAME "libHaru-${LIBHARU_VERSION}-${COMPILER_LABEL}")
++
++set(CPACK_STRIP_FILES ON)
++
++if(WIN32)
++  set(CPACK_GENERATOR ZIP)
++else(WIN32)
++  set(CPACK_GENERATOR TGZ)
++endif(WIN32)
++
++INCLUDE( CPack )
+diff -rupdN libharu-2.2.1.orig/README_cmake libharu-2.2.1/README_cmake
+--- libharu-2.2.1.orig/README_cmake	Thu Jan  1 01:00:00 1970
++++ libharu-2.2.1/README_cmake	Sun Jan  9 23:22:14 2011
+@@ -0,0 +1,106 @@
++Instruction for the CMake Build System
++======================================
++
++CMake is a family of tools designed to build, test and
++package software and it is cross-platform and open
++source. CMake and can obtained from http://www.cmake.org.
++
++0 Setup CMake
++-------------
++CMake is available in most of Linux repositories and can 
++be therefore easily installed. In Cygwin just use the 
++usual method with setup.exe to get the latest version of CMake.
++For Windows and Mac OS X go to http://www.cmake.org and 
++download the appropriate binary packge. Make sure that the
++bin directory of the extracted CMake package is in the 
++PATH environment variable. Check in the CLI with
++
++cmake --version
++
++that CMake can be found. There is also a graphical interface
++to CMake available which can be run with ccmake (Linux, Mac OS X)
++or cmake-gui (Windows, Linux, Mac OS X). In the next section
++the command line tool cmake is used, but the graphical interface
++works similar. Note, that CMake should always operate in a 
++out-of-source directory. If you need to run CMake again it's best
++to remove the whole folder and start with the directory creation
++in order to prevent problems with stale CMake cache files.
++
++X Specific instructions for Linux and Mac OS X
++==============================================
++Create a directory at the same level as the libharu source directory,
++e.g. "mkdir libharu_build". Cd into this directory.
++Than run cmake with the command
++
++cmake ../libharu
++
++CMake will configure the build and create the appropriate makefiles.
++Run "make" to create the library and the examples. There are some
++options available which are described below.
++
++X Specific instructions for Windows
++===================================
++Create a directory at the same level as the libharu source directory,
++e.g. "mkdir libharu_build". Cd into this directory.
++Since there are more compiler toolsets available for Windows than
++the standard gcc compiler, you need to tell cmake which makefile
++generator to use
++
++cmake -G "Makefile Generator" ..\libharu
++
++where Make Generator is one of the following (most important listed)
++
++  Borland Makefiles           = Generates Borland makefiles.
++  MSYS Makefiles              = Generates MSYS makefiles.
++  MinGW Makefiles             = Generates a make file for use with
++                                mingw32-make.
++  NMake Makefiles             = Generates NMake makefiles.
++  Visual Studio 6             = Generates Visual Studio 6 project files.
++  Visual Studio 9 2008        = Generates Visual Studio 9 2008 project files.
++
++You get a complete list of all available generators for your platfrom
++with "cmake --help". I'll go into details for one specific compiler toolset.
++The other generators work similar.
++
++Using CMake to produce Visual C++ 2008 Makfiles
++-----------------------------------------------
++First you need to have the command line interface setup correctly. Start
++cmd.exe and run "%VS90COMNTOOLS%vsvars32.bat". This will set up the
++command line tools of Visual C++ 2008. Cd into the created build
++directory and run
++
++cmake -G "NMake Makefiles" ..\libharu
++
++After the configuration and creation of the makefile run "nmake" to create
++the libraries and demonstrations. By default a shared library will be 
++created therefore you need to copy the haru.dll from the src directory
++in the demo directory in order for the demonstrations to run correctly.
++
++X Useful CMake options
++======================
++There are some options available where you can influence the configuration
++stage. These options must be given at the command line with the -D flag, e.g.
++
++cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Debug ..\libharu
++
++  CMAKE_BUILD_TYPE=Debug|Release - debug or release build
++  BUILD_SHARED_LIBS=ON|OFF - shared or static build
++  CMAKE_COLOR_MAKEFILE=ON|OFF - color output
++  CMAKE_VERBOSE_MAKEFILE=ON|OFF - verbose makefile output
++  
++More options can be found here: http://www.cmake.org/Wiki/CMake_Useful_Variables
++
++X How does CMake find libraries
++===============================
++CMake searches usually in the standard locations to find libraries, which
++works well on Linux und Mac OS X. This is not the case for Windows (where
++there are simply no standard locations for libraries) or if you want to
++use a library at a non-standard location. You can help CMake to find
++libraries via two environment variables, e.g. for Windows:
++
++set CMAKE_INCLUDE_PATH=path_to_zlib_headers
++set CMAKE_LIBRARY_PATH=path_to_zlib
++
++and then CMake will be able to find zlib.
++  
++  
+diff -rupdN libharu-2.2.1.orig/cmake/modules/haru.cmake libharu-2.2.1/cmake/modules/haru.cmake
+--- libharu-2.2.1.orig/cmake/modules/haru.cmake	Thu Jan  1 01:00:00 1970
++++ libharu-2.2.1/cmake/modules/haru.cmake	Sun Jan  9 23:22:14 2011
+@@ -0,0 +1,37 @@
++# cmake/modules/haru.cmake
++#
++# Copyright (C) 2008  Werner Smekal
++#
++# check if headers exist
++# Need these modules to do subsequent checks.
++include(CheckIncludeFiles)
++
++# =======================================================================
++# check header availability
++# =======================================================================
++# check if header file exists
++check_include_files(dlfcn.h HAVE_DLFCN_H)
++check_include_files(inttypes.h HAVE_INTTYPES_H)
++check_include_files(memory.h HAVE_MEMORY_H)
++check_include_files(stdint.h HAVE_STDINT_H)
++check_include_files(stdlib.h HAVE_STDLIB_H)
++check_include_files(strings.h HAVE_STRINGS_H)
++check_include_files(string.h HAVE_STRING_H)
++check_include_files(sys/stat.h HAVE_SYS_STAT_H)
++check_include_files(sys/types.h HAVE_SYS_TYPES_H)
++check_include_files(unistd.h HAVE_UNISTD_H)
++
++
++# =======================================================================
++# additional library support
++# =======================================================================
++# On windows systems the math library is not separated so do not specify
++# it unless you are on a non-windows system.
++if(NOT WIN32)
++  find_library(MATH_LIB NAMES m PATHS /usr/local/lib /usr/lib)
++  if(NOT MATH_LIB)
++    message(FATAL_ERROR "Cannot find required math library")
++  endif(NOT MATH_LIB)
++else(NOT WIN32)
++  set(MATH_LIB)
++endif(NOT WIN32)
+diff -rupdN libharu-2.2.1.orig/cmake/modules/summary.cmake libharu-2.2.1/cmake/modules/summary.cmake
+--- libharu-2.2.1.orig/cmake/modules/summary.cmake	Thu Jan  1 01:00:00 1970
++++ libharu-2.2.1/cmake/modules/summary.cmake	Sun Jan  9 23:22:14 2011
+@@ -0,0 +1,49 @@
++# cmake/modules/summary.cmake
++#
++# Copyright (C) 2008  Werner Smekal
++#
++# Macro for outputting all the most important CMake variables for haru
++
++# =======================================================================
++# print summary of configuration to screen
++# =======================================================================
++
++macro(summary)
++set(_output_results "
++Summary of CMake build system results for the haru library
++
++Install location variables which can be set by the user:
++CMAKE_INSTALL_PREFIX:      ${CMAKE_INSTALL_PREFIX}
++CMAKE_INSTALL_EXEC_PREFIX  ${CMAKE_INSTALL_EXEC_PREFIX}
++CMAKE_INSTALL_BINDIR 	   ${CMAKE_INSTALL_BINDIR}
++CMAKE_INSTALL_LIBDIR 	   ${CMAKE_INSTALL_LIBDIR}
++CMAKE_INSTALL_INCLUDEDIR   ${CMAKE_INSTALL_INCLUDEDIR}
++
++Other important CMake variables:
++
++CMAKE_SYSTEM_NAME:	${CMAKE_SYSTEM_NAME}
++UNIX:			${UNIX}
++WIN32:			${WIN32}
++APPLE:			${APPLE}
++MSVC:			${MSVC}	(MSVC_VERSION:	${MSVC_VERSION})
++MINGW:			${MINGW}
++MSYS:			${MSYS}
++CYGWIN:			${CYGWIN}
++BORLAND:		${BORLAND}
++WATCOM:		  ${WATCOM}
++
++CMAKE_BUILD_TYPE:	${CMAKE_BUILD_TYPE}
++CMAKE_C_COMPILER CMAKE_C_FLAGS:			${CMAKE_C_COMPILER} ${CMAKE_C_FLAGS}
++
++Library options:
++LIBHARU_SHARED:		${LIBHARU_SHARED}
++LIBHARU_STATIC:		${LIBHARU_STATIC}
++LIBHARU_EXAMPLES:	${LIBHARU_EXAMPLES}
++#DEVPAK:			${DEVPAK}
++
++Optional libraries:
++HAVE_LIBZ:		${HAVE_LIBZ}
++HAVE_LIBPNG:		${HAVE_LIBPNG}
++")
++message("${_output_results}")
++endmacro(summary)
+diff -rupdN libharu-2.2.1.orig/include/hpdf_config.h.cmake libharu-2.2.1/include/hpdf_config.h.cmake
+--- libharu-2.2.1.orig/include/hpdf_config.h.cmake	Thu Jan  1 01:00:00 1970
++++ libharu-2.2.1/include/hpdf_config.h.cmake	Sun Jan  9 23:22:14 2011
+@@ -0,0 +1,70 @@
++/* include/hpdf_config.h.in.  Generated from configure.in by autoheader.  */
++
++/* Define to 1 if you have the <dlfcn.h> header file. */
++#cmakedefine LIBHPDF_HAVE_DLFCN_H
++
++/* Define to 1 if you have the <inttypes.h> header file. */
++#cmakedefine LIBHPDF_HAVE_INTTYPES_H
++
++/* Define to 1 if you have the `png' library (-lpng). */
++#cmakedefine LIBHPDF_HAVE_LIBPNG
++
++/* Define to 1 if you have the `z' library (-lz). */
++#cmakedefine LIBHPDF_HAVE_LIBZ
++
++/* Define to 1 if you have the <memory.h> header file. */
++#cmakedefine LIBHPDF_HAVE_MEMORY_H
++
++/* Define to 1 if you have the <stdint.h> header file. */
++#cmakedefine LIBHPDF_HAVE_STDINT_H
++
++/* Define to 1 if you have the <stdlib.h> header file. */
++#cmakedefine LIBHPDF_HAVE_STDLIB_H
++
++/* Define to 1 if you have the <strings.h> header file. */
++#cmakedefine LIBHPDF_HAVE_STRINGS_H
++
++/* Define to 1 if you have the <string.h> header file. */
++#cmakedefine LIBHPDF_HAVE_STRING_H
++
++/* Define to 1 if you have the <sys/stat.h> header file. */
++#cmakedefine LIBHPDF_HAVE_SYS_STAT_H
++
++/* Define to 1 if you have the <sys/types.h> header file. */
++#cmakedefine LIBHPDF_HAVE_SYS_TYPES_H
++
++/* Define to 1 if you have the <unistd.h> header file. */
++#cmakedefine LIBHPDF_HAVE_UNISTD_H
++
++/* debug build */
++#cmakedefine LIBHPDF_DEBUG
++
++/* debug trace enabled */
++#cmakedefine LIBHPDF_DEBUG_TRACE
++
++/* libpng is not available */
++#cmakedefine LIBHPDF_HAVE_NOPNGLIB
++
++/* zlib is not available */
++#cmakedefine LIBHPDF_HAVE_NOZLIB
++
++/* Define to the address where bug reports for this package should be sent. */
++#cmakedefine LIBHPDF_PACKAGE_BUGREPORT
++
++/* Define to the full name of this package. */
++#cmakedefine LIBHPDF_PACKAGE_NAME
++
++/* Define to the full name and version of this package. */
++#cmakedefine LIBHPDF_PACKAGE_STRING
++
++/* Define to the one symbol short name of this package. */
++#cmakedefine LIBHPDF_PACKAGE_TARNAME
++
++/* Define to the version of this package. */
++#cmakedefine LIBHPDF_PACKAGE_VERSION
++
++/* Define to 1 if you have the ANSI C header files. */
++#cmakedefine LIBHPDF_STDC_HEADERS
++
++/* Define to `unsigned int' if <sys/types.h> does not define. */
++#cmakedefine LIBHPDF_size_t
+diff -rupdN libharu-2.2.1.orig/src/CMakeLists.txt libharu-2.2.1/src/CMakeLists.txt
+--- libharu-2.2.1.orig/src/CMakeLists.txt	Thu Jan  1 01:00:00 1970
++++ libharu-2.2.1/src/CMakeLists.txt	Fri Jan 14 16:41:08 2011
+@@ -0,0 +1,100 @@
++# src/CMakeLists.txt
++#
++# Copyright (C) 2008  Werner Smekal
++#
++# create library
++# =======================================================================
++# libharu source files
++# =======================================================================
++set(
++  libharu_SRCS
++  	hpdf_annotation.c
++  	hpdf_array.c
++  	hpdf_binary.c
++  	hpdf_boolean.c
++  	hpdf_catalog.c
++  	hpdf_destination.c
++  	hpdf_dict.c
++  	hpdf_doc_png.c
++  	hpdf_doc.c
++  	hpdf_encoder_cns.c
++  	hpdf_encoder_cnt.c
++  	hpdf_encoder_jp.c
++  	hpdf_encoder_kr.c
++  	hpdf_encoder.c
++  	hpdf_encrypt.c
++  	hpdf_encryptdict.c
++  	hpdf_error.c
++  	hpdf_ext_gstate.c
++  	hpdf_font_cid.c
++  	hpdf_font_tt.c
++  	hpdf_font_type1.c
++  	hpdf_font.c
++  	hpdf_fontdef_base14.c
++  	hpdf_fontdef_cid.c
++  	hpdf_fontdef_cns.c
++  	hpdf_fontdef_cnt.c
++  	hpdf_fontdef_jp.c
++  	hpdf_fontdef_kr.c
++  	hpdf_fontdef_tt.c
++  	hpdf_fontdef_type1.c
++  	hpdf_fontdef.c
++  	hpdf_gstate.c
++  	hpdf_image_png.c
++  	hpdf_image.c
++  	hpdf_info.c
++  	hpdf_list.c
++  	hpdf_mmgr.c
++  	hpdf_name.c
++  	hpdf_namedict.c
++  	hpdf_null.c
++  	hpdf_number.c
++  	hpdf_objects.c
++  	hpdf_outline.c
++  	hpdf_page_label.c
++  	hpdf_page_operator.c
++  	hpdf_pages.c
++  	hpdf_real.c
++  	hpdf_streams.c
++  	hpdf_string.c
++  	hpdf_u3d.c
++  	hpdf_utils.c
++  	hpdf_xref.c
++  	hpdf_pdfa.c
++)
++
++IF(NOT DEFINED ${HAVE_LIBPNG})
++ADD_DEFINITIONS(-DLIBHPDF_HAVE_NOPNGLIB)
++ENDIF(NOT DEFINED ${HAVE_LIBPNG})
++
++# =======================================================================
++# create static and shared haru library
++# =======================================================================
++if(LIBHARU_STATIC)
++  add_library(${LIBHARU_NAME_STATIC} STATIC ${libharu_SRCS})
++  target_link_libraries(${LIBHARU_NAME_STATIC} ${ADDITIONAL_LIBRARIES})
++  install(
++    TARGETS ${LIBHARU_NAME_STATIC}
++    ARCHIVE DESTINATION lib
++    LIBRARY DESTINATION lib
++    RUNTIME DESTINATION bin
++  )
++  if(WIN32 AND NOT CYGWIN)
++		foreach(addlib ${ADDITIONAL_LIBRARIES})
++			install(FILES ${addlib} DESTINATION lib)
++		endforeach(addlib)
++  endif(WIN32 AND NOT CYGWIN)
++endif(LIBHARU_STATIC)
++if(LIBHARU_SHARED)
++  add_library(${LIBHARU_NAME} SHARED ${libharu_SRCS})
++  target_link_libraries(${LIBHARU_NAME} ${ADDITIONAL_LIBRARIES})
++  if(WIN32 AND NOT CYGWIN)
++  	set_target_properties(${LIBHARU_NAME} PROPERTIES DEFINE_SYMBOL HPDF_DLL_MAKE)
++  endif(WIN32 AND NOT CYGWIN)
++  install(
++    TARGETS ${LIBHARU_NAME}
++    ARCHIVE DESTINATION lib
++    LIBRARY DESTINATION lib
++    RUNTIME DESTINATION bin
++  )
++endif(LIBHARU_SHARED)
+diff -rupdN libharu-2.2.1.orig/src/hpdf_pdfa.c libharu-2.2.1/src/hpdf_pdfa.c
+--- libharu-2.2.1.orig/src/hpdf_pdfa.c	Fri Apr 23 10:20:14 2010
++++ libharu-2.2.1/src/hpdf_pdfa.c	Fri Jan 14 17:06:56 2011
+@@ -117,11 +117,11 @@ HPDF_PDFA_GenerateID(HPDF_Doc pdf)
+     HPDF_BYTE idkey[HPDF_MD5_KEY_LEN];
+     HPDF_MD5_CTX md5_ctx;
+     time_t ltime; 
++    HPDF_Array id;
+ 
+     ltime = time(NULL); 
+     currentTime = (HPDF_BYTE *)ctime(&ltime);
+-    
+-    HPDF_Array id;
++
+     id = HPDF_Dict_GetItem(pdf->trailer, "ID", HPDF_OCLASS_ARRAY);
+     if (!id) {
+        id = HPDF_Array_New(pdf->mmgr);

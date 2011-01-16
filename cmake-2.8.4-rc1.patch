@@ -1,0 +1,24 @@
+diff -rupd cmake.orig/share/cmake-2.8/Modules/FindPNG.cmake cmake/share/cmake-2.8/Modules/FindPNG.cmake
+--- cmake.orig/share/cmake-2.8/Modules/FindPNG.cmake	Wed Jan 12 14:05:58 2011
++++ cmake/share/cmake-2.8/Modules/FindPNG.cmake	Fri Jan 14 03:38:00 2011
+@@ -33,7 +33,7 @@ if(ZLIB_FOUND)
+   /usr/local/include/libpng             # OpenBSD
+   )
+ 
+-  set(PNG_NAMES ${PNG_NAMES} png libpng png14 libpng14 png14d libpng14d png12 libpng12 png12d libpng12d)
++  set(PNG_NAMES ${PNG_NAMES} png libpng png15 libpng15 png15d libpng15d png14 libpng14 png14d libpng14d png12 libpng12 png12d libpng12d)
+   find_library(PNG_LIBRARY NAMES ${PNG_NAMES} )
+ 
+   if (PNG_LIBRARY AND PNG_PNG_INCLUDE_DIR)
+diff -rupd cmake.orig/share/cmake-2.8/Modules/FindZLIB.cmake cmake/share/cmake-2.8/Modules/FindZLIB.cmake
+--- cmake.orig/share/cmake-2.8/Modules/FindZLIB.cmake	Wed Jan 12 14:05:58 2011
++++ cmake/share/cmake-2.8/Modules/FindZLIB.cmake	Fri Jan 14 03:10:26 2011
+@@ -35,7 +35,7 @@ FIND_PATH(ZLIB_INCLUDE_DIR zlib.h
+     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\GnuWin32\\Zlib;InstallPath]/include"
+ )
+ 
+-SET(ZLIB_NAMES z zlib zdll)
++SET(ZLIB_NAMES z zlib zdll zlib1 zlibd zlibd1 )
+ FIND_LIBRARY(ZLIB_LIBRARY
+     NAMES
+         ${ZLIB_NAMES}
