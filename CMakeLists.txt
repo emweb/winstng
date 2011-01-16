@@ -190,9 +190,9 @@ ELSE ( FETCH_ONLY )
             URL ${nasm_URL}
             URL_MD5 ${nasm_MD5}
             CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
-            BUILD_COMMAND make
+            BUILD_COMMAND ${CMAKE_BUILD_TOOL}
             BUILD_IN_SOURCE 1
-            INSTALL_COMMAND make install
+            INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
             LOG_DOWNLOAD 1
             LOG_UPDATE 1
             LOG_CONFIGURE 1
@@ -206,7 +206,7 @@ ELSE ( FETCH_ONLY )
 #        message( ERROR "Mac support to come, please build manually" )
 
         elseif( UNIX )
-        
+            message( STATUS "" )
         endif(APPLE)
 
  #       message( ERROR "Unix support to come, please build manually" )
@@ -297,17 +297,17 @@ ELSE ( FETCH_ONLY )
             if( MSVC )
                 if( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
                     set( OPENSSL_CONFIGURE_COMMAND "perl Configure VC-WIN64A --prefix=${PROJECT_SOURCE_DIR}" )
-                    set( OPENSSL_BUILD_COMMAND nmake -f ms/ntdll.mak )
-                    set( OPENSSL_INSTALL_COMMAND "nmake -f ms/ntdll.mak install" )
+                    set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak" )
+                    set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak install" )
                 elseif( CMAKE_SYSTEM_PROCESSOR STREQUAL IA64 )
                     set( OPENSSL_CONFIGURE_COMMAND "perl Configure VC-WIN64I --prefix=${PROJECT_SOURCE_DIR}" )
-                    set( OPENSSL_BUILD_COMMAND nmake -f ms/ntdll.mak )
-                    set( OPENSSL_INSTALL_COMMAND "nmake -f ms/ntdll.mak install" )
+                    set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak" )
+                    set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak install" )
                 endif( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
             else(MSVC) # Cygwin and MinGW, there is no Borland 64-bit support in OpenSSL :-?
                 set( OPENSSL_CONFIGURE_COMMAND "./config --prefix=${PROJECT_SOURCE_DIR}" )
-                set( OPENSSL_BUILD_COMMAND make )
-                set( OPENSSL_INSTALL_COMMAND make install )
+                set( OPENSSL_BUILD_COMMAND ${CMAKE_BUILD_TOOL} )
+                set( OPENSSL_INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install )
             endif( MSVC )
 
         else( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # 32-bit
@@ -315,18 +315,18 @@ ELSE ( FETCH_ONLY )
             if( MSVC )
                 set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_nasm.bat" )
                 set( OPENSSL_CONFIGURE_COMMAND "perl Configure VC-WIN32 --prefix=${PROJECT_SOURCE_DIR}" )
-                set( OPENSSL_BUILD_COMMAND "nmake -f ms/ntdll.mak" )
-                set( OPENSSL_INSTALL_COMMAND "nmake -f ms/ntdll.mak install" )
+                set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak" )
+                set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak install" )
             elseif( BORLAND )
                 set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_nasm.bat" )
                 set( OPENSSL_CONFIGURE_COMMAND "perl Configure BC-32 no-asm --prefix=${PROJECT_SOURCE_DIR}" )
-                set( OPENSSL_BUILD_COMMAND "make -f ms\\\\\\\\bcb.mak" )
-                set( OPENSSL_INSTALL_COMMAND "make -f ms\\\\\\\\bcb.mak install" )
+                set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL} -f ms\\\\\\\\bcb.mak" )
+                set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} -f ms\\\\\\\\bcb.mak install" )
             else(MSVC) #Cygwin and MinGW
                 set( OPENSSL_GENASM_COMMAND )
                 set( OPENSSL_CONFIGURE_COMMAND "./config --prefix=${PROJECT_SOURCE_DIR}" )
-                set( OPENSSL_BUILD_COMMAND make )
-                set( OPENSSL_INSTALL_COMMAND "make install" )
+                set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL}" )
+                set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} install" )
             endif( MSVC )
             
         endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
@@ -379,9 +379,9 @@ ELSE ( FETCH_ONLY )
             URL ${graphicsmagick_URL}
             URL_MD5 ${graphicsmagick_MD5}
             CONFIGURE_COMMAND ./configure
-            BUILD_COMMAND make
+            BUILD_COMMAND ${CMAKE_BUILD_TOOL}
             BUILD_IN_SOURCE 1
-            INSTALL_COMMAND make install
+            INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
             LOG_DOWNLOAD 1
             LOG_UPDATE 1
             LOG_CONFIGURE 1
