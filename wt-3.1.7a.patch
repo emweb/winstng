@@ -1,6 +1,6 @@
 diff -rupd wt-3.1.7a.orig/cmake/WtFindGm.txt wt-3.1.7a/cmake/WtFindGm.txt
---- wt-3.1.7a.orig/cmake/WtFindGm.txt	2011-01-17 17:29:08.430278002 +0100
-+++ wt-3.1.7a/cmake/WtFindGm.txt	2011-01-17 17:30:14.446278002 +0100
+--- wt-3.1.7a.orig/cmake/WtFindGm.txt	2011-01-18 00:23:47.218278001 +0100
++++ wt-3.1.7a/cmake/WtFindGm.txt	2011-01-18 00:23:59.998278001 +0100
 @@ -11,6 +11,7 @@ FIND_PATH(GM_INCLUDE_DIR
      ${GM_PREFIX}/include/GraphicsMagick/
      ${GM_PREFIX}/include/
@@ -9,3 +9,45 @@ diff -rupd wt-3.1.7a.orig/cmake/WtFindGm.txt wt-3.1.7a/cmake/WtFindGm.txt
      /usr/include/GraphicsMagick/
      /usr/include/
      /usr/local/include/GraphicsMagick/
+diff -rupd wt-3.1.7a.orig/CMakeLists.txt wt-3.1.7a/CMakeLists.txt
+--- wt-3.1.7a.orig/CMakeLists.txt	2011-01-18 00:23:47.218278001 +0100
++++ wt-3.1.7a/CMakeLists.txt	2011-01-18 00:45:19.406278003 +0100
+@@ -71,6 +71,14 @@ IF(NOT SHARED_LIBS)
+   ENDIF(WIN32)
+ ENDIF(NOT SHARED_LIBS)
+ 
++IF(NOT EXAMPLES_DESTINATION)
++  IF(WIN32 AND NOT UNIX)
++    SET(EXAMPLES_DESTINATION bin)
++  ELSE(WIN32 AND NOT UNIX)
++    SET(EXAMPLES_DESTINATION lib/Wt/examples)
++  ENDIF(WIN32 AND NOT UNIX)
++ENDIF(NOT EXAMPLES_DESTINATION)
++
+ IF(WIN32)
+   IF(SHARED_LIBS)
+     # See http://svn.boost.org/trac/boost/ticket/3465
+@@ -344,11 +352,7 @@ IF (DOXYGEN_FOUND)
+ SUBDIRS(src)
+ 
+ IF(BUILD_EXAMPLES)
+-  IF(WIN32)
+     SUBDIRS(examples)
+-  ELSE(WIN32)
+-    SUBDIRS(EXCLUDE_FROM_ALL examples)
+-  ENDIF(WIN32)
+ ENDIF(BUILD_EXAMPLES)
+ 
+ IF(BUILD_TESTS)
+Only in wt-3.1.7a/examples/blog: CMakeLists.txt~
+diff -rupd wt-3.1.7a.orig/examples/CMakeLists.txt wt-3.1.7a/examples/CMakeLists.txt
+--- wt-3.1.7a.orig/examples/CMakeLists.txt	2011-01-18 00:23:48.574278002 +0100
++++ wt-3.1.7a/examples/CMakeLists.txt	2011-01-18 00:45:36.594278001 +0100
+@@ -30,6 +30,7 @@ MACRO(WT_ADD_EXAMPLE name)
+     SET_TARGET_PROPERTIES(${name} PROPERTIES COMPILE_FLAGS "/W3 /Wp64 /wd4251 /wd4275")
+   ENDIF(MSVC)
+   TARGET_LINK_LIBRARIES(${name} ${EXAMPLES_CONNECTOR})
++  INSTALL( TARGETS ${name} DESTINATION ${EXAMPLES_DESTINATION} )
+ ENDMACRO(WT_ADD_EXAMPLE)
+ 
+ SUBDIRS(
