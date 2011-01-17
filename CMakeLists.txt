@@ -110,13 +110,24 @@ else( WIN32 AND NOT UNIX )
     set( postgresql_MD5 fc79ef32b602f75f2ccd37647bc008e9 )
     set( _PACKAGES ${_PACKAGES} postgresql )
 
-    set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/GraphicsMagick-1.3.12.tar.bz2 )
-    set( graphicsmagick_MD5 55182f371f82d5f9367bce04e59bbf25 )
+#    set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/GraphicsMagick-1.3.12.tar.bz2 )
+#    set( graphicsmagick_MD5 55182f371f82d5f9367bce04e59bbf25 )
+#    set( _PACKAGES ${_PACKAGES} graphicsmagick )
+    set( graphicsmagick_URL ftp://ftp.graphicsmagick.org/pub/GraphicsMagick/snapshots/GraphicsMagick-1.4.020110109.tar.bz2 )
+    set( graphicsmagick_MD5 6a92d27d7b326b176ff0dcfca828aa24 )
     set( _PACKAGES ${_PACKAGES} graphicsmagick )
 
     set( fcgi_URL http://www.fastcgi.com/dist/fcgi-2.4.0.tar.gz )
     set( fcgi_MD5 d15060a813b91383a9f3c66faf84867e )
-    set( _PACKAGES ${PACKAGES} fcgi )
+    set( _PACKAGES ${_PACKAGES} fcgi )
+
+    # TODO Move to pdcurses? (it's buildable on Win32 with nmake and others, might need win32a - http://www.projectpluto.com/win32a.htm )
+    set( ncurses_URL http://ftp.gnu.org/pub/gnu/ncurses/ncurses-5.7.tar.gz )
+    set( ncurses_MD5 cce05daf61a64501ef6cd8da1f727ec6 )
+    set( _PACKAGES ${_PACKAGES} ncurses )
+#    set( ncurses_URL http://prdownloads.sourceforge.net/pdcurses/PDCurses-3.4.tar.gz )
+#    set( ncurses_MD5 4e04e4412d1b1392a7f9a489b95b331a )
+#    set( _PACKAGES ${_PACKAGES} ncurses )
 
     # TODO Build MySQL on Unix - On Windows, too?
     set( mysql_URL http://www.mirrorservice.org/sites/ftp.mysql.com/Downloads/MySQL-5.5/mysql-5.5.8.tar.gz )
@@ -177,6 +188,9 @@ ELSE ( FETCH_ONLY )
             )
 	set( PATCH_EXECUTABLE ${PROJECT_SOURCE_DIR}/bin/patch )
     endif( WIN32 AND NOT UNIX )
+
+    # Make sure autotools-based 3rd-parties use the bootstrapped libraries
+    file( WRITE ${PROJECT_SOURCE_DIR}/share/config.site "CPPFLAGS='-I${PROJECT_SOURCE_DIR}/include'\nLDFLAGS='-L${PROJECT_SOURCE_DIR}/lib'" )
 
     # Netwide Assembler
     if( WIN32 AND NOT UNIX )
@@ -251,8 +265,9 @@ ELSE ( FETCH_ONLY )
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${zlib_URL}
         URL_MD5 ${zlib_MD5}
+	LIST_SEPARATOR ^^
         PATCH_COMMAND ${CMAKE_COMMAND} -E remove zconf.h
-        CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
+        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -266,7 +281,11 @@ ELSE ( FETCH_ONLY )
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${libpng_URL}
         URL_MD5 ${libpng_MD5}
-        CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
+#	LIST_SEPARATOR ^^
+#	PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/libpng-export.patch
+        CMAKE_ARGS 
+	# -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include 
+	-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -280,8 +299,9 @@ ELSE ( FETCH_ONLY )
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${libjpeg_URL}
         URL_MD5 ${libjpeg_MD5}
+	LIST_SEPARATOR ^^
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/jpeg8.patch
-        CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
+        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -295,8 +315,9 @@ ELSE ( FETCH_ONLY )
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${freetype_URL}
         URL_MD5 ${freetype_MD5}
+	LIST_SEPARATOR ^^
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/freetype-2.3.12.patch
-        CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
+        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -310,8 +331,9 @@ ELSE ( FETCH_ONLY )
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${libgd2_URL}
         URL_MD5 ${libgd2_MD5}
+	LIST_SEPARATOR ^^
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/gd.patch
-        CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
+        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -390,6 +412,22 @@ ELSE ( FETCH_ONLY )
         LOG_TEST 1
         LOG_INSTALL 1
         )
+
+#     ExternalProject_Add( readline
+# 	DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
+# 	URL ${readline_URL}
+# 	URL_MD5 ${readline_MD5}
+# 	CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
+# 	BUILD_COMMAND ${CMAKE_BUILD_TOOL}
+# 	BUILD_IN_SOURCE 1
+# 	INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
+# 	LOG_DOWNLOAD 1
+# 	LOG_UPDATE 1
+# 	LOG_CONFIGURE 1
+# 	LOG_BUILD 1
+# 	LOG_TEST 1
+# 	LOG_INSTALL 1
+# 	)
                     
     # PostgreSQL
     if( WIN32 AND NOT UNIX )
@@ -410,10 +448,11 @@ ELSE ( FETCH_ONLY )
     else( WIN32 AND NOT UNIX )
         ExternalProject_Add( postgresql
 #	    DEPENDS readline perl openssl zlib
+	    DEPENDS perl openssl zlib
             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
             URL ${postgresql_URL}
             URL_MD5 ${postgresql_MD5}
-            CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR} --without-readline
+            CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}  --without-readline
             BUILD_COMMAND ${CMAKE_BUILD_TOOL}
             BUILD_IN_SOURCE 1
             INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
@@ -447,16 +486,36 @@ ELSE ( FETCH_ONLY )
             )
     endif(NOT WIN32)
 
+    ExternalProject_Add( ncurses
+#	DEPENDS patch
+	DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
+	URL ${ncurses_URL}
+	URL_MD5 ${ncurses_MD5}
+#	PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/fcgi-2.4.0-cstdiofix.patch
+	CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
+	BUILD_COMMAND ${CMAKE_BUILD_TOOL}
+	BUILD_IN_SOURCE 1
+	INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
+	LOG_DOWNLOAD 1
+	LOG_UPDATE 1
+	LOG_CONFIGURE 1
+	LOG_BUILD 1
+	LOG_TEST 1
+	LOG_INSTALL 1
+	)
+    
     #if( WIN32 )
 	# Download and extract MySQL binaries. Or build it?
     #else( WIN32 )
         ExternalProject_Add( mysql
 #	    DEPENDS zlib openssl readline
-	    DEPENDS zlib openssl
+#	    DEPENDS zlib openssl ncurses readline
+	    DEPENDS zlib openssl ncurses
             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
             URL ${mysql_URL}
             URL_MD5 ${mysql_MD5}
-            CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
+	    LIST_SEPARATOR ^^
+            CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCURSES_NCURSES_INCLUDE_PATH:PATH=${PROJECT_SOURCE_DIR}/include -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
             LOG_DOWNLOAD 1
             LOG_UPDATE 1
             LOG_CONFIGURE 1
@@ -485,22 +544,6 @@ ELSE ( FETCH_ONLY )
             LOG_INSTALL 1
             )
 
-#         ExternalProject_Add( readline
-#             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
-#             URL ${readline_URL}
-#             URL_MD5 ${readline_MD5}
-#             CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
-#             BUILD_COMMAND ${CMAKE_BUILD_TOOL}
-#             BUILD_IN_SOURCE 1
-#             INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
-#             LOG_DOWNLOAD 1
-#             LOG_UPDATE 1
-#             LOG_CONFIGURE 1
-#             LOG_BUILD 1
-#             LOG_TEST 1
-#             LOG_INSTALL 1
-#             )
-
 #
 # Build step
 #
@@ -510,8 +553,11 @@ ELSE ( FETCH_ONLY )
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${libharu_URL}
         URL_MD5 ${libharu_MD5}
+#	LIST_SEPARATOR ^^
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/libharu-2.2.1-cmake.patch
-        CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
+        CMAKE_ARGS 
+#	-DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include 
+	    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -568,8 +614,9 @@ ELSE ( FETCH_ONLY )
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${wt_URL}
         URL_MD5 ${wt_MD5}
+	LIST_SEPARATOR ^^
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/wt-3.1.7a.patch
-        CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR} -DWT_CMAKE_FINDER_INSTALL_DIR:PATH=/share/cmake-2.8/Modules -DBoost_NO_SYSTEM_PATHS:BOOL=1 -DBOOST_ROOT:PATH=${PROJECT_SOURCE_DIR} -DCONFIG_DIR:PATH=${PROJECT_SOURCE_DIR}/etc -DFCGI_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DGM_PREFIX=${PROJECT_SOURCE_DIR} -DHARU_PREFIX=${PROJECT_SOURCE_DIR} -DPOSTGRES_PREFIX=${PROJECT_SOURCE_DIR} -DZLIB_PREFIX=${PROJECT_SOURCE_DIR} -DRUNDIR=${PROJECT_SOURCE_DIR}/var/run/wt
+        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR} -DWT_CMAKE_FINDER_INSTALL_DIR:PATH=/share/cmake-2.8/Modules -DBoost_NO_SYSTEM_PATHS:BOOL=1 -DBOOST_ROOT:PATH=${PROJECT_SOURCE_DIR} -DCONFIG_DIR:PATH=${PROJECT_SOURCE_DIR}/etc -DFCGI_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DGM_PREFIX=${PROJECT_SOURCE_DIR} -DHARU_PREFIX=${PROJECT_SOURCE_DIR} -DPOSTGRES_PREFIX=${PROJECT_SOURCE_DIR} -DZLIB_PREFIX=${PROJECT_SOURCE_DIR} -DRUNDIR=${PROJECT_SOURCE_DIR}/var/run/wt
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
