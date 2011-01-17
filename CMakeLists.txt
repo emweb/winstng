@@ -49,6 +49,18 @@ if( NOT MSVC )
     set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/GraphicsMagick-1.3.12.tar.bz2 )
     set( graphicsmagick_MD5 55182f371f82d5f9367bce04e59bbf25 )
     set( _PACKAGES ${_PACKAGES} graphicsmagick )
+
+    set( patch_URL http://ftp.gnu.org/gnu/patch/patch-2.6.1.tar.bz2 )
+    set( patch_MD5 0818d1763ae0c4281bcdc63cdac0b2c0 )
+    set( _PACKAGES ${_PACKAGES} patch )
+
+    set( perl_URL http://www.cpan.org/src/5.0/perl-5.12.2.tar.gz )
+    set( perl_MD5 af2df531d46b77fdf0d97eecb03eddb2 )
+    set( _PACKAGES ${_PACKAGES} perl )
+
+    set( postgresql_URL http://wwwmaster.postgresql.org/download/mirrors-ftp/source/v9.0.2/postgresql-9.0.2.tar.bz2 )
+    set( postgresql_MD5 fc79ef32b602f75f2ccd37647bc008e9 )
+    set( _PACKAGES ${_PACKAGES} postgresql )
 endif( NOT MSVC )
 
 if( WIN32 )
@@ -102,6 +114,7 @@ endif( WIN32 )
 # If in fetch mode, only download and set a "fetch-only" indicator
 if (FETCH_ONLY )
     foreach( pkg ${_PACKAGES} )
+	message( STATUS "Downloading ${pkg}" )
         get_filename_component( fn ${${pkg}_URL} NAME )
         file( DOWNLOAD ${${pkg}_URL} ${PROJECT_SOURCE_DIR}/downloads/${fn} EXPECTED_MD5 ${${pkg}_MD5} SHOW_PROGRESS )
     endforeach(pkg)
@@ -175,20 +188,73 @@ ELSE ( FETCH_ONLY )
                     
     else( WIN32 )
 
-        find_program( PATCH_EXECUTABLE patch )
-        if( NOT PATCH_EXECUTABLE )
-            message( ERROR "GNU patch is required" )
-        endif( NOT PATCH_EXECUTABLE )
+#         find_program( PATCH_EXECUTABLE patch )
+#         if( NOT PATCH_EXECUTABLE )
+#             message( ERROR "GNU patch is required" )
+#         endif( NOT PATCH_EXECUTABLE )
+# 
+# 	add_custom_target( patch )
+        ExternalProject_Add( patch
+            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
+            URL ${patch_URL}
+            URL_MD5 ${patch_MD5}
+            CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
+            BUILD_COMMAND ${CMAKE_BUILD_TOOL}
+            BUILD_IN_SOURCE 1
+            INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
+            LOG_DOWNLOAD 1
+            LOG_UPDATE 1
+            LOG_CONFIGURE 1
+            LOG_BUILD 1
+            LOG_TEST 1
+            LOG_INSTALL 1
+            )
+	set( PATCH_EXECUTABLE ${PROJECT_SOURCE_DIR}/bin/patch )
 
-        find_program( PERL_FOUND perl )
-        if( NOT PERL_FOUND )
-            message( ERROR "Perl is required" )
-        endif( NOT PERL_FOUND )
-        
-        ExternalProjectAdd( nasm
+
+#         find_program( PERL_FOUND perl )
+#         if( NOT PERL_FOUND )
+#             message( ERROR "Perl is required" )
+#         endif( NOT PERL_FOUND )
+# 
+# 	add_custom_target( perl )
+        ExternalProject_Add( perl
+            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
+            URL ${perl_URL}
+            URL_MD5 ${perl_MD5}
+            CONFIGURE_COMMAND ./Configure -de -Dprefix=${PROJECT_SOURCE_DIR}
+            BUILD_COMMAND ${CMAKE_BUILD_TOOL}
+            BUILD_IN_SOURCE 1
+            INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
+            LOG_DOWNLOAD 1
+            LOG_UPDATE 1
+            LOG_CONFIGURE 1
+            LOG_BUILD 1
+            LOG_TEST 1
+            LOG_INSTALL 1
+            )
+        set( PERL_EXECUTABLE ${PROJECT_SOURCE_DIR}/bin/perl )
+
+        ExternalProject_Add( nasm
             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
             URL ${nasm_URL}
             URL_MD5 ${nasm_MD5}
+            CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
+            BUILD_COMMAND ${CMAKE_BUILD_TOOL}
+            BUILD_IN_SOURCE 1
+            INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
+            LOG_DOWNLOAD 1
+            LOG_UPDATE 1
+            LOG_CONFIGURE 1
+            LOG_BUILD 1
+            LOG_TEST 1
+            LOG_INSTALL 1
+            )
+
+        ExternalProject_Add( postgresql
+            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
+            URL ${postgresql_URL}
+            URL_MD5 ${postgresql_MD5}
             CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
             BUILD_COMMAND ${CMAKE_BUILD_TOOL}
             BUILD_IN_SOURCE 1
@@ -333,6 +399,8 @@ ELSE ( FETCH_ONLY )
     else( WIN32 )
         set( OPENSSL_GENASM_COMMAND )
         set( OPENSSL_CONFIGURE_COMMAND "./config --prefix=${PROJECT_SOURCE_DIR}" )
+	set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL}" )
+	set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} install" )
     endif( WIN32 )
 
     set( _OLDPATH $ENV{PATH} )
@@ -378,7 +446,7 @@ ELSE ( FETCH_ONLY )
             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
             URL ${graphicsmagick_URL}
             URL_MD5 ${graphicsmagick_MD5}
-            CONFIGURE_COMMAND ./configure
+            CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
             BUILD_COMMAND ${CMAKE_BUILD_TOOL}
             BUILD_IN_SOURCE 1
             INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
@@ -391,14 +459,21 @@ ELSE ( FETCH_ONLY )
             )
     endif( NOT MSVC )
 
+    if( WIN32 )
+      set( boost_BOOTSTRAP_COMMAND "bootstrap.bat" )
+      set( boost_BJAM "bjam" )
+    else( WIN32 )
+      set( boost_BOOTSTRAP_COMMAND "./bootstrap.sh" )
+      set( boost_BJAM "./bjam" )
+    endif( WIN32 )
     ExternalProject_Add( boost
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${boost_URL}
         URL_MD5 ${boost_MD5}
-        CONFIGURE_COMMAND bootstrap.bat
-        BUILD_COMMAND bjam --prefix=${PROJECT_SOURCE_DIR} --build-type=minimal --variant=release link=static threading=multi
+        CONFIGURE_COMMAND ${boost_BOOTSTRAP_COMMAND}
+        BUILD_COMMAND ${boost_BJAM} --prefix=${PROJECT_SOURCE_DIR} --build-type=minimal --variant=release link=static threading=multi
         BUILD_IN_SOURCE 1
-        INSTALL_COMMAND bjam --prefix=${PROJECT_SOURCE_DIR} install
+        INSTALL_COMMAND ${boost_BJAM} --prefix=${PROJECT_SOURCE_DIR} install
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
