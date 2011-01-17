@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/sh
 echo ""
 echo "*******************************************************"
 echo "*                  Wt bootstrapper                    *"
@@ -9,7 +9,7 @@ _DIRNAME=`dirname "$0"`
 PREFIX=`readlink -e $_DIRNAME`
 
 
-if [ -n $1 ] && ( [ "$1" == "--help" ] || [ "$1" == "-h" ] )
+if [ -n $1 ] && ( [ "$1" = "--help" ] || [ "$1" = "-h" ] )
 then
   echo "Usage:" 
   echo "  $0 -h | --help          This help"
@@ -19,7 +19,7 @@ then
 fi
 
 # On Mac, use curl (built-in)
-DOWNLOADER=wget -N -c
+DOWNLOADER="wget -N -c"
 
 CMAKE_ZIP=cmake-2.8.3.20110115-gf8614.tar.gz
 CMAKE_FULLURL=http://www.cmake.org/files/vCVS/$CMAKE_ZIP
@@ -48,47 +48,17 @@ fi
 
 echo "Bootstrapping..."
 
-if [ -n $1 ] && [ "$1" == "--fetch" ]
+if [ -n $1 ] && [ "$1" = "--fetch" ]
 then
-  echo "blah - pwd = `pwd`"
   shift
   cd ../build
   ../bin/cmake -DFETCH_ONLY:BOOL=1 $@ ..
 else
-  echo "blah - pwd2 = `pwd`"
   if [ -f ../build/fetch-only ]
   then
-    echo "blah - pwd3 = `pwd`"
     rm -rf ../build
     mkdir ../build
   fi
-  echo "blah - pwd4 = `pwd`"
   cd ../build
   ../bin/cmake $@ ..
 fi
-
-# @echo on
-# @IF NOT [%1]==[] (
-#     @IF /I "%1"=="fetch" ( 
-#         SHIFT
-#         cd ..\build
-#         ..\bin\cmake -DFETCH_ONLY:BOOL=1 %* ..
-#     ) ELSE (
-#         @IF EXIST ..\build\fetch-only (
-#             @rd /q /s ..\build
-#             @mkdir ..\build
-#             @cd ..\build
-#             ..\bin\cmake %* ..
-#         ) ELSE (
-#             @echo There is something wrong with your build directory, please remove it and start again
-#         )
-#     )
-# ) ELSE (
-#     @IF EXIST ..\build\fetch-only (
-#         @rd /q /s ..\build
-#         @mkdir ..\build
-#     )
-# 
-#     @cd ..\build
-#     ..\bin\cmake %* ..
-# )
