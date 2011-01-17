@@ -4,6 +4,8 @@ cmake_minimum_required(VERSION 2.8)
 
 include (ExternalProject)
 
+# TODO MinGW support
+
 # Make sure we use bootstrapped dependencies
 set(CMAKE_PREFIX_PATH ${PROJECT_SOURCE_DIR} )
 
@@ -57,6 +59,10 @@ if( NOT MSVC )
     set( perl_URL http://www.cpan.org/src/5.0/perl-5.12.2.tar.gz )
     set( perl_MD5 af2df531d46b77fdf0d97eecb03eddb2 )
     set( _PACKAGES ${_PACKAGES} perl )
+
+    set( readline_URL http://ftp.gnu.org/gnu/readline/readline-6.1.tar.gz )
+    set( readline_MD5 fc2f7e714fe792db1ce6ddc4c9fb4ef3 )
+    set( _PACKAGES ${_PACKAGES} readline )
 
     set( postgresql_URL http://wwwmaster.postgresql.org/download/mirrors-ftp/source/v9.0.2/postgresql-9.0.2.tar.bz2 )
     set( postgresql_MD5 fc79ef32b602f75f2ccd37647bc008e9 )
@@ -188,12 +194,6 @@ ELSE ( FETCH_ONLY )
                     
     else( WIN32 )
 
-#         find_program( PATCH_EXECUTABLE patch )
-#         if( NOT PATCH_EXECUTABLE )
-#             message( ERROR "GNU patch is required" )
-#         endif( NOT PATCH_EXECUTABLE )
-# 
-# 	add_custom_target( patch )
         ExternalProject_Add( patch
             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
             URL ${patch_URL}
@@ -212,12 +212,6 @@ ELSE ( FETCH_ONLY )
 	set( PATCH_EXECUTABLE ${PROJECT_SOURCE_DIR}/bin/patch )
 
 
-#         find_program( PERL_FOUND perl )
-#         if( NOT PERL_FOUND )
-#             message( ERROR "Perl is required" )
-#         endif( NOT PERL_FOUND )
-# 
-# 	add_custom_target( perl )
         ExternalProject_Add( perl
             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
             URL ${perl_URL}
@@ -251,11 +245,28 @@ ELSE ( FETCH_ONLY )
             LOG_INSTALL 1
             )
 
+#         ExternalProject_Add( readline
+#             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
+#             URL ${readline_URL}
+#             URL_MD5 ${readline_MD5}
+#             CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
+#             BUILD_COMMAND ${CMAKE_BUILD_TOOL}
+#             BUILD_IN_SOURCE 1
+#             INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
+#             LOG_DOWNLOAD 1
+#             LOG_UPDATE 1
+#             LOG_CONFIGURE 1
+#             LOG_BUILD 1
+#             LOG_TEST 1
+#             LOG_INSTALL 1
+#             )
+
         ExternalProject_Add( postgresql
+#	    DEPENDS readline perl openssl zlib
             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
             URL ${postgresql_URL}
             URL_MD5 ${postgresql_MD5}
-            CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
+            CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR} --without-readline
             BUILD_COMMAND ${CMAKE_BUILD_TOOL}
             BUILD_IN_SOURCE 1
             INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
@@ -388,9 +399,9 @@ ELSE ( FETCH_ONLY )
                 set( OPENSSL_CONFIGURE_COMMAND "perl Configure BC-32 no-asm --prefix=${PROJECT_SOURCE_DIR}" )
                 set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL} -f ms\\\\\\\\bcb.mak" )
                 set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} -f ms\\\\\\\\bcb.mak install" )
-            else(MSVC) #Cygwin and MinGW
+            else(MSVC) #Cygwin and MSYS
                 set( OPENSSL_GENASM_COMMAND )
-                set( OPENSSL_CONFIGURE_COMMAND "./config --prefix=${PROJECT_SOURCE_DIR}" )
+                set( OPENSSL_CONFIGURE_COMMAND ./config --prefix=${PROJECT_SOURCE_DIR} )
                 set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL}" )
                 set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} install" )
             endif( MSVC )
@@ -398,7 +409,7 @@ ELSE ( FETCH_ONLY )
         endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
     else( WIN32 )
         set( OPENSSL_GENASM_COMMAND )
-        set( OPENSSL_CONFIGURE_COMMAND "./config --prefix=${PROJECT_SOURCE_DIR}" )
+        set( OPENSSL_CONFIGURE_COMMAND ./config --prefix=${PROJECT_SOURCE_DIR} )
 	set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL}" )
 	set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} install" )
     endif( WIN32 )
@@ -406,6 +417,7 @@ ELSE ( FETCH_ONLY )
     set( _OLDPATH $ENV{PATH} )
     set( _NEWPATH ${PROJECT_SOURCE_DIR}\\bin ${_OLDPATH} )
     set( ENV{PATH} "${_NEWPATH}" )
+    message( STATUS "OPENSSL_CONFIGURE_COMMAND = ${OPENSSL_CONFIGURE_COMMAND}" )
     ExternalProject_Add( openssl
         DEPENDS zlib perl patch nasm
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
@@ -446,7 +458,7 @@ ELSE ( FETCH_ONLY )
             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
             URL ${graphicsmagick_URL}
             URL_MD5 ${graphicsmagick_MD5}
-            CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
+            CONFIGURE_COMMAND ./configure --enable-shared --prefix=${PROJECT_SOURCE_DIR}
             BUILD_COMMAND ${CMAKE_BUILD_TOOL}
             BUILD_IN_SOURCE 1
             INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
@@ -494,5 +506,7 @@ ELSE ( FETCH_ONLY )
         LOG_BUILD 1
         LOG_TEST 1
         LOG_INSTALL 1
+# 	TEST_AFTER_INSTALL 1
+# 	TEST_COMMAND ${CMAKE_BUILD_TOOL} test
         )
 ENDIF( FETCH_ONLY )
