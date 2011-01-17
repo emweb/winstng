@@ -5,6 +5,8 @@ cmake_minimum_required(VERSION 2.8)
 include (ExternalProject)
 
 # TODO MinGW support
+# TODO Cross-compilation support. I think I only need to build nasm and patch for the host platform.
+# TODO bzip2 ?
 
 # Make sure we use bootstrapped dependencies
 set(CMAKE_PREFIX_PATH ${PROJECT_SOURCE_DIR} )
@@ -47,29 +49,7 @@ set( wt_URL http://prdownloads.sourceforge.net/witty/wt-3.1.7a.tar.gz )
 set( wt_MD5 5725e1f45ed64811c3153f1e0e283b7d )
 set( _PACKAGES ${_PACKAGES} wt )
 
-if( NOT MSVC )
-    set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/GraphicsMagick-1.3.12.tar.bz2 )
-    set( graphicsmagick_MD5 55182f371f82d5f9367bce04e59bbf25 )
-    set( _PACKAGES ${_PACKAGES} graphicsmagick )
-
-    set( patch_URL http://ftp.gnu.org/gnu/patch/patch-2.6.1.tar.bz2 )
-    set( patch_MD5 0818d1763ae0c4281bcdc63cdac0b2c0 )
-    set( _PACKAGES ${_PACKAGES} patch )
-
-    set( perl_URL http://www.cpan.org/src/5.0/perl-5.12.2.tar.gz )
-    set( perl_MD5 af2df531d46b77fdf0d97eecb03eddb2 )
-    set( _PACKAGES ${_PACKAGES} perl )
-
-    set( readline_URL http://ftp.gnu.org/gnu/readline/readline-6.1.tar.gz )
-    set( readline_MD5 fc2f7e714fe792db1ce6ddc4c9fb4ef3 )
-    set( _PACKAGES ${_PACKAGES} readline )
-
-    set( postgresql_URL http://wwwmaster.postgresql.org/download/mirrors-ftp/source/v9.0.2/postgresql-9.0.2.tar.bz2 )
-    set( postgresql_MD5 fc79ef32b602f75f2ccd37647bc008e9 )
-    set( _PACKAGES ${_PACKAGES} postgresql )
-endif( NOT MSVC )
-
-if( WIN32 )
+if( WIN32 AND NOT UNIX )
 
     set( patch_URL http://prdownloads.sourceforge.net/gnuwin32/patch-2.5.9-7-bin.zip )
     set( patch_MD5 b9c8b31d62f4b2e4f1887bbb63e8a905)
@@ -108,14 +88,47 @@ if( WIN32 )
              
     endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
-else( WIN32 )
+else( WIN32 AND NOT UNIX )
 
-    # Unix
+    set( patch_URL http://ftp.gnu.org/gnu/patch/patch-2.6.1.tar.bz2 )
+    set( patch_MD5 0818d1763ae0c4281bcdc63cdac0b2c0 )
+    set( _PACKAGES ${_PACKAGES} patch )
+
     set( nasm_URL http://www.nasm.us/pub/nasm/releasebuilds/2.10rc3/nasm-2.10rc3.tar.bz2 )
     set( nasm_MD5 d5073fba836533a3f2bfa62f0fca98b2 )
     set( _PACKAGES ${_PACKAGES} nasm )
 
-endif( WIN32 )
+    set( perl_URL http://www.cpan.org/src/5.0/perl-5.12.2.tar.gz )
+    set( perl_MD5 af2df531d46b77fdf0d97eecb03eddb2 )
+    set( _PACKAGES ${_PACKAGES} perl )
+
+#    set( readline_URL http://ftp.gnu.org/gnu/readline/readline-6.1.tar.gz )
+#    set( readline_MD5 fc2f7e714fe792db1ce6ddc4c9fb4ef3 )
+#    set( _PACKAGES ${_PACKAGES} readline )
+
+    set( postgresql_URL http://wwwmaster.postgresql.org/download/mirrors-ftp/source/v9.0.2/postgresql-9.0.2.tar.bz2 )
+    set( postgresql_MD5 fc79ef32b602f75f2ccd37647bc008e9 )
+    set( _PACKAGES ${_PACKAGES} postgresql )
+
+    set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/GraphicsMagick-1.3.12.tar.bz2 )
+    set( graphicsmagick_MD5 55182f371f82d5f9367bce04e59bbf25 )
+    set( _PACKAGES ${_PACKAGES} graphicsmagick )
+
+    set( fcgi_URL http://www.fastcgi.com/dist/fcgi-2.4.0.tar.gz )
+    set( fcgi_MD5 d15060a813b91383a9f3c66faf84867e )
+    set( _PACKAGES ${PACKAGES} fcgi )
+
+    # TODO Build MySQL on Unix - On Windows, too?
+    set( mysql_URL http://www.mirrorservice.org/sites/ftp.mysql.com/Downloads/MySQL-5.5/mysql-5.5.8.tar.gz )
+    set( mysql_MD5 42e866302b61f5e213afd33e04677017 )
+    set( _PACKAGES ${_PACKAGES} mysql )
+
+    # TODO Build on Windows using Bakefile ( http://bakefile.org )
+    set( mysqlpp_URL http://tangentsoft.net/mysql++/releases/mysql++-3.1.0.tar.gz )
+    set( mysqlpp_MD5 d92769cc579b87a60e58a77099cc4f0e )
+    set( _PACKAGES ${_PACKAGES} mysqlpp )
+
+endif( WIN32 AND NOT UNIX )
 
 # If in fetch mode, only download and set a "fetch-only" indicator
 if (FETCH_ONLY )
@@ -129,8 +142,8 @@ if (FETCH_ONLY )
     
 ELSE ( FETCH_ONLY )
 
-    if( WIN32 )
-
+    # GNU patch
+    if( WIN32 AND NOT UNIX )
         ExternalProject_Add( patch
             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
             URL ${patch_URL}
@@ -146,54 +159,7 @@ ELSE ( FETCH_ONLY )
             LOG_INSTALL 1
             )
         set( PATCH_EXECUTABLE ${PROJECT_SOURCE_DIR}\\bin\\patch.exe )
-
-        ExternalProject_Add( nasm
-            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
-            URL ${nasm_URL}
-            URL_MD5 ${nasm_MD5}
-            CONFIGURE_COMMAND ""
-            BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${PROJECT_SOURCE_DIR}/bin
-            INSTALL_COMMAND ""
-            LOG_DOWNLOAD 1
-            LOG_UPDATE 1
-            LOG_CONFIGURE 1
-            LOG_BUILD 1
-            LOG_TEST 1
-            LOG_INSTALL 1
-            )
-
-        ExternalProject_Add( perl
-                DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
-                URL ${perl_URL}
-                URL_MD5 ${perl_MD5}
-                CONFIGURE_COMMAND ""
-                BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/perl ${PROJECT_SOURCE_DIR}/
-                INSTALL_COMMAND ""
-                LOG_DOWNLOAD 1
-                LOG_UPDATE 1
-                LOG_CONFIGURE 1
-                LOG_BUILD 1
-                LOG_TEST 1
-                LOG_INSTALL 1
-                )
-
-        ExternalProject_Add( postgresql
-                DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
-                URL ${postgresql_URL}
-                URL_MD5 ${postgresql_MD5}
-                CONFIGURE_COMMAND ""
-                BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${PROJECT_SOURCE_DIR}/
-                INSTALL_COMMAND ""
-                LOG_DOWNLOAD 1
-                LOG_UPDATE 1
-                LOG_CONFIGURE 1
-                LOG_BUILD 1
-                LOG_TEST 1
-                LOG_INSTALL 1
-                )
-                    
-    else( WIN32 )
-
+    else( WIN32 AND NOT UNIX )
         ExternalProject_Add( patch
             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
             URL ${patch_URL}
@@ -210,8 +176,59 @@ ELSE ( FETCH_ONLY )
             LOG_INSTALL 1
             )
 	set( PATCH_EXECUTABLE ${PROJECT_SOURCE_DIR}/bin/patch )
+    endif( WIN32 AND NOT UNIX )
 
+    # Netwide Assembler
+    if( WIN32 AND NOT UNIX )
+        ExternalProject_Add( nasm
+            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+            URL ${nasm_URL}
+            URL_MD5 ${nasm_MD5}
+            CONFIGURE_COMMAND ""
+            BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${PROJECT_SOURCE_DIR}/bin
+            INSTALL_COMMAND ""
+            LOG_DOWNLOAD 1
+            LOG_UPDATE 1
+            LOG_CONFIGURE 1
+            LOG_BUILD 1
+            LOG_TEST 1
+            LOG_INSTALL 1
+            )
+    else( WIN32 AND NOT UNIX )
+        ExternalProject_Add( nasm
+            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
+            URL ${nasm_URL}
+            URL_MD5 ${nasm_MD5}
+            CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
+            BUILD_COMMAND ${CMAKE_BUILD_TOOL}
+            BUILD_IN_SOURCE 1
+            INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
+            LOG_DOWNLOAD 1
+            LOG_UPDATE 1
+            LOG_CONFIGURE 1
+            LOG_BUILD 1
+            LOG_TEST 1
+            LOG_INSTALL 1
+            )
+    endif( WIN32 AND NOT UNIX )
 
+    # Perl - required for OpenSSL
+    if( WIN32 AND NOT UNIX )
+        ExternalProject_Add( perl
+                DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+                URL ${perl_URL}
+                URL_MD5 ${perl_MD5}
+                CONFIGURE_COMMAND ""
+                BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/perl ${PROJECT_SOURCE_DIR}/
+                INSTALL_COMMAND ""
+                LOG_DOWNLOAD 1
+                LOG_UPDATE 1
+                LOG_CONFIGURE 1
+                LOG_BUILD 1
+                LOG_TEST 1
+                LOG_INSTALL 1
+                )
+    else( WIN32 AND NOT UNIX )
         ExternalProject_Add( perl
             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
             URL ${perl_URL}
@@ -228,71 +245,8 @@ ELSE ( FETCH_ONLY )
             LOG_INSTALL 1
             )
         set( PERL_EXECUTABLE ${PROJECT_SOURCE_DIR}/bin/perl )
+    endif( WIN32 AND NOT UNIX )
 
-        ExternalProject_Add( nasm
-            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
-            URL ${nasm_URL}
-            URL_MD5 ${nasm_MD5}
-            CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
-            BUILD_COMMAND ${CMAKE_BUILD_TOOL}
-            BUILD_IN_SOURCE 1
-            INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
-            LOG_DOWNLOAD 1
-            LOG_UPDATE 1
-            LOG_CONFIGURE 1
-            LOG_BUILD 1
-            LOG_TEST 1
-            LOG_INSTALL 1
-            )
-
-#         ExternalProject_Add( readline
-#             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
-#             URL ${readline_URL}
-#             URL_MD5 ${readline_MD5}
-#             CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
-#             BUILD_COMMAND ${CMAKE_BUILD_TOOL}
-#             BUILD_IN_SOURCE 1
-#             INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
-#             LOG_DOWNLOAD 1
-#             LOG_UPDATE 1
-#             LOG_CONFIGURE 1
-#             LOG_BUILD 1
-#             LOG_TEST 1
-#             LOG_INSTALL 1
-#             )
-
-        ExternalProject_Add( postgresql
-#	    DEPENDS readline perl openssl zlib
-            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
-            URL ${postgresql_URL}
-            URL_MD5 ${postgresql_MD5}
-            CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR} --without-readline
-            BUILD_COMMAND ${CMAKE_BUILD_TOOL}
-            BUILD_IN_SOURCE 1
-            INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
-            LOG_DOWNLOAD 1
-            LOG_UPDATE 1
-            LOG_CONFIGURE 1
-            LOG_BUILD 1
-            LOG_TEST 1
-            LOG_INSTALL 1
-            )
-
-        if( APPLE )
-        # TODO PostgreSQL
-#        message( ERROR "Mac support to come, please build manually" )
-
-        elseif( UNIX )
-            message( STATUS "" )
-        endif(APPLE)
-
- #       message( ERROR "Unix support to come, please build manually" )
-        
-    endif( WIN32 )
-
-#
-# Build step
-#
     ExternalProject_Add( zlib
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${zlib_URL}
@@ -367,11 +321,11 @@ ELSE ( FETCH_ONLY )
         )
 
     # OpenSSL requires some extra effort
-    if( WIN32 )
-        if( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # 64-bit
+    if( WIN32 AND NOT UNIX ) # Windows compilers but Cygwin
+        if( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Windows 64-bit
         
             set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_win64a.bat" )
-            if( MSVC )
+            if( MSVC ) # Visual C++
                 if( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
                     set( OPENSSL_CONFIGURE_COMMAND "perl Configure VC-WIN64A --prefix=${PROJECT_SOURCE_DIR}" )
                     set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak" )
@@ -381,13 +335,13 @@ ELSE ( FETCH_ONLY )
                     set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak" )
                     set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak install" )
                 endif( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
-            else(MSVC) # Cygwin and MinGW, there is no Borland 64-bit support in OpenSSL :-?
-                set( OPENSSL_CONFIGURE_COMMAND "./config --prefix=${PROJECT_SOURCE_DIR}" )
+            else(MSVC) # Watcom? Borland 64-bit (not sure it exists) ? - This configuration won't work, probably
+                set( OPENSSL_CONFIGURE_COMMAND "./config shared --prefix=${PROJECT_SOURCE_DIR}" )
                 set( OPENSSL_BUILD_COMMAND ${CMAKE_BUILD_TOOL} )
                 set( OPENSSL_INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install )
             endif( MSVC )
 
-        else( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # 32-bit
+        else( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Windows 32-bit
         
             if( MSVC )
                 set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_nasm.bat" )
@@ -399,31 +353,31 @@ ELSE ( FETCH_ONLY )
                 set( OPENSSL_CONFIGURE_COMMAND "perl Configure BC-32 no-asm --prefix=${PROJECT_SOURCE_DIR}" )
                 set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL} -f ms\\\\\\\\bcb.mak" )
                 set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} -f ms\\\\\\\\bcb.mak install" )
-            else(MSVC) #Cygwin and MSYS
+            else(MSVC)
                 set( OPENSSL_GENASM_COMMAND )
-                set( OPENSSL_CONFIGURE_COMMAND ./config --prefix=${PROJECT_SOURCE_DIR} )
-                set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL}" )
-                set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} install" )
+                set( OPENSSL_CONFIGURE_COMMAND ./config shared --prefix=${PROJECT_SOURCE_DIR} )
+                set( OPENSSL_BUILD_COMMAND ${CMAKE_BUILD_TOOL} )
+                set( OPENSSL_INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install )
             endif( MSVC )
             
         endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-    else( WIN32 )
+    else( WIN32 AND NOT UNIX ) # Unix, Cygwin and MSYS
         set( OPENSSL_GENASM_COMMAND )
-        set( OPENSSL_CONFIGURE_COMMAND ./config --prefix=${PROJECT_SOURCE_DIR} )
-	set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL}" )
-	set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} install" )
-    endif( WIN32 )
+        set( OPENSSL_CONFIGURE_COMMAND ./config^^shared^^--prefix=${PROJECT_SOURCE_DIR} )
+	set( OPENSSL_BUILD_COMMAND ${CMAKE_BUILD_TOOL} )
+	set( OPENSSL_INSTALL_COMMAND ${CMAKE_BUILD_TOOL}^^install )
+    endif( WIN32 AND NOT UNIX )
 
     set( _OLDPATH $ENV{PATH} )
     set( _NEWPATH ${PROJECT_SOURCE_DIR}\\bin ${_OLDPATH} )
     set( ENV{PATH} "${_NEWPATH}" )
-    message( STATUS "OPENSSL_CONFIGURE_COMMAND = ${OPENSSL_CONFIGURE_COMMAND}" )
     ExternalProject_Add( openssl
         DEPENDS zlib perl patch nasm
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${openssl_URL}
         URL_MD5 ff8fb85610aef328315a9decbb2712e4
-        UPDATE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${PROJECT_SOURCE_DIR} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_CONFIGURE_COMMAND=${OPENSSL_CONFIGURE_COMMAND} -P ${PROJECT_SOURCE_DIR}/configure-openssl.cmake
+	LIST_SEPARATOR ^^
+        UPDATE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${PROJECT_SOURCE_DIR} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_CONFIGURE_COMMAND:STRING=${OPENSSL_CONFIGURE_COMMAND} -P ${PROJECT_SOURCE_DIR}/configure-openssl.cmake
    #    PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/openssl-1.0.0c.patch
         CONFIGURE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${PROJECT_SOURCE_DIR} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_GENASM_COMMAND=${OPENSSL_GENASM_COMMAND} -P ${PROJECT_SOURCE_DIR}/genasm-openssl.cmake
         BUILD_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${PROJECT_SOURCE_DIR} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_BUILD_COMMAND=${OPENSSL_BUILD_COMMAND} -P ${PROJECT_SOURCE_DIR}/build-openssl.cmake
@@ -436,6 +390,120 @@ ELSE ( FETCH_ONLY )
         LOG_TEST 1
         LOG_INSTALL 1
         )
+                    
+    # PostgreSQL
+    if( WIN32 AND NOT UNIX )
+      ExternalProject_Add( postgresql
+	    DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+	    URL ${postgresql_URL}
+	    URL_MD5 ${postgresql_MD5}
+	    CONFIGURE_COMMAND ""
+	    BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${PROJECT_SOURCE_DIR}/
+	    INSTALL_COMMAND ""
+	    LOG_DOWNLOAD 1
+	    LOG_UPDATE 1
+	    LOG_CONFIGURE 1
+	    LOG_BUILD 1
+	    LOG_TEST 1
+	    LOG_INSTALL 1
+	    )
+    else( WIN32 AND NOT UNIX )
+        ExternalProject_Add( postgresql
+#	    DEPENDS readline perl openssl zlib
+            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
+            URL ${postgresql_URL}
+            URL_MD5 ${postgresql_MD5}
+            CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR} --without-readline
+            BUILD_COMMAND ${CMAKE_BUILD_TOOL}
+            BUILD_IN_SOURCE 1
+            INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
+            LOG_DOWNLOAD 1
+            LOG_UPDATE 1
+            LOG_CONFIGURE 1
+            LOG_BUILD 1
+            LOG_TEST 1
+            LOG_INSTALL 1
+            )
+    endif( WIN32 AND NOT UNIX )
+
+    # FastCGI - Only Unix, on Windows Wt builds the ISAPI connector
+    if(NOT WIN32)
+        ExternalProject_Add( fcgi
+	    DEPENDS patch
+            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
+            URL ${fcgi_URL}
+            URL_MD5 ${fcgi_MD5}
+	    PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/fcgi-2.4.0-cstdiofix.patch
+            CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
+            BUILD_COMMAND ${CMAKE_BUILD_TOOL}
+            BUILD_IN_SOURCE 1
+            INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
+            LOG_DOWNLOAD 1
+            LOG_UPDATE 1
+            LOG_CONFIGURE 1
+            LOG_BUILD 1
+            LOG_TEST 1
+            LOG_INSTALL 1
+            )
+    endif(NOT WIN32)
+
+    #if( WIN32 )
+	# Download and extract MySQL binaries. Or build it?
+    #else( WIN32 )
+        ExternalProject_Add( mysql
+#	    DEPENDS zlib openssl readline
+	    DEPENDS zlib openssl
+            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
+            URL ${mysql_URL}
+            URL_MD5 ${mysql_MD5}
+            CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
+            LOG_DOWNLOAD 1
+            LOG_UPDATE 1
+            LOG_CONFIGURE 1
+            LOG_BUILD 1
+            LOG_TEST 1
+            LOG_INSTALL 1
+            )
+    #endif( WIN32 )
+
+	# TODO On Windows, use Bakefile to build
+        ExternalProject_Add( mysqlpp
+	    DEPENDS mysql openssl
+            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
+            URL ${mysqlpp_URL}
+            URL_MD5 ${mysqlpp_MD5}
+	    PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/mysql++-3.1.0.patch
+            CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
+            BUILD_COMMAND ${CMAKE_BUILD_TOOL}
+            BUILD_IN_SOURCE 1
+            INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
+            LOG_DOWNLOAD 1
+            LOG_UPDATE 1
+            LOG_CONFIGURE 1
+            LOG_BUILD 1
+            LOG_TEST 1
+            LOG_INSTALL 1
+            )
+
+#         ExternalProject_Add( readline
+#             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
+#             URL ${readline_URL}
+#             URL_MD5 ${readline_MD5}
+#             CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
+#             BUILD_COMMAND ${CMAKE_BUILD_TOOL}
+#             BUILD_IN_SOURCE 1
+#             INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
+#             LOG_DOWNLOAD 1
+#             LOG_UPDATE 1
+#             LOG_CONFIGURE 1
+#             LOG_BUILD 1
+#             LOG_TEST 1
+#             LOG_INSTALL 1
+#             )
+
+#
+# Build step
+#
         
     ExternalProject_Add( libharu
         DEPENDS zlib libpng patch
@@ -453,7 +521,7 @@ ELSE ( FETCH_ONLY )
         )
 
     # TODO GM seems impossible to build silently with Visual C++ :-/
-    if( NOT MSVC )
+    if( UNIX AND NOT WIN32 )
         ExternalProject_Add( graphicsmagick
             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
             URL ${graphicsmagick_URL}
@@ -469,16 +537,17 @@ ELSE ( FETCH_ONLY )
             LOG_TEST 1
             LOG_INSTALL 1
             )
-    endif( NOT MSVC )
+    endif( UNIX AND NOT WIN32 )
 
-    if( WIN32 )
+    if( WIN32 AND NOT UNIX )
       set( boost_BOOTSTRAP_COMMAND "bootstrap.bat" )
       set( boost_BJAM "bjam" )
-    else( WIN32 )
+    else( WIN32 AND NOT UNIX )
       set( boost_BOOTSTRAP_COMMAND "./bootstrap.sh" )
       set( boost_BJAM "./bjam" )
-    endif( WIN32 )
+    endif( WIN32 AND NOT UNIX )
     ExternalProject_Add( boost
+	DEPENDS zlib
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${boost_URL}
         URL_MD5 ${boost_MD5}
@@ -495,11 +564,12 @@ ELSE ( FETCH_ONLY )
         )
         
     ExternalProject_Add( wt
-        DEPENDS zlib libpng libharu openssl boost libgd2
+        DEPENDS zlib libpng libharu openssl boost libgd2 fcgi
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${wt_URL}
         URL_MD5 ${wt_MD5}
-        CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR} -DWT_CMAKE_FINDER_INSTALL_DIR:PATH=/share/cmake-2.8/Modules
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/wt-3.1.7a.patch
+        CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR} -DWT_CMAKE_FINDER_INSTALL_DIR:PATH=/share/cmake-2.8/Modules -DBoost_NO_SYSTEM_PATHS:BOOL=1 -DBOOST_ROOT:PATH=${PROJECT_SOURCE_DIR} -DCONFIG_DIR:PATH=${PROJECT_SOURCE_DIR}/etc -DFCGI_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DGM_PREFIX=${PROJECT_SOURCE_DIR} -DHARU_PREFIX=${PROJECT_SOURCE_DIR} -DPOSTGRES_PREFIX=${PROJECT_SOURCE_DIR} -DZLIB_PREFIX=${PROJECT_SOURCE_DIR} -DRUNDIR=${PROJECT_SOURCE_DIR}/var/run/wt
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1

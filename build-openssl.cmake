@@ -4,7 +4,8 @@ set( ENV{PATH} "${_NEWPATH}" )
 
 message( STATUS "* OpenSSL - Compiling..." )
 
-separate_arguments( OPENSSL_BUILD_COMMAND )
+#separate_arguments( OPENSSL_BUILD_COMMAND )
+separate_arguments( OPENSSL_BUILD_COMMAND_WS UNIX_COMMAND "${OPENSSL_BUILD_COMMAND}" )
 
 execute_process( 
                 COMMAND ${OPENSSL_BUILD_COMMAND}

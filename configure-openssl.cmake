@@ -2,10 +2,11 @@ set( _OLDPATH $ENV{PATH} )
 set( _NEWPATH ${PROJECT_SOURCE_DIR}\\bin ${_OLDPATH} )
 set( ENV{PATH} "${_NEWPATH}" )
 
-separate_arguments( OPENSSL_CONFIGURE_COMMAND )
+#separate_arguments( OPENSSL_CONFIGURE_COMMAND )
+separate_arguments( OPENSSL_CONFIGURE_COMMAND_WS UNIX_COMMAND "${OPENSSL_CONFIGURE_COMMAND}" )
 
 message( STATUS "* OpenSSL - Configuring..." )
-
+#message( STATUS "OPENSSL_CONFIGURE_COMMAND = ${OPENSSL_CONFIGURE_COMMAND}" )
 execute_process( 
                 COMMAND ${OPENSSL_CONFIGURE_COMMAND}
                 WORKING_DIRECTORY ${OPENSSL_SOURCE_DIR}

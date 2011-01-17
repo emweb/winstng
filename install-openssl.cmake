@@ -4,7 +4,8 @@ set( ENV{PATH} "${_NEWPATH}" )
 
 message( STATUS "* OpenSSL - Installing..." )
 
-separate_arguments( OPENSSL_INSTALL_COMMAND )
+#separate_arguments( OPENSSL_INSTALL_COMMAND )
+separate_arguments( OPENSSL_INSTALL_COMMAND_WS UNIX_COMMAND "${OPENSSL_INSTALL_COMMAND}" )
 
 execute_process(
                 COMMAND ${OPENSSL_INSTALL_COMMAND}
