@@ -636,7 +636,7 @@ ELSE ( FETCH_ONLY )
         )
     
     if(UNIX)
-        set( WT_UNIXONLY_DEPENDENCIES mysqlspp fcgi )
+        set( WT_UNIXONLY_DEPENDENCIES mysqlpp fcgi )
     endif(UNIX)
     ExternalProject_Add( wt
         DEPENDS zlib libpng libharu openssl boost libgd2 ${WT_UNIXONLY_DEPENDENCIES}
