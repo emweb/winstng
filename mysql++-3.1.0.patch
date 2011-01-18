@@ -1,0 +1,11 @@
+diff -rupd mysql++-3.1.0.orig/ssx/genv2.cpp mysql++-3.1.0/ssx/genv2.cpp
+--- mysql++-3.1.0.orig/ssx/genv2.cpp	2011-01-17 16:17:37.658278002 +0100
++++ mysql++-3.1.0/ssx/genv2.cpp	2011-01-17 16:17:56.982278002 +0100
+@@ -32,6 +32,7 @@
+ 
+ #include "parsev2.h"
+ 
++#include <cstring>
+ #include <iostream>
+ #include <fstream>
+ #include <typeinfo>
