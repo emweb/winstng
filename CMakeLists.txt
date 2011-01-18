@@ -70,6 +70,10 @@ if( WIN32 AND NOT UNIX )
             set( postgresql_MD5 63b1a4fc268fd2a719fa65fa668575e2 )
             set( _PACKAGES ${_PACKAGES} postgresql )
 
+            set( mysql_URL http://artfiles.org/mysql/Downloads/MySQL-5.1/mysql-noinstall-5.1.54-winx64.zip )
+            set( mysql_MD5 b7e23ff588ac235a47b440cfbeffabcc )
+            set( _PACKAGES ${_PACKAGES} mysql )
+
         else( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
         
             message( ERROR "${CMAKE_SYSTEM_PROCESSOR} architecture is not supported by the Wt bootstrapper, please build manually." )
@@ -85,6 +89,10 @@ if( WIN32 AND NOT UNIX )
         set( postgresql_URL http://get.enterprisedb.com/postgresql/postgresql-9.0.2-1-windows-binaries.zip )
         set( postgresql_MD5 5557b14f1a7e3824f47eaf1427467d1a)
         set( _PACKAGES ${_PACKAGES} postgresql )
+        
+        set( mysql_URL http://artfiles.org/mysql/Downloads/MySQL-5.1/mysql-noinstall-5.1.54-win32.zip )
+        set( mysql_MD5 0b0d5477303a0ddf18b6d9d66e74180b )
+        set( _PACKAGES ${_PACKAGES} mysql )
              
     endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
@@ -468,11 +476,11 @@ ELSE ( FETCH_ONLY )
     # FastCGI - Only Unix, on Windows Wt builds the ISAPI connector
     if(NOT WIN32)
         ExternalProject_Add( fcgi
-	    DEPENDS patch
+            DEPENDS patch
             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
             URL ${fcgi_URL}
             URL_MD5 ${fcgi_MD5}
-	    PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/fcgi-2.4.0-cstdiofix.patch
+            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/fcgi-2.4.0-cstdiofix.patch
             CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
             BUILD_COMMAND ${CMAKE_BUILD_TOOL}
             BUILD_IN_SOURCE 1
@@ -486,27 +494,43 @@ ELSE ( FETCH_ONLY )
             )
     endif(NOT WIN32)
 
-    ExternalProject_Add( ncurses
-#	DEPENDS patch
-	DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
-	URL ${ncurses_URL}
-	URL_MD5 ${ncurses_MD5}
-#	PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/fcgi-2.4.0-cstdiofix.patch
-	CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
-	BUILD_COMMAND ${CMAKE_BUILD_TOOL}
-	BUILD_IN_SOURCE 1
-	INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
-	LOG_DOWNLOAD 1
-	LOG_UPDATE 1
-	LOG_CONFIGURE 1
-	LOG_BUILD 1
-	LOG_TEST 1
-	LOG_INSTALL 1
-	)
+    if( UNIX )
+        ExternalProject_Add( ncurses
+    ##	DEPENDS patch
+        DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
+        URL ${ncurses_URL}
+        URL_MD5 ${ncurses_MD5}
+    ##	PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/fcgi-2.4.0-cstdiofix.patch
+        CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
+        BUILD_COMMAND ${CMAKE_BUILD_TOOL}
+        BUILD_IN_SOURCE 1
+        INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        )
+    endif(UNIX)
     
-    #if( WIN32 )
+    if( WIN32 )
 	# Download and extract MySQL binaries. Or build it?
-    #else( WIN32 )
+        ExternalProject_Add( mysql
+            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+            URL ${mysql_URL}
+            URL_MD5 ${mysql_MD5}
+            CONFIGURE_COMMAND ""
+            BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${PROJECT_SOURCE_DIR}/
+            INSTALL_COMMAND ""
+            LOG_DOWNLOAD 1
+            LOG_UPDATE 1
+            LOG_CONFIGURE 1
+            LOG_BUILD 1
+            LOG_TEST 1
+            LOG_INSTALL 1
+	    )
+    else( WIN32 )
         ExternalProject_Add( mysql
 #	    DEPENDS zlib openssl readline
 #	    DEPENDS zlib openssl ncurses readline
@@ -523,7 +547,7 @@ ELSE ( FETCH_ONLY )
             LOG_TEST 1
             LOG_INSTALL 1
             )
-    #endif( WIN32 )
+    endif( WIN32 )
 
 	# TODO On Windows, use Bakefile to build
         ExternalProject_Add( mysqlpp
