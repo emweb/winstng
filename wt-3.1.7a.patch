@@ -37,12 +37,29 @@ diff -rupd wt-3.1.7a.orig/CMakeLists.txt wt-3.1.7a/CMakeLists.txt
  IF(BUILD_TESTS)
 diff -rupd wt-3.1.7a.orig/examples/CMakeLists.txt wt-3.1.7a/examples/CMakeLists.txt
 --- wt-3.1.7a.orig/examples/CMakeLists.txt	2011-01-18 01:24:46.462278001 +0100
-+++ wt-3.1.7a/examples/CMakeLists.txt	2011-01-18 01:29:49.710278001 +0100
-@@ -30,6 +30,8 @@ MACRO(WT_ADD_EXAMPLE name)
++++ wt-3.1.7a/examples/CMakeLists.txt	2011-01-18 01:48:12.894278002 +0100
+@@ -13,7 +13,16 @@ ADD_DEFINITIONS(-DWT_DEPRECATED_3_0_0)
+ # The WT_ADD_EXAMPLE function builds a DLL in case of ISAPI, and an executable
+ # in case of FCGI or HTTPD connectors. It also makes sure that the example
+ # links to the proper libraries (connector + wt).
++
+ MACRO(WT_ADD_EXAMPLE name)
++  # Find the subdirectory inside wt/examples where this example resides.
++  # Works even if there is no project(...), or there is more than one
++  # example in that subdirectory 
++  GET_TARGET_PROPERTY(${name}_SOURCEFILES ${name} SOURCES)
++  LIST(GET ${NAME}_SOURCEFILES 0 ${name}_FIRST_SOURCEFILE )
++  GET_SOURCE_FILE_PROPERTY(${name}_SUBDIR_FULLPATH ${${name}_FIRST_SOURCEFILE} LOCATION)
++  STRING(REPLACE ${WT_SOURCE_DIR}/examples/ "" ${name}_SUBDIR ${name_SUBDIR_FULLPATH})
++
+   IF(EXAMPLES_CONNECTOR MATCHES "wtisapi")
+     SET(MYLIST ${ARGV})
+     LIST(INSERT MYLIST 1 SHARED)
+@@ -30,6 +39,8 @@ MACRO(WT_ADD_EXAMPLE name)
      SET_TARGET_PROPERTIES(${name} PROPERTIES COMPILE_FLAGS "/W3 /Wp64 /wd4251 /wd4275")
    ENDIF(MSVC)
    TARGET_LINK_LIBRARIES(${name} ${EXAMPLES_CONNECTOR})
-+  INSTALL( TARGETS ${name} DESTINATION ${EXAMPLES_DESTINATION} )
++  INSTALL( TARGETS ${name} DESTINATION ${EXAMPLES_DESTINATION}/${${name}_SUBDIR} )
 +  INSTALL( DIRECTORY ${name_SOURCE_DIR} DESTINATION ${EXAMPLES_DESTINATION} )
  ENDMACRO(WT_ADD_EXAMPLE)
  
