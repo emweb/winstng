@@ -1,6 +1,6 @@
 diff -rupdN wt-3.1.7a.orig/cmake/WtFindGm.txt wt-3.1.7a/cmake/WtFindGm.txt
---- wt-3.1.7a.orig/cmake/WtFindGm.txt	2011-01-18 17:46:26.105635000 +0100
-+++ wt-3.1.7a/cmake/WtFindGm.txt	2011-01-18 17:46:39.237635000 +0100
+--- wt-3.1.7a.orig/cmake/WtFindGm.txt	2011-01-18 19:32:06.189635000 +0100
++++ wt-3.1.7a/cmake/WtFindGm.txt	2011-01-18 19:32:17.341635000 +0100
 @@ -11,6 +11,7 @@ FIND_PATH(GM_INCLUDE_DIR
      ${GM_PREFIX}/include/GraphicsMagick/
      ${GM_PREFIX}/include/
@@ -10,8 +10,8 @@ diff -rupdN wt-3.1.7a.orig/cmake/WtFindGm.txt wt-3.1.7a/cmake/WtFindGm.txt
      /usr/include/
      /usr/local/include/GraphicsMagick/
 diff -rupdN wt-3.1.7a.orig/CMakeLists.txt wt-3.1.7a/CMakeLists.txt
---- wt-3.1.7a.orig/CMakeLists.txt	2011-01-18 17:46:26.105635000 +0100
-+++ wt-3.1.7a/CMakeLists.txt	2011-01-18 17:46:39.237635000 +0100
+--- wt-3.1.7a.orig/CMakeLists.txt	2011-01-18 19:32:06.189635000 +0100
++++ wt-3.1.7a/CMakeLists.txt	2011-01-18 19:32:17.341635000 +0100
 @@ -71,6 +71,10 @@ IF(NOT SHARED_LIBS)
    ENDIF(WIN32)
  ENDIF(NOT SHARED_LIBS)
@@ -36,8 +36,8 @@ diff -rupdN wt-3.1.7a.orig/CMakeLists.txt wt-3.1.7a/CMakeLists.txt
  
  IF(BUILD_TESTS)
 diff -rupdN wt-3.1.7a.orig/examples/CMakeLists.txt wt-3.1.7a/examples/CMakeLists.txt
---- wt-3.1.7a.orig/examples/CMakeLists.txt	2011-01-18 17:46:26.253635000 +0100
-+++ wt-3.1.7a/examples/CMakeLists.txt	2011-01-18 17:46:51.109635001 +0100
+--- wt-3.1.7a.orig/examples/CMakeLists.txt	2011-01-18 19:32:06.329635000 +0100
++++ wt-3.1.7a/examples/CMakeLists.txt	2011-01-18 19:36:22.793635001 +0100
 @@ -13,6 +13,7 @@ ADD_DEFINITIONS(-DWT_DEPRECATED_3_0_0)
  # The WT_ADD_EXAMPLE function builds a DLL in case of ISAPI, and an executable
  # in case of FCGI or HTTPD connectors. It also makes sure that the example
@@ -46,7 +46,7 @@ diff -rupdN wt-3.1.7a.orig/examples/CMakeLists.txt wt-3.1.7a/examples/CMakeLists
  MACRO(WT_ADD_EXAMPLE name)
    IF(EXAMPLES_CONNECTOR MATCHES "wtisapi")
      SET(MYLIST ${ARGV})
-@@ -30,6 +31,32 @@ MACRO(WT_ADD_EXAMPLE name)
+@@ -30,6 +31,39 @@ MACRO(WT_ADD_EXAMPLE name)
      SET_TARGET_PROPERTIES(${name} PROPERTIES COMPILE_FLAGS "/W3 /Wp64 /wd4251 /wd4275")
    ENDIF(MSVC)
    TARGET_LINK_LIBRARIES(${name} ${EXAMPLES_CONNECTOR})
@@ -71,9 +71,16 @@ diff -rupdN wt-3.1.7a.orig/examples/CMakeLists.txt wt-3.1.7a/examples/CMakeLists
 +  IF(WIN32)
 +    CONFIGURE_FILE(${WT_SOURCE_DIR}/examples/run-example.bat.cmake ${WT_BINARY_DIR}/${EXAMPLENAME}.bat @ONLY)
 +    INSTALL(PROGRAMS ${WT_BINARY_DIR}/${EXAMPLENAME}.bat DESTINATION bin )
++
++    IF(INSTALL_RESOURCES)
++      INSTALL(DIRECTORY ${WT_SOURCE_DIR}/resources DESTINATION ${EXAMPLES_DESTINATION}/${EXAMPLESUBDIR})  # Can't safely make symlinks of Windows
++    ENDIF(INSTALL_RESOURCES)
 +  ELSE(WIN32)
 +    CONFIGURE_FILE(${WT_SOURCE_DIR}/examples/run-example.cmake ${WT_BINARY_DIR}/${EXAMPLENAME} @ONLY)
 +    INSTALL(PROGRAMS ${WT_BINARY_DIR}/${EXAMPLENAME} DESTINATION ${EXAMPLES_DESTINATION}/${EXAMPLESUBDIR})
++    IF(INSTALL_RESOURCES)
++      EXECUTE_PROCESS(${CMAKE_COMMAND} -E ${CMAKE_INSTALL_PREFIX}/share/Wt/resources ${EXAMPLES_DESTINATION}/${EXAMPLESUBDIR})
++    ENDIF(INSTALL_RESOURCES)
 +  ENDIF(WIN32)
 +
  ENDMACRO(WT_ADD_EXAMPLE)
@@ -81,14 +88,14 @@ diff -rupdN wt-3.1.7a.orig/examples/CMakeLists.txt wt-3.1.7a/examples/CMakeLists
  SUBDIRS(
 diff -rupdN wt-3.1.7a.orig/examples/run-example.bat.cmake wt-3.1.7a/examples/run-example.bat.cmake
 --- wt-3.1.7a.orig/examples/run-example.bat.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ wt-3.1.7a/examples/run-example.bat.cmake	2011-01-18 17:46:39.237635000 +0100
++++ wt-3.1.7a/examples/run-example.bat.cmake	2011-01-18 19:32:17.341635000 +0100
 @@ -0,0 +1,3 @@
 +set PATH=%~p0;%PATH%
 +
 +%~p0\\..\\lib\\Wt\\examples\\@EXAMPLESUBDIR@\\@EXAMPLENAME@.wt  --docroot ..\\lib\\Wt\\examples\\@EXAMPLESUBDIR@ --http-port 8080 --http-addr 0.0.0.0
 diff -rupdN wt-3.1.7a.orig/examples/run-example.cmake wt-3.1.7a/examples/run-example.cmake
 --- wt-3.1.7a.orig/examples/run-example.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ wt-3.1.7a/examples/run-example.cmake	2011-01-18 17:47:11.237635001 +0100
++++ wt-3.1.7a/examples/run-example.cmake	2011-01-18 19:32:17.341635000 +0100
 @@ -0,0 +1,9 @@
 +#!/bin/sh
 +
