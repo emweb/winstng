@@ -1,4 +1,4 @@
-diff -rupd wt-3.1.7a.orig/cmake/WtFindGm.txt wt-3.1.7a/cmake/WtFindGm.txt
+diff -rupdN wt-3.1.7a.orig/cmake/WtFindGm.txt wt-3.1.7a/cmake/WtFindGm.txt
 --- wt-3.1.7a.orig/cmake/WtFindGm.txt	2011-01-18 01:24:45.834278002 +0100
 +++ wt-3.1.7a/cmake/WtFindGm.txt	2011-01-18 01:25:26.798278002 +0100
 @@ -11,6 +11,7 @@ FIND_PATH(GM_INCLUDE_DIR
@@ -9,7 +9,7 @@ diff -rupd wt-3.1.7a.orig/cmake/WtFindGm.txt wt-3.1.7a/cmake/WtFindGm.txt
      /usr/include/GraphicsMagick/
      /usr/include/
      /usr/local/include/GraphicsMagick/
-diff -rupd wt-3.1.7a.orig/CMakeLists.txt wt-3.1.7a/CMakeLists.txt
+diff -rupdN wt-3.1.7a.orig/CMakeLists.txt wt-3.1.7a/CMakeLists.txt
 --- wt-3.1.7a.orig/CMakeLists.txt	2011-01-18 01:24:45.834278002 +0100
 +++ wt-3.1.7a/CMakeLists.txt	2011-01-18 01:25:42.842278001 +0100
 @@ -71,6 +71,10 @@ IF(NOT SHARED_LIBS)
@@ -35,32 +35,81 @@ diff -rupd wt-3.1.7a.orig/CMakeLists.txt wt-3.1.7a/CMakeLists.txt
  ENDIF(BUILD_EXAMPLES)
  
  IF(BUILD_TESTS)
-diff -rupd wt-3.1.7a.orig/examples/CMakeLists.txt wt-3.1.7a/examples/CMakeLists.txt
+diff -rupdN wt-3.1.7a.orig/examples/CMakeLists.txt wt-3.1.7a/examples/CMakeLists.txt
 --- wt-3.1.7a.orig/examples/CMakeLists.txt	2011-01-18 01:24:46.462278001 +0100
-+++ wt-3.1.7a/examples/CMakeLists.txt	2011-01-18 01:48:12.894278002 +0100
-@@ -13,7 +13,16 @@ ADD_DEFINITIONS(-DWT_DEPRECATED_3_0_0)
++++ wt-3.1.7a/examples/CMakeLists.txt	2011-01-18 04:06:34.486278002 +0100
+@@ -13,6 +13,7 @@ ADD_DEFINITIONS(-DWT_DEPRECATED_3_0_0)
  # The WT_ADD_EXAMPLE function builds a DLL in case of ISAPI, and an executable
  # in case of FCGI or HTTPD connectors. It also makes sure that the example
  # links to the proper libraries (connector + wt).
 +
  MACRO(WT_ADD_EXAMPLE name)
+   IF(EXAMPLES_CONNECTOR MATCHES "wtisapi")
+     SET(MYLIST ${ARGV})
+@@ -30,6 +31,40 @@ MACRO(WT_ADD_EXAMPLE name)
+     SET_TARGET_PROPERTIES(${name} PROPERTIES COMPILE_FLAGS "/W3 /Wp64 /wd4251 /wd4275")
+   ENDIF(MSVC)
+   TARGET_LINK_LIBRARIES(${name} ${EXAMPLES_CONNECTOR})
++
 +  # Find the subdirectory inside wt/examples where this example resides.
 +  # Works even if there is no project(...), or there is more than one
 +  # example in that subdirectory 
 +  GET_TARGET_PROPERTY(${name}_SOURCEFILES ${name} SOURCES)
-+  LIST(GET ${NAME}_SOURCEFILES 0 ${name}_FIRST_SOURCEFILE )
-+  GET_SOURCE_FILE_PROPERTY(${name}_SUBDIR_FULLPATH ${${name}_FIRST_SOURCEFILE} LOCATION)
-+  STRING(REPLACE ${WT_SOURCE_DIR}/examples/ "" ${name}_SUBDIR ${name_SUBDIR_FULLPATH})
++  message( STATUS "${name}_SOURCEFILES = ${${name}_SOURCEFILES}" )
++  LIST(GET ${name}_SOURCEFILES 0 ${name}_FIRST_SOURCEFILE )
++  message( STATUS "${name}_FIRST_SOURCEFILE = ${${name}_FIRST_SOURCEFILE}" )
++  GET_SOURCE_FILE_PROPERTY(${name}_FIRST_SOURCEFILE_FULLPATH ${${name}_FIRST_SOURCEFILE} LOCATION)
++  message( STATUS "${name}_FIRST_SOURCEFILE_FULLPATH = ${${name}_FIRST_SOURCEFILE_FULLPATH}" )
++  STRING(REPLACE ${WT_SOURCE_DIR}/examples/ "" ${name}_SUBDIRANDSOURCE ${${name}_FIRST_SOURCEFILE_FULLPATH})
++  message( STATUS "${name}_SUBDIRANDSOURCE = ${${name}_SUBDIRANDSOURCE}" )
++  STRING(REPLACE /${${name}_FIRST_SOURCEFILE} "" ${name}_SUBDIR ${${name}_SUBDIRANDSOURCE})
++  message( STATUS "${name}_SUBDIR = ${${name}_SUBDIR}" )
 +
-   IF(EXAMPLES_CONNECTOR MATCHES "wtisapi")
-     SET(MYLIST ${ARGV})
-     LIST(INSERT MYLIST 1 SHARED)
-@@ -30,6 +39,8 @@ MACRO(WT_ADD_EXAMPLE name)
-     SET_TARGET_PROPERTIES(${name} PROPERTIES COMPILE_FLAGS "/W3 /Wp64 /wd4251 /wd4275")
-   ENDIF(MSVC)
-   TARGET_LINK_LIBRARIES(${name} ${EXAMPLES_CONNECTOR})
++  STRING(REPLACE /${${name}_FIRST_SOURCEFILE} "" ${name}_TARGET_SOURCE_DIR ${${name}_FIRST_SOURCEFILE_FULLPATH} )
++  
++  message( STATUS "name = ${name}" )
++  SET( EXAMPLESUBDIR ${${name}_SUBDIR} )
++  STRING( REPLACE .wt "" EXAMPLENAME ${name} )
++  message( STATUS "EXAMPLESUBDIR = ${EXAMPLESUBDIR}" )
++  message( STATUS "EXAMPLENAME = ${EXAMPLENAME}" )
++  
 +  INSTALL( TARGETS ${name} DESTINATION ${EXAMPLES_DESTINATION}/${${name}_SUBDIR} )
-+  INSTALL( DIRECTORY ${name_SOURCE_DIR} DESTINATION ${EXAMPLES_DESTINATION} )
++  INSTALL( DIRECTORY ${${name}_TARGET_SOURCE_DIR} DESTINATION ${EXAMPLES_DESTINATION} )
++
++  IF(WIN32)
++    CONFIGURE_FILE(${WT_SOURCE_DIR}/examples/run-example.bat.cmake ${WT_BINARY_DIR}/${EXAMPLENAME}.bat @ONLY)
++    INSTALL(PROGRAMS ${WT_BINARY_DIR}/${EXAMPLENAME}.bat DESTINATION ${EXAMPLES_DESTINATION}/${EXAMPLESUBDIR})
++  ELSE(WIN32)
++    CONFIGURE_FILE(${WT_SOURCE_DIR}/examples/run-example.cmake ${WT_BINARY_DIR}/${EXAMPLENAME} @ONLY)
++    INSTALL(PROGRAMS ${WT_BINARY_DIR}/${EXAMPLENAME} DESTINATION ${EXAMPLES_DESTINATION}/${EXAMPLESUBDIR})
++  ENDIF(WIN32)
++
  ENDMACRO(WT_ADD_EXAMPLE)
  
  SUBDIRS(
+diff -rupdN wt-3.1.7a.orig/examples/run-example.bat.cmake wt-3.1.7a/examples/run-example.bat.cmake
+--- wt-3.1.7a.orig/examples/run-example.bat.cmake	1970-01-01 01:00:00.000000000 +0100
++++ wt-3.1.7a/examples/run-example.bat.cmake	2011-01-18 02:35:48.934278002 +0100
+@@ -0,0 +1,6 @@
++REM Install in the 'bin' directory
++REM http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/percent.mspx?mfr=true
++
++set PATH=%~p0;%PATH%
++
++%~p0\\..\\lib\\Wt\\examples\\@EXAMPLESUBDIR@\\@EXAMPLENAME@.wt  --docroot ..\\lib\\Wt\\examples\\@EXAMPLESUBDIR@ --http-port 8080 --http-addr 0.0.0.0
+diff -rupdN wt-3.1.7a.orig/examples/run-example.cmake wt-3.1.7a/examples/run-example.cmake
+--- wt-3.1.7a.orig/examples/run-example.cmake	1970-01-01 01:00:00.000000000 +0100
++++ wt-3.1.7a/examples/run-example.cmake	2011-01-18 04:12:18.178278001 +0100
+@@ -0,0 +1,12 @@
++#!/bin/sh
++
++_DIRNAME=`dirname "$0"`
++echo "_DIRNAME = $DIRNAME"
++PREFIX=`readlink -e $_DIRNAME`
++echo "PREFIX=$PREFIX"
++#EXAMPLENAME=`basename "$0"`
++
++PATH=$PREFIX/../bin:$PATH
++LD_LIBRARY_PATH=$PREFIX/../lib:$LD_LIBRARY_PATH
++
++$PREFIX/@EXAMPLENAME@.wt --docroot $PREFIX/ --http-port 8080 --http-addr 0.0.0.0

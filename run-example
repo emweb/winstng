@@ -1,10 +1,12 @@
 #!/bin/sh
 
 _DIRNAME=`dirname "$0"`
+echo "_DIRNAME = $DIRNAME"
 PREFIX=`readlink -e $_DIRNAME`
-EXAMPLENAME=`basename "$0"`
+echo "PREFIX=$PREFIX"
+#EXAMPLENAME=`basename "$0"`
 
 PATH=$PREFIX/../bin:$PATH
 LD_LIBRARY_PATH=$PREFIX/../lib:$LD_LIBRARY_PATH
 
-$PREFIX/../lib/Wt/examples/$EXAMPLENAME/$EXAMPLENAME.wt --docroot $PREFIX/../lib/Wt/examples/$EXAMPLENAME/ --http-port 8080 --http-addr 0.0.0.0
+$PREFIX/@EXAMPLENAME@.wt --docroot $PREFIX/ --http-port 8080 --http-addr 0.0.0.0
