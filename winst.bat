@@ -67,10 +67,11 @@ rem @echo OFF
 @wget -N -c %CMAKE_FULLURL%
 
 :INSTALLSTEP
+@echo Setting up prerequisites...
 @cd ..\devutil
-@IF NOT [%1]==[] (
-@IF /I "%1"=="fetch" GOTO BOOTSTRAP
-)
+rem @IF NOT [%1]==[] (
+rem @IF /I "%1"=="fetch" GOTO BOOTSTRAP
+rem )
 
 :INSTALLUNZIP
 @echo Setting up unzip...
