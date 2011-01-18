@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 echo ""
 echo "*******************************************************"
 echo "*                  Wt bootstrapper                    *"
@@ -22,10 +22,10 @@ fi
 # On BSD, use fetch (built-in)
 
 SYSTEM=`uname -s`
-if [[ $SYSTEM =~ BSD ]]
-then
+
+if [[ $SYSTEM =~ BSD ]]; then
   DOWNLOADER="fetch -a -m"
-elif [[ $SYSTEM =~ Darwin ]]
+elif [[ $SYSTEM =~ Darwin ]]; then
   DOWNLOADER="curl --retry 10 -S"
 else
   DOWNLOADER="wget -N -c"
