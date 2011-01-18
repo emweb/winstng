@@ -549,6 +549,7 @@ ELSE ( FETCH_ONLY )
             )
     endif( WIN32 )
 
+    if(UNIX)
 	# TODO On Windows, use Bakefile to build
         ExternalProject_Add( mysqlpp
 	    DEPENDS mysql openssl
@@ -567,6 +568,7 @@ ELSE ( FETCH_ONLY )
             LOG_TEST 1
             LOG_INSTALL 1
             )
+    endif(UNIX)
 
 #
 # Build step
@@ -632,9 +634,12 @@ ELSE ( FETCH_ONLY )
         LOG_TEST 1
         LOG_INSTALL 1
         )
-        
+    
+    if(UNIX)
+        set( WT_UNIXONLY_DEPENDENCIES mysqlspp fcgi )
+    endif(UNIX)
     ExternalProject_Add( wt
-        DEPENDS zlib libpng libharu openssl boost libgd2 fcgi
+        DEPENDS zlib libpng libharu openssl boost libgd2 ${WT_UNIXONLY_DEPENDENCIES}
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${wt_URL}
         URL_MD5 ${wt_MD5}

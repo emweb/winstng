@@ -101,7 +101,11 @@ rem )
             @cd ..\build
             ..\bin\cmake %* ..
         ) ELSE (
-            @echo There is something wrong with your build directory, please remove it and start again
+            @IF EXIST ..\build\Nul (
+                cd ..\build
+                ..\bin\cmake %* ..
+            )
+rem             @echo There is something wrong with your build directory, please remove it and start again
         )
     )
 ) ELSE (
