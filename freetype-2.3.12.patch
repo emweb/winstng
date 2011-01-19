@@ -1,7 +1,7 @@
-diff -N -r -u freetype-2.3.5-orig/CMakeLists.txt freetype-2.3.5/CMakeLists.txt
---- freetype-2.3.5-orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
-+++ freetype-2.3.5/CMakeLists.txt	2008-02-07 18:59:32.765625000 +0100
-@@ -0,0 +1,103 @@
+diff -rupdN freetype-2.3.12.orig/CMakeLists.txt freetype-2.3.12/CMakeLists.txt
+--- freetype-2.3.12.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ freetype-2.3.12/CMakeLists.txt	2011-01-19 02:08:26.000000000 +0100
+@@ -0,0 +1,110 @@
 +project( freetype )
 +
 +if( WIN32 )
@@ -11,6 +11,10 @@ diff -N -r -u freetype-2.3.5-orig/CMakeLists.txt freetype-2.3.5/CMakeLists.txt
 +      add_definitions( -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE -D_SCL_SECURE_NO_WARNINGS -DWIN32_LEAN_AND_MEAN -D_REENTRANT )
 +    endif( MINGW )
 +endif( WIN32 )
++
++if( APPLE )
++    find_library( CARBON NAMES Carbon )
++endif( APPLE )
 +
 +include( CheckIncludeFile )
 +include( CheckTypeSize )
@@ -94,6 +98,9 @@ diff -N -r -u freetype-2.3.5-orig/CMakeLists.txt freetype-2.3.5/CMakeLists.txt
 +add_definitions( -DFT_CONFIG_CONFIG_H="<ftconfig.h>" -DFT2_BUILD_LIBRARY -DFT_CONFIG_MODULES_H="<ftmodule.h>" )
 +
 +add_library( freetype SHARED ${freetype_SRC} )
++if( APPLE )
++    target_link_libraries( freetype ${CARBON} )
++endif( APPLE )
 +
 +install( TARGETS freetype RUNTIME DESTINATION bin LIBRARY DESTINATION lib ARCHIVE DESTINATION lib )
 +
@@ -105,9 +112,9 @@ diff -N -r -u freetype-2.3.5-orig/CMakeLists.txt freetype-2.3.5/CMakeLists.txt
 +install( FILES ${include_config_files} DESTINATION include/freetype2/freetype/config )
 +install( FILES ${include_internal_files} DESTINATION include/freetype2/freetype/internal )
 +install( FILES include/ft2build.h DESTINATION include )
-diff -N -r -u freetype-2.3.5-orig/ftconfig.h.cmake freetype-2.3.5/ftconfig.h.cmake
---- freetype-2.3.5-orig/ftconfig.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ freetype-2.3.5/ftconfig.h.cmake	2008-02-07 18:59:09.312500000 +0100
+diff -rupdN freetype-2.3.12.orig/ftconfig.h.cmake freetype-2.3.12/ftconfig.h.cmake
+--- freetype-2.3.12.orig/ftconfig.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ freetype-2.3.12/ftconfig.h.cmake	2011-01-19 01:59:58.000000000 +0100
 @@ -0,0 +1,364 @@
 +/***************************************************************************/
 +/*                                                                         */
@@ -473,9 +480,9 @@ diff -N -r -u freetype-2.3.5-orig/ftconfig.h.cmake freetype-2.3.5/ftconfig.h.cma
 +
 +
 +/* END */
-diff -N -r -u freetype-2.3.5-orig/ftmodule.h.cmake freetype-2.3.5/ftmodule.h.cmake
---- freetype-2.3.5-orig/ftmodule.h.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ freetype-2.3.5/ftmodule.h.cmake	2008-02-07 18:59:09.312500000 +0100
+diff -rupdN freetype-2.3.12.orig/ftmodule.h.cmake freetype-2.3.12/ftmodule.h.cmake
+--- freetype-2.3.12.orig/ftmodule.h.cmake	1970-01-01 01:00:00.000000000 +0100
++++ freetype-2.3.12/ftmodule.h.cmake	2011-01-19 01:59:58.000000000 +0100
 @@ -0,0 +1,20 @@
 +/* This is a generated file. */
 +FT_USE_MODULE( FT_Module_Class, autofit_module_class )

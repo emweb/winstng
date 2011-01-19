@@ -98,8 +98,11 @@ if( WIN32 AND NOT UNIX )
 
 else( WIN32 AND NOT UNIX )
 
-    set( patch_URL http://ftp.gnu.org/gnu/patch/patch-2.6.1.tar.bz2 )
-    set( patch_MD5 0818d1763ae0c4281bcdc63cdac0b2c0 )
+#    set( patch_URL http://ftp.gnu.org/gnu/patch/patch-2.6.1.tar.bz2 )
+#    set( patch_MD5 0818d1763ae0c4281bcdc63cdac0b2c0 )
+#    set( _PACKAGES ${_PACKAGES} patch )
+    set( patch_URL http://alpha.gnu.org/gnu/patch/patch-2.6.1.108-7fae.tar.gz )
+    set( patch_MD5 00d2689a7032d14d25bc308a0989670e )
     set( _PACKAGES ${_PACKAGES} patch )
 
     set( nasm_URL http://www.nasm.us/pub/nasm/releasebuilds/2.10rc3/nasm-2.10rc3.tar.bz2 )
@@ -114,7 +117,7 @@ else( WIN32 AND NOT UNIX )
 #    set( readline_MD5 fc2f7e714fe792db1ce6ddc4c9fb4ef3 )
 #    set( _PACKAGES ${_PACKAGES} readline )
 
-    set( postgresql_URL http://wwwmaster.postgresql.org/download/mirrors-ftp/source/v9.0.2/postgresql-9.0.2.tar.bz2 )
+    set( postgresql_URL http://ftp3.de.postgresql.org/pub/Mirrors/ftp.postgresql.org/source/v9.0.2/postgresql-9.0.2.tar.bz2 )
     set( postgresql_MD5 fc79ef32b602f75f2ccd37647bc008e9 )
     set( _PACKAGES ${_PACKAGES} postgresql )
 
@@ -325,7 +328,7 @@ ELSE ( FETCH_ONLY )
         URL_MD5 ${freetype_MD5}
 	LIST_SEPARATOR ^^
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/freetype-2.3.12.patch
-        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
+        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR} 
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -501,7 +504,7 @@ ELSE ( FETCH_ONLY )
         URL ${ncurses_URL}
         URL_MD5 ${ncurses_MD5}
     ##	PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/fcgi-2.4.0-cstdiofix.patch
-        CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
+        CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR} --with-shared --disable-rpath --without-progs --without-ada
         BUILD_COMMAND ${CMAKE_BUILD_TOOL}
         BUILD_IN_SOURCE 1
         INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
