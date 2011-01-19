@@ -26,7 +26,7 @@ SYSTEM=`uname -s`
 if [[ $SYSTEM =~ BSD ]]; then
   DOWNLOADER="fetch -a -m"
 elif [[ $SYSTEM =~ Darwin ]]; then
-  DOWNLOADER="curl --retry 10 -S"
+  DOWNLOADER="curl --retry 10 -C - -O -S"
 else
   DOWNLOADER="wget -N -c"
 fi
