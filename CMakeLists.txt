@@ -396,7 +396,13 @@ ELSE ( FETCH_ONLY )
         endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
     else( WIN32 AND NOT UNIX ) # Unix, Cygwin and MSYS
         set( OPENSSL_GENASM_COMMAND )
-        set( OPENSSL_CONFIGURE_COMMAND ./config^^shared^^--prefix=${PROJECT_SOURCE_DIR} )
+
+        if( APPLE AND CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Mac OS X 64-bit
+          set( OPENSSL_CONFIGURE_COMMAND ./Configure^^shared^^darwin64-x86_64-cc^^--prefix=${PROJECT_SOURCE_DIR} )
+        else( APPLE AND CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Mac OS X 32-bit and all other Unix platforms
+          set( OPENSSL_CONFIGURE_COMMAND ./config^^shared^^--prefix=${PROJECT_SOURCE_DIR} )
+        endif( APPLE AND CMAKE_SIZEOF_VOID_P EQUAL 8 )
+
 	set( OPENSSL_BUILD_COMMAND ${CMAKE_BUILD_TOOL} )
 	set( OPENSSL_INSTALL_COMMAND ${CMAKE_BUILD_TOOL}^^install )
     endif( WIN32 AND NOT UNIX )
@@ -560,7 +566,7 @@ ELSE ( FETCH_ONLY )
             URL ${mysqlpp_URL}
             URL_MD5 ${mysqlpp_MD5}
 	    PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/mysql++-3.1.0.patch
-            CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
+            CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR} --with-mysql=${PROJECT_SOURCE_DIR}
             BUILD_COMMAND ${CMAKE_BUILD_TOOL}
             BUILD_IN_SOURCE 1
             INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
