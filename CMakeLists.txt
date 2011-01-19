@@ -201,7 +201,7 @@ ELSE ( FETCH_ONLY )
     endif( WIN32 AND NOT UNIX )
 
     # Make sure autotools-based 3rd-parties use the bootstrapped libraries
-    file( WRITE ${PROJECT_SOURCE_DIR}/share/config.site "CPPFLAGS='-I${PROJECT_SOURCE_DIR}/include'\nLDFLAGS='-L${PROJECT_SOURCE_DIR}/lib'" )
+    file( WRITE ${PROJECT_SOURCE_DIR}/share/config.site "CPPFLAGS='-I${PROJECT_SOURCE_DIR}/include'\nLDFLAGS='-L${PROJECT_SOURCE_DIR}/lib'\n" )
 
     # Netwide Assembler
     if( WIN32 AND NOT UNIX )
