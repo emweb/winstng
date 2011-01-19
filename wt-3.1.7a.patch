@@ -112,4 +112,4 @@ diff -rupdN wt-3.1.7a.orig/examples/run-example.cmake wt-3.1.7a/examples/run-exa
 +# Required until wthttp accepts a "--approot path" parameter
 +cd $EXAMPLEPREFIX
 +
-+PATH=$PREFIX/bin:$PATH LD_LIBRARY_PATH=$PREFIX/lib:$LD_LIBRARY_PATH $EXAMPLEPREFIX/@EXAMPLENAME@.wt --docroot $EXAMPLEPREFIX/ --http-port 8080 --http-addr 0.0.0.0 $@
++PATH=$PREFIX/bin:$PATH LD_LIBRARY_PATH=$PREFIX/lib:$LD_LIBRARY_PATH DYLD_LIBRARY_PATH=$PREFIX/lib:$DYLD_LIBRARY_PATH $EXAMPLEPREFIX/@EXAMPLENAME@.wt --docroot $EXAMPLEPREFIX/ --http-port 8080 --http-addr 0.0.0.0 $@
