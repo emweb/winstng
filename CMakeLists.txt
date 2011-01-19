@@ -505,12 +505,10 @@ ELSE ( FETCH_ONLY )
 
     if( UNIX )
         ExternalProject_Add( ncurses
-    ##	DEPENDS patch
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
         URL ${ncurses_URL}
         URL_MD5 ${ncurses_MD5}
-    ##	PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/fcgi-2.4.0-cstdiofix.patch
-        CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR} --with-shared --disable-rpath --without-progs --without-ada
+        CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR} --disable-rpath --without-progs --without-debug --without-ada
         BUILD_COMMAND ${CMAKE_BUILD_TOOL}
         BUILD_IN_SOURCE 1
         INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
