@@ -59,7 +59,10 @@ winstng installs wrapper scripts to run the examples:
 * Unix: installed in 'lib/Wt/examples/<example subdir>
 
 
-KNOWN PROBLEMS
+KNOWN ISSUES
+
+- Cross-compilation does not work (yet). To make it work, CMake and GNU patch 
+  have to be built for the host platform instead of the target platform.
 
 - On Unix, some libraries which use autotools are built with rpath, which means 
   you cannot move the winst directory to some other place. This will be solved 
