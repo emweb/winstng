@@ -291,6 +291,7 @@ ELSE ( FETCH_ONLY )
         )
 
 	    ExternalProject_Add( bzip2
+            DEPENDS patch
 	        DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
 	        URL ${bzip2_URL}
 	        URL_MD5 ${bzip2_MD5}
