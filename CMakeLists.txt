@@ -504,11 +504,15 @@ ELSE ( FETCH_ONLY )
     endif(NOT WIN32)
 
     if( UNIX )
+		if(APPLE)
+		  # http://stackoverflow.com/questions/3801011/ld-library-not-found-for-lcrt0-o-on-osx-10-6-with-gcc-clang-static-flag
+		  set( PLATFORM_SPECIFIC_FLAGS -with-shared )
+		endif(APPLE)
         ExternalProject_Add( ncurses
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
         URL ${ncurses_URL}
         URL_MD5 ${ncurses_MD5}
-        CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR} --disable-rpath --without-progs --without-debug --without-ada
+        CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR} ${PLATFORM_SPECIFIC_FLAGS} --disable-rpath --without-progs --without-debug --without-ada
         BUILD_COMMAND ${CMAKE_BUILD_TOOL}
         BUILD_IN_SOURCE 1
         INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install

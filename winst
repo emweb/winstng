@@ -5,9 +5,29 @@ echo "*                  Wt bootstrapper                    *"
 echo "*******************************************************"
 echo ""
 
-_DIRNAME=`dirname "$0"`
-PREFIX=`readlink -e $_DIRNAME`
+# On Mac, use curl (built-in)
+# On BSD, use fetch (built-in)
 
+SYSTEM=`uname -s`
+
+if [[ $SYSTEM =~ BSD ]]; then
+  DOWNLOADER="fetch -a -m"
+  PATH_TO_SCRIPT=$(cd ${0%/*} && echo $PWD/${0##*/})
+  PREFIX=`dirname "$PATH_TO_SCRIPT"`
+elif [[ $SYSTEM =~ Darwin ]]; then
+  DOWNLOADER="curl --retry 10 -C - -O -S"
+  PATH_TO_SCRIPT=$(cd ${0%/*} && echo $PWD/${0##*/})
+  PREFIX=`dirname "$PATH_TO_SCRIPT"`
+else
+  DOWNLOADER="wget -N -c"
+  _DIRNAME=`dirname "$0"`
+  PREFIX=`readlink -e $_DIRNAME`
+fi
+
+#_DIRNAME=`dirname "$0"`
+#PREFIX=`readlink -e $_DIRNAME`
+#echo "_DIRNAME = $DIRNAME"
+echo "PREFIX = $PREFIX"
 
 if [ -n $1 ] && ( [ "$1" = "help" ] || [ "$1" = "--help" ] || [ "$1" = "-h" ] )
 then
@@ -16,19 +36,6 @@ then
   echo "  $0 [CMake parameters]   Download and build Wt and its dependencies. CMake parameters are optional."
   echo "  $0 --fetch              Download dependencies, do not build anything now [for later usage]"
   exit
-fi
-
-# On Mac, use curl (built-in)
-# On BSD, use fetch (built-in)
-
-SYSTEM=`uname -s`
-
-if [[ $SYSTEM =~ BSD ]]; then
-  DOWNLOADER="fetch -a -m"
-elif [[ $SYSTEM =~ Darwin ]]; then
-  DOWNLOADER="curl --retry 10 -C - -O -S"
-else
-  DOWNLOADER="wget -N -c"
 fi
 
 CMAKE_ZIP=cmake-2.8.3.20110115-gf8614.tar.gz

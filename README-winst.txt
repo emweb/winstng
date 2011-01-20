@@ -18,7 +18,7 @@ REQUIREMENTS
 
 * Windows: a C++ compiler
 
-* Unix: a C++ compiler. On Linux, also wget.
+* Unix: bash and a C++ compiler. On Linux, also wget.
 
 Administrator/root permissions are not needed
 

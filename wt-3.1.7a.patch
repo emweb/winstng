@@ -1,17 +1,6 @@
-diff -rupNd wt-3.1.7a.orig/cmake/WtFindGm.txt wt-3.1.7a/cmake/WtFindGm.txt
---- wt-3.1.7a.orig/cmake/WtFindGm.txt	2011-01-20 01:02:56.898573002 +0100
-+++ wt-3.1.7a/cmake/WtFindGm.txt	2011-01-20 01:03:06.082573002 +0100
-@@ -11,6 +11,7 @@ FIND_PATH(GM_INCLUDE_DIR
-     ${GM_PREFIX}/include/GraphicsMagick/
-     ${GM_PREFIX}/include/
-     ${GM_PREFIX}/
-+    include/GraphicsMagick/
-     /usr/include/GraphicsMagick/
-     /usr/include/
-     /usr/local/include/GraphicsMagick/
-diff -rupNd wt-3.1.7a.orig/CMakeLists.txt wt-3.1.7a/CMakeLists.txt
---- wt-3.1.7a.orig/CMakeLists.txt	2011-01-20 01:02:56.898573002 +0100
-+++ wt-3.1.7a/CMakeLists.txt	2011-01-20 02:22:21.914573000 +0100
+diff -rupdN wt-3.1.7a.orig/CMakeLists.txt wt-3.1.7a/CMakeLists.txt
+--- wt-3.1.7a.orig/CMakeLists.txt	2011-01-20 15:28:16.000000000 +0100
++++ wt-3.1.7a/CMakeLists.txt	2011-01-20 15:28:40.000000000 +0100
 @@ -54,6 +54,7 @@ ENDIF(GCC_COMPILER_VERSION MATCHES ".*4\
  # Various things that must be configured by the user or packager ...
  #
@@ -55,9 +44,20 @@ diff -rupNd wt-3.1.7a.orig/CMakeLists.txt wt-3.1.7a/CMakeLists.txt
  IF(NOT EXISTS ${DESTDIR}${CONFIGDIR}/wt_config.xml)
    INSTALL(FILES ${WT_BINARY_DIR}/wt_config.xml DESTINATION ${CONFIGDIR})
  ENDIF (NOT EXISTS ${DESTDIR}${CONFIGDIR}/wt_config.xml)
-diff -rupNd wt-3.1.7a.orig/examples/CMakeLists.txt wt-3.1.7a/examples/CMakeLists.txt
---- wt-3.1.7a.orig/examples/CMakeLists.txt	2011-01-20 01:02:57.046573002 +0100
-+++ wt-3.1.7a/examples/CMakeLists.txt	2011-01-20 02:31:25.038573000 +0100
+diff -rupdN wt-3.1.7a.orig/cmake/WtFindGm.txt wt-3.1.7a/cmake/WtFindGm.txt
+--- wt-3.1.7a.orig/cmake/WtFindGm.txt	2011-01-20 15:28:16.000000000 +0100
++++ wt-3.1.7a/cmake/WtFindGm.txt	2011-01-20 15:28:40.000000000 +0100
+@@ -11,6 +11,7 @@ FIND_PATH(GM_INCLUDE_DIR
+     ${GM_PREFIX}/include/GraphicsMagick/
+     ${GM_PREFIX}/include/
+     ${GM_PREFIX}/
++    include/GraphicsMagick/
+     /usr/include/GraphicsMagick/
+     /usr/include/
+     /usr/local/include/GraphicsMagick/
+diff -rupdN wt-3.1.7a.orig/examples/CMakeLists.txt wt-3.1.7a/examples/CMakeLists.txt
+--- wt-3.1.7a.orig/examples/CMakeLists.txt	2011-01-20 15:28:17.000000000 +0100
++++ wt-3.1.7a/examples/CMakeLists.txt	2011-01-20 15:28:40.000000000 +0100
 @@ -13,6 +13,7 @@ ADD_DEFINITIONS(-DWT_DEPRECATED_3_0_0)
  # The WT_ADD_EXAMPLE function builds a DLL in case of ISAPI, and an executable
  # in case of FCGI or HTTPD connectors. It also makes sure that the example
@@ -105,9 +105,9 @@ diff -rupNd wt-3.1.7a.orig/examples/CMakeLists.txt wt-3.1.7a/examples/CMakeLists
  ENDMACRO(WT_ADD_EXAMPLE)
  
  SUBDIRS(
-diff -rupNd wt-3.1.7a.orig/examples/feature/dbo/CMakeLists.txt wt-3.1.7a/examples/feature/dbo/CMakeLists.txt
---- wt-3.1.7a.orig/examples/feature/dbo/CMakeLists.txt	2011-01-20 01:02:57.058573002 +0100
-+++ wt-3.1.7a/examples/feature/dbo/CMakeLists.txt	2011-01-20 02:20:07.918573000 +0100
+diff -rupdN wt-3.1.7a.orig/examples/feature/dbo/CMakeLists.txt wt-3.1.7a/examples/feature/dbo/CMakeLists.txt
+--- wt-3.1.7a.orig/examples/feature/dbo/CMakeLists.txt	2011-01-20 15:28:17.000000000 +0100
++++ wt-3.1.7a/examples/feature/dbo/CMakeLists.txt	2011-01-20 15:28:40.000000000 +0100
 @@ -20,3 +20,8 @@ ADD_EXECUTABLE(dbo-tutorial5  tutorial5.
  TARGET_LINK_LIBRARIES(dbo-tutorial5 ${tutorial_libs})
  
@@ -117,9 +117,9 @@ diff -rupNd wt-3.1.7a.orig/examples/feature/dbo/CMakeLists.txt wt-3.1.7a/example
 +  INSTALL(TARGETS dbo-tutorial1 dbo-tutorial2 dbo-tutorial3 dbo-tutorial4 dbo-tutorial5
 +	    DESTINATION ${CMAKE_INSTALL_PREFIX}/${EXAMPLES_DESTINATION}/feature/dbo/)
 +ENDIF(INSTALL_EXAMPLES)
-diff -rupNd wt-3.1.7a.orig/examples/run-example.bat.cmake wt-3.1.7a/examples/run-example.bat.cmake
+diff -rupdN wt-3.1.7a.orig/examples/run-example.bat.cmake wt-3.1.7a/examples/run-example.bat.cmake
 --- wt-3.1.7a.orig/examples/run-example.bat.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ wt-3.1.7a/examples/run-example.bat.cmake	2011-01-20 01:03:06.082573002 +0100
++++ wt-3.1.7a/examples/run-example.bat.cmake	2011-01-20 15:28:40.000000000 +0100
 @@ -0,0 +1,7 @@
 +set PATH=%~p0;%PATH%
 +set OLDPWD=%CD%
@@ -128,14 +128,22 @@ diff -rupNd wt-3.1.7a.orig/examples/run-example.bat.cmake wt-3.1.7a/examples/run
 +
 +%~p0\\..\\lib\\Wt\\examples\\@EXAMPLESUBDIR@\\@EXAMPLENAME@.wt  --docroot ..\\lib\\Wt\\examples\\@EXAMPLESUBDIR@ --http-port 8080 --http-addr 0.0.0.0 %*
 +cd %OLDPWD%
-diff -rupNd wt-3.1.7a.orig/examples/run-example.cmake wt-3.1.7a/examples/run-example.cmake
+diff -rupdN wt-3.1.7a.orig/examples/run-example.cmake wt-3.1.7a/examples/run-example.cmake
 --- wt-3.1.7a.orig/examples/run-example.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ wt-3.1.7a/examples/run-example.cmake	2011-01-20 01:03:06.082573002 +0100
-@@ -0,0 +1,12 @@
-+#!/bin/sh
++++ wt-3.1.7a/examples/run-example.cmake	2011-01-20 15:32:30.000000000 +0100
+@@ -0,0 +1,20 @@
++#!/bin/bash
 +
-+_DIRNAME=`dirname "$0"`
-+EXAMPLEPREFIX=`readlink -e $_DIRNAME`
++SYSTEM=`uname -s`
++
++if [[ $SYSTEM =~ Darwin ]] || [[ $SYSTEM =~ BSD ]]; then
++  PATH_TO_SCRIPT=$(cd ${0%/*} && echo $PWD/${0##*/})
++  EXAMPLEPREFIX=`dirname "$PATH_TO_SCRIPT"`
++else
++  _DIRNAME=`dirname "$0"`
++  EXAMPLEPREFIX=`readlink -e $_DIRNAME`
++fi
++
 +EXAMPLESUBDIR=@EXAMPLESUBDIR@
 +EXAMPLESUBDIRFROMPREFIX=@EXAMPLESUBDIRFROMPREFIX@
 +PREFIX=`echo $EXAMPLEPREFIX | sed s,$EXAMPLESUBDIRFROMPREFIX,,g`
