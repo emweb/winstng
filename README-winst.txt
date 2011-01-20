@@ -59,9 +59,6 @@ winstng installs wrapper scripts to run the examples:
 
 KNOWN PROBLEMS
 
-- For the Wt Dbo examples, only the source (not the binaries) are installed. 
-  I'm still trying to figure how to solve this.
-
 - On Unix, some libraries which use autotools are built with rpath, which means 
   you cannot move the winst directory to some other place. This will be solved 
   with chrpath soon. 
