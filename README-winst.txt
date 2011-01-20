@@ -20,6 +20,8 @@ REQUIREMENTS
 
 * Unix: a C++ compiler. On Linux, also wget.
 
+Administrator/root permissions are not needed
+
 USAGE
 
 Windows
