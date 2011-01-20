@@ -83,3 +83,6 @@ KNOWN PROBLEMS
 - On Windows, MySQL++ is not available (= hangman example not built) because it 
   uses a not-so-good build system (Bakefile) and, well, Emweb should really 
   port hangman to Wt Dbo.
+
+- Not really an issue but worth noting: patches have DOS line-endings, otherwise 
+  GNU patch on Windows crashes.
