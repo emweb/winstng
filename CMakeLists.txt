@@ -644,11 +644,13 @@ ELSE ( FETCH_ONLY )
     if( WIN32 AND NOT UNIX )
       set( boost_BOOTSTRAP_COMMAND "bootstrap.bat" )
       set( boost_BJAM "bjam" )
+      set( boost_LINKAGE link=static )
     else( WIN32 AND NOT UNIX )
       set( boost_BOOTSTRAP_COMMAND "./bootstrap.sh" )
       set( boost_BJAM "./bjam" )
+      set( boost_LINKAGE link=shared )
     endif( WIN32 AND NOT UNIX )
-    set( boost_COMMAND ${boost_BJAM} --prefix=${PROJECT_SOURCE_DIR} --build-type=minimal --variant=release --without-python link=static threading=multi include=${PROJECT_SOURCE_DIR}/include linkflags=-L{PROJECT_SOURCE_DIR}/lib )
+    set( boost_COMMAND ${boost_BJAM} --prefix=${PROJECT_SOURCE_DIR} --build-type=minimal --variant=release --without-python ${boost_LINKAGE} threading=multi include=${PROJECT_SOURCE_DIR}/include linkflags=-L{PROJECT_SOURCE_DIR}/lib )
     ExternalProject_Add( boost
 	DEPENDS zlib bzip2
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
