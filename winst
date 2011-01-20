@@ -5,9 +5,6 @@ echo "*                  Wt bootstrapper                    *"
 echo "*******************************************************"
 echo ""
 
-# On Mac, use curl (built-in)
-# On BSD, use fetch (built-in)
-
 SYSTEM=`uname -s`
 if [[ $SYSTEM =~ BSD ]]; then
   DOWNLOADER="fetch -a -m"
