@@ -9,25 +9,16 @@ echo ""
 # On BSD, use fetch (built-in)
 
 SYSTEM=`uname -s`
-
 if [[ $SYSTEM =~ BSD ]]; then
   DOWNLOADER="fetch -a -m"
-  PATH_TO_SCRIPT=$(cd ${0%/*} && echo $PWD/${0##*/})
-  PREFIX=`dirname "$PATH_TO_SCRIPT"`
 elif [[ $SYSTEM =~ Darwin ]]; then
   DOWNLOADER="curl --retry 10 -C - -O -S"
-  PATH_TO_SCRIPT=$(cd ${0%/*} && echo $PWD/${0##*/})
-  PREFIX=`dirname "$PATH_TO_SCRIPT"`
 else
   DOWNLOADER="wget -N -c"
-  _DIRNAME=`dirname "$0"`
-  PREFIX=`readlink -e $_DIRNAME`
 fi
 
-#_DIRNAME=`dirname "$0"`
-#PREFIX=`readlink -e $_DIRNAME`
-#echo "_DIRNAME = $DIRNAME"
-echo "PREFIX = $PREFIX"
+PATH_TO_SCRIPT=$(cd ${0%/*} && echo $PWD/${0##*/})
+PREFIX=`dirname "$PATH_TO_SCRIPT"`
 
 if [ -n $1 ] && ( [ "$1" = "help" ] || [ "$1" = "--help" ] || [ "$1" = "-h" ] )
 then

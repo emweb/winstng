@@ -131,18 +131,11 @@ diff -rupdN wt-3.1.7a.orig/examples/run-example.bat.cmake wt-3.1.7a/examples/run
 diff -rupdN wt-3.1.7a.orig/examples/run-example.cmake wt-3.1.7a/examples/run-example.cmake
 --- wt-3.1.7a.orig/examples/run-example.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ wt-3.1.7a/examples/run-example.cmake	2011-01-20 15:32:30.000000000 +0100
-@@ -0,0 +1,20 @@
+@@ -0,0 +1,13 @@
 +#!/bin/bash
 +
-+SYSTEM=`uname -s`
-+
-+if [[ $SYSTEM =~ Darwin ]] || [[ $SYSTEM =~ BSD ]]; then
-+  PATH_TO_SCRIPT=$(cd ${0%/*} && echo $PWD/${0##*/})
-+  EXAMPLEPREFIX=`dirname "$PATH_TO_SCRIPT"`
-+else
-+  _DIRNAME=`dirname "$0"`
-+  EXAMPLEPREFIX=`readlink -e $_DIRNAME`
-+fi
++PATH_TO_SCRIPT=$(cd ${0%/*} && echo $PWD/${0##*/})
++EXAMPLEPREFIX=`dirname "$PATH_TO_SCRIPT"`
 +
 +EXAMPLESUBDIR=@EXAMPLESUBDIR@
 +EXAMPLESUBDIRFROMPREFIX=@EXAMPLESUBDIRFROMPREFIX@

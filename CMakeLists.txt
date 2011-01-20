@@ -17,6 +17,10 @@ set( zlib_URL http://prdownloads.sourceforge.net/libpng/zlib-1.2.5.tar.bz2 )
 set( zlib_MD5 be1e89810e66150f5b0327984d8625a0 )
 set( _PACKAGES ${_PACKAGES} zlib )
 
+set( bzip2_URL http://bzip.org/1.0.6/bzip2-1.0.6.tar.gz )
+set( bzip2_MD5 00b516f4704d4a7cb50a1d97e6e8e15b )
+set( _PACKAGES ${_PACKAGES} bzip2 )
+
 set( libpng_URL http://prdownloads.sourceforge.net/libpng/libpng-1.5.0.tar.gz )
 set( libpng_MD5 32a9f9c8f7f020bf7867a453d81fcb51 )
 set( _PACKAGES ${_PACKAGES} libpng )
@@ -287,6 +291,21 @@ ELSE ( FETCH_ONLY )
         LOG_INSTALL 1
         )
 
+	    ExternalProject_Add( bzip2
+	        DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+	        URL ${bzip2_URL}
+	        URL_MD5 ${bzip2_MD5}
+		LIST_SEPARATOR ^^
+	        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/libpng-export.patch
+	        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
+	        LOG_DOWNLOAD 1
+	        LOG_UPDATE 1
+	        LOG_CONFIGURE 1
+	        LOG_BUILD 1
+	        LOG_TEST 1
+	        LOG_INSTALL 1
+	        )
+
     ExternalProject_Add( libpng
         DEPENDS zlib
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
@@ -338,7 +357,7 @@ ELSE ( FETCH_ONLY )
         )
 
     ExternalProject_Add( libgd2
-        DEPENDS libpng zlib libjpeg patch
+        DEPENDS libpng zlib bzip2 libjpeg patch
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${libgd2_URL}
         URL_MD5 ${libgd2_MD5}
@@ -630,12 +649,12 @@ ELSE ( FETCH_ONLY )
       set( boost_BJAM "./bjam" )
     endif( WIN32 AND NOT UNIX )
     ExternalProject_Add( boost
-	DEPENDS zlib
+	DEPENDS zlib bzip2
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${boost_URL}
         URL_MD5 ${boost_MD5}
         CONFIGURE_COMMAND ${boost_BOOTSTRAP_COMMAND}
-        BUILD_COMMAND ${boost_BJAM} --prefix=${PROJECT_SOURCE_DIR} --build-type=minimal --variant=release link=static threading=multi
+        BUILD_COMMAND ${boost_BJAM} --prefix=${PROJECT_SOURCE_DIR} --build-type=minimal --variant=release --without-python link=static threading=multi
         BUILD_IN_SOURCE 1
         INSTALL_COMMAND ${boost_BJAM} --prefix=${PROJECT_SOURCE_DIR} install
         LOG_DOWNLOAD 1
