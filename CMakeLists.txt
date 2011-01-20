@@ -654,7 +654,7 @@ ELSE ( FETCH_ONLY )
         URL ${boost_URL}
         URL_MD5 ${boost_MD5}
         CONFIGURE_COMMAND ${boost_BOOTSTRAP_COMMAND}
-        BUILD_COMMAND ${boost_BJAM} --prefix=${PROJECT_SOURCE_DIR} --build-type=minimal --variant=release --without-python link=static threading=multi
+        BUILD_COMMAND ${boost_BJAM} --prefix=${PROJECT_SOURCE_DIR} --build-type=minimal --variant=release --without-python link=static threading=multi include=${PROJECT_SOURCE_DIR}/include linkflags=-L{PROJECT_SOURCE_DIR}/lib
         BUILD_IN_SOURCE 1
         INSTALL_COMMAND ${boost_BJAM} --prefix=${PROJECT_SOURCE_DIR} install
         LOG_DOWNLOAD 1
