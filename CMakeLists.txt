@@ -648,15 +648,16 @@ ELSE ( FETCH_ONLY )
       set( boost_BOOTSTRAP_COMMAND "./bootstrap.sh" )
       set( boost_BJAM "./bjam" )
     endif( WIN32 AND NOT UNIX )
+    set( boost_COMMAND ${boost_BJAM} --prefix=${PROJECT_SOURCE_DIR} --build-type=minimal --variant=release --without-python link=static threading=multi include=${PROJECT_SOURCE_DIR}/include linkflags=-L{PROJECT_SOURCE_DIR}/lib )
     ExternalProject_Add( boost
 	DEPENDS zlib bzip2
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${boost_URL}
         URL_MD5 ${boost_MD5}
         CONFIGURE_COMMAND ${boost_BOOTSTRAP_COMMAND}
-        BUILD_COMMAND ${boost_BJAM} --prefix=${PROJECT_SOURCE_DIR} --build-type=minimal --variant=release --without-python link=static threading=multi include=${PROJECT_SOURCE_DIR}/include linkflags=-L{PROJECT_SOURCE_DIR}/lib
+        BUILD_COMMAND ${boost_COMMAND}
         BUILD_IN_SOURCE 1
-        INSTALL_COMMAND ${boost_BJAM} --prefix=${PROJECT_SOURCE_DIR} install
+        INSTALL_COMMAND ${boost_COMMAND} install
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
