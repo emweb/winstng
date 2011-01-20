@@ -6,7 +6,6 @@ include (ExternalProject)
 
 # TODO MinGW support
 # TODO Cross-compilation support. I think I only need to build nasm and patch for the host platform.
-# TODO bzip2 ?
 
 # Make sure we use bootstrapped dependencies
 set(CMAKE_PREFIX_PATH ${PROJECT_SOURCE_DIR} )
@@ -296,7 +295,7 @@ ELSE ( FETCH_ONLY )
 	        URL ${bzip2_URL}
 	        URL_MD5 ${bzip2_MD5}
 		LIST_SEPARATOR ^^
-	        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/libpng-export.patch
+	        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/bzip2.patch
 	        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
 	        LOG_DOWNLOAD 1
 	        LOG_UPDATE 1
