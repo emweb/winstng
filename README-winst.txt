@@ -72,7 +72,7 @@ winstng installs wrapper scripts to run the examples:
 * Unix: installed in 'lib/Wt/examples/<example subdir>
 
 Wrapper scripts have the same name as the example but need no parameters (you 
-can still pass parameters, if you want to).
+can still pass parameters, if you want to). Examples are started in port 8080.
 
 
 KNOWN ISSUES
