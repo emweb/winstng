@@ -1,6 +1,6 @@
 diff -rupdN wt-3.1.7a.orig/CMakeLists.txt wt-3.1.7a/CMakeLists.txt
---- wt-3.1.7a.orig/CMakeLists.txt	2011-01-20 15:28:16.000000000 +0100
-+++ wt-3.1.7a/CMakeLists.txt	2011-01-20 15:28:40.000000000 +0100
+--- wt-3.1.7a.orig/CMakeLists.txt	Tue Nov 30 10:59:02 2010
++++ wt-3.1.7a/CMakeLists.txt	Fri Jan 21 11:42:34 2011
 @@ -54,6 +54,7 @@ ENDIF(GCC_COMPILER_VERSION MATCHES ".*4\
  # Various things that must be configured by the user or packager ...
  #
@@ -20,7 +20,20 @@ diff -rupdN wt-3.1.7a.orig/CMakeLists.txt wt-3.1.7a/CMakeLists.txt
  IF(WIN32)
    IF(SHARED_LIBS)
      # See http://svn.boost.org/trac/boost/ticket/3465
-@@ -344,11 +349,7 @@ IF (DOXYGEN_FOUND)
+@@ -223,7 +228,11 @@ SET(EXAMPLES_CONNECTOR wthttp CACHE STRI
+ 
+ INCLUDE(cmake/WtFindBoost.txt)
+ INCLUDE(cmake/WtFindFcgi.txt)
+-INCLUDE(cmake/WtFindZlib.txt)
++IF( CMAKE_VERSION VERSION_LESS 2.8.3 )
++  INCLUDE(cmake/WtFindZlib.txt)
++ELSE( CMAKE_VERSION VERSION_LESS 2.8.3 )
++  FIND_PACKAGE(ZLIB)
++ENDIF( CMAKE_VERSION VERSION_LESS 2.8.3 )
+ INCLUDE(cmake/WtFindSsl.txt)
+ INCLUDE(cmake/WtFindMysqlpp.txt)
+ INCLUDE(cmake/WtFindPostgresql.txt)
+@@ -344,11 +351,7 @@ IF (DOXYGEN_FOUND)
  SUBDIRS(src)
  
  IF(BUILD_EXAMPLES)
@@ -32,21 +45,21 @@ diff -rupdN wt-3.1.7a.orig/CMakeLists.txt wt-3.1.7a/CMakeLists.txt
  ENDIF(BUILD_EXAMPLES)
  
  IF(BUILD_TESTS)
-@@ -367,6 +368,11 @@ INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/
+@@ -366,6 +369,11 @@ IF(INSTALL_RESOURCES)
+ INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/resources DESTINATION
      ${CMAKE_INSTALL_PREFIX}/share/Wt/)
  ENDIF(INSTALL_RESOURCES)
- 
++
 +IF(INSTALL_EXAMPLES)
 +  INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/examples/ DESTINATION
 +      ${CMAKE_INSTALL_PREFIX}/${EXAMPLES_DESTINATION} PATTERN "examples/*")
 +ENDIF(INSTALL_EXAMPLES)
-+
+ 
  IF(NOT EXISTS ${DESTDIR}${CONFIGDIR}/wt_config.xml)
    INSTALL(FILES ${WT_BINARY_DIR}/wt_config.xml DESTINATION ${CONFIGDIR})
- ENDIF (NOT EXISTS ${DESTDIR}${CONFIGDIR}/wt_config.xml)
 diff -rupdN wt-3.1.7a.orig/cmake/WtFindGm.txt wt-3.1.7a/cmake/WtFindGm.txt
---- wt-3.1.7a.orig/cmake/WtFindGm.txt	2011-01-20 15:28:16.000000000 +0100
-+++ wt-3.1.7a/cmake/WtFindGm.txt	2011-01-20 15:28:40.000000000 +0100
+--- wt-3.1.7a.orig/cmake/WtFindGm.txt	Mon Nov 22 16:33:20 2010
++++ wt-3.1.7a/cmake/WtFindGm.txt	Fri Jan 21 11:40:37 2011
 @@ -11,6 +11,7 @@ FIND_PATH(GM_INCLUDE_DIR
      ${GM_PREFIX}/include/GraphicsMagick/
      ${GM_PREFIX}/include/
@@ -56,8 +69,8 @@ diff -rupdN wt-3.1.7a.orig/cmake/WtFindGm.txt wt-3.1.7a/cmake/WtFindGm.txt
      /usr/include/
      /usr/local/include/GraphicsMagick/
 diff -rupdN wt-3.1.7a.orig/examples/CMakeLists.txt wt-3.1.7a/examples/CMakeLists.txt
---- wt-3.1.7a.orig/examples/CMakeLists.txt	2011-01-20 15:28:17.000000000 +0100
-+++ wt-3.1.7a/examples/CMakeLists.txt	2011-01-20 15:28:40.000000000 +0100
+--- wt-3.1.7a.orig/examples/CMakeLists.txt	Wed Nov 17 23:11:18 2010
++++ wt-3.1.7a/examples/CMakeLists.txt	Fri Jan 21 11:40:37 2011
 @@ -13,6 +13,7 @@ ADD_DEFINITIONS(-DWT_DEPRECATED_3_0_0)
  # The WT_ADD_EXAMPLE function builds a DLL in case of ISAPI, and an executable
  # in case of FCGI or HTTPD connectors. It also makes sure that the example
@@ -106,8 +119,8 @@ diff -rupdN wt-3.1.7a.orig/examples/CMakeLists.txt wt-3.1.7a/examples/CMakeLists
  
  SUBDIRS(
 diff -rupdN wt-3.1.7a.orig/examples/feature/dbo/CMakeLists.txt wt-3.1.7a/examples/feature/dbo/CMakeLists.txt
---- wt-3.1.7a.orig/examples/feature/dbo/CMakeLists.txt	2011-01-20 15:28:17.000000000 +0100
-+++ wt-3.1.7a/examples/feature/dbo/CMakeLists.txt	2011-01-20 15:28:40.000000000 +0100
+--- wt-3.1.7a.orig/examples/feature/dbo/CMakeLists.txt	Fri Oct 29 15:27:50 2010
++++ wt-3.1.7a/examples/feature/dbo/CMakeLists.txt	Fri Jan 21 11:40:37 2011
 @@ -20,3 +20,8 @@ ADD_EXECUTABLE(dbo-tutorial5  tutorial5.
  TARGET_LINK_LIBRARIES(dbo-tutorial5 ${tutorial_libs})
  
@@ -120,17 +133,18 @@ diff -rupdN wt-3.1.7a.orig/examples/feature/dbo/CMakeLists.txt wt-3.1.7a/example
 diff -rupdN wt-3.1.7a.orig/examples/run-example.bat.cmake wt-3.1.7a/examples/run-example.bat.cmake
 --- wt-3.1.7a.orig/examples/run-example.bat.cmake	1970-01-01 01:00:00.000000000 +0100
 +++ wt-3.1.7a/examples/run-example.bat.cmake	2011-01-20 15:28:40.000000000 +0100
-@@ -0,0 +1,7 @@
+@@ -0,0 +1,8 @@
 +set PATH=%~p0;%PATH%
 +set OLDPWD=%CD%
 +REM Required until wthttp accepts a "--approot path" parameter
-+cd ..\\lib\\Wt\\examples\\@EXAMPLESUBDIR@
++cd ..\lib\Wt\examples\@EXAMPLESUBDIR@
++set DOCROOT=%CD%
 +
-+%~p0\\..\\lib\\Wt\\examples\\@EXAMPLESUBDIR@\\@EXAMPLENAME@.wt  --docroot ..\\lib\\Wt\\examples\\@EXAMPLESUBDIR@ --http-port 8080 --http-addr 0.0.0.0 %*
++%~p0\..\lib\Wt\examples\@EXAMPLESUBDIR@\@EXAMPLENAME@.wt  --docroot %DOCROOT% --http-port 8080 --http-addr 0.0.0.0 %*
 +cd %OLDPWD%
 diff -rupdN wt-3.1.7a.orig/examples/run-example.cmake wt-3.1.7a/examples/run-example.cmake
---- wt-3.1.7a.orig/examples/run-example.cmake	1970-01-01 01:00:00.000000000 +0100
-+++ wt-3.1.7a/examples/run-example.cmake	2011-01-20 15:32:30.000000000 +0100
+--- wt-3.1.7a.orig/examples/run-example.cmake	Thu Jan  1 01:00:00 1970
++++ wt-3.1.7a/examples/run-example.cmake	Fri Jan 21 11:40:37 2011
 @@ -0,0 +1,13 @@
 +#!/bin/bash
 +
