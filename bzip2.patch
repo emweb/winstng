@@ -1,6 +1,6 @@
-diff -Nru bzip2-1.0.5.orig/CMakeLists.txt bzip2-1.0.5/CMakeLists.txt
---- bzip2-1.0.5.orig/CMakeLists.txt	Thu Jan  1 00:00:00 1970
-+++ bzip2-1.0.5/CMakeLists.txt	Mon May 17 12:52:18 2010
+diff -rupdN bzip2-1.0.6.orig/CMakeLists.txt bzip2-1.0.6/CMakeLists.txt
+--- bzip2-1.0.6.orig/CMakeLists.txt	1970-01-01 01:00:00.000000000 +0100
++++ bzip2-1.0.6/CMakeLists.txt	2011-01-21 01:09:02.000000000 +0100
 @@ -0,0 +1,82 @@
 +project(bzip2)
 +cmake_minimum_required(VERSION 2.6)
@@ -45,29 +45,29 @@ diff -Nru bzip2-1.0.5.orig/CMakeLists.txt bzip2-1.0.5/CMakeLists.txt
 +  set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /LTCG")
 +endif(MSVC)
 +
-+add_library(bzip2 SHARED ${bzip2_lib_SRCS})
++add_library(bz2 SHARED ${bzip2_lib_SRCS})
 +if(WIN32)
-+  set_target_properties(bzip2 PROPERTIES PREFIX "")
++  set_target_properties(bz2 PROPERTIES PREFIX "")
 +endif(WIN32)
 +
 +if(WINCE)
-+    target_link_libraries(bzip2 ${WCECOMPAT_LIBRARIES})
++    target_link_libraries(bz2 ${WCECOMPAT_LIBRARIES})
 +endif(WINCE)
 +
 +# bzip2recover
 +add_executable(bzip2recover bzip2recover.c)
-+target_link_libraries(bzip2recover bzip2)
++target_link_libraries(bzip2recover bz2)
 +# bzip2
 +# disabled bin for wince because of problems with the file system
 +if(NOT WINCE)
 +add_executable(bzip2_bin bzip2.c)
-+target_link_libraries(bzip2_bin bzip2)
++target_link_libraries(bzip2_bin bz2)
 +set_target_properties(bzip2_bin PROPERTIES OUTPUT_NAME bzip2)
 +endif(NOT WINCE)
 +
 +file(GLOB man1 ${bzip2_SOURCE_DIR}/*.1)
 +
-+install_targets(/lib bzip2)
++install_targets(/lib bz2)
 +install_targets(/bin bzip2recover)
 +if(NOT WINCE)
 +install_targets(/bin bzip2_bin)
@@ -84,9 +84,9 @@ diff -Nru bzip2-1.0.5.orig/CMakeLists.txt bzip2-1.0.5/CMakeLists.txt
 +# nm bzip2.dll | grep ' T _' | sed 's/.* T _//' >> bzip2.def
 +# pexports bzip2.dll > bzip2.def
 +# lib /def:bzip2.def /machine:x86
-diff -Nru bzip2-1.0.5.orig/bzip2.c bzip2-1.0.5/bzip2.c
---- bzip2-1.0.5.orig/bzip2.c	Sun Dec  9 12:22:06 2007
-+++ bzip2-1.0.5/bzip2.c	Mon May 17 12:44:37 2010
+diff -rupdN bzip2-1.0.6.orig/bzip2.c bzip2-1.0.6/bzip2.c
+--- bzip2-1.0.6.orig/bzip2.c	2011-01-21 01:06:25.000000000 +0100
++++ bzip2-1.0.6/bzip2.c	2011-01-21 01:06:50.000000000 +0100
 @@ -153,6 +153,10 @@
  #endif /* BZ_LCCWIN32 */
  
@@ -98,7 +98,7 @@ diff -Nru bzip2-1.0.5.orig/bzip2.c bzip2-1.0.5/bzip2.c
  /*---------------------------------------------*/
  /*--
    Some more stuff for all platforms :-)
-@@ -1805,7 +1809,9 @@
+@@ -1805,7 +1809,9 @@ IntNative main ( IntNative argc, Char *a
     i = j = 0; /* avoid bogus warning from egcs-1.1.X */
  
     /*-- Set up signal handlers for mem access errors --*/
@@ -108,7 +108,7 @@ diff -Nru bzip2-1.0.5.orig/bzip2.c bzip2-1.0.5/bzip2.c
  #  if BZ_UNIX
  #  ifndef __DJGPP__
     signal (SIGBUS,  mySIGSEGVorSIGBUScatcher);
-@@ -1949,8 +1955,10 @@
+@@ -1949,8 +1955,10 @@ IntNative main ( IntNative argc, Char *a
     if (opMode != OM_Z) blockSize100k = 0;
  
     if (srcMode == SM_F2F) {
@@ -119,9 +119,9 @@ diff -Nru bzip2-1.0.5.orig/bzip2.c bzip2-1.0.5/bzip2.c
  #     if BZ_UNIX
        signal (SIGHUP,  mySignalCatcher);
  #     endif
-diff -Nru bzip2-1.0.5.orig/bzlib.c bzip2-1.0.5/bzlib.c
---- bzip2-1.0.5.orig/bzlib.c	Sun Dec  9 13:57:21 2007
-+++ bzip2-1.0.5/bzlib.c	Mon May 17 12:31:17 2010
+diff -rupdN bzip2-1.0.6.orig/bzlib.c bzip2-1.0.6/bzlib.c
+--- bzip2-1.0.6.orig/bzlib.c	2011-01-21 01:06:25.000000000 +0100
++++ bzip2-1.0.6/bzlib.c	2011-01-21 01:06:50.000000000 +0100
 @@ -30,6 +30,10 @@
  
  #include "bzlib_private.h"
@@ -133,10 +133,10 @@ diff -Nru bzip2-1.0.5.orig/bzlib.c bzip2-1.0.5/bzlib.c
  
  /*---------------------------------------------------*/
  /*--- Compression stuff                           ---*/
-diff -Nru bzip2-1.0.5.orig/bzlib.h bzip2-1.0.5/bzlib.h
---- bzip2-1.0.5.orig/bzlib.h	Sun Dec  9 12:34:39 2007
-+++ bzip2-1.0.5/bzlib.h	Mon May 17 12:54:09 2010
-@@ -81,18 +81,45 @@
+diff -rupdN bzip2-1.0.6.orig/bzlib.h bzip2-1.0.6/bzlib.h
+--- bzip2-1.0.6.orig/bzlib.h	2011-01-21 01:06:25.000000000 +0100
++++ bzip2-1.0.6/bzlib.h	2011-01-21 01:06:50.000000000 +0100
+@@ -81,19 +81,46 @@ typedef 
        /* windows.h define small to char */
  #      undef small
  #   endif
@@ -185,15 +185,16 @@ diff -Nru bzip2-1.0.5.orig/bzlib.h bzip2-1.0.5/bzlib.h
 +#else /* __WIN32__ */
 +# define BZIP2_DLL_IMPEXP  
  #endif
-+
+ 
 +#define BZ_API(func) func
 +#define BZ_EXTERN BZIP2_DLL_IMPEXP
- 
++
  
  /*-- Core (low-level) library functions --*/
-diff -Nru bzip2-1.0.5.orig/cmake/modules/FindWcecompat.cmake bzip2-1.0.5/cmake/modules/FindWcecompat.cmake
---- bzip2-1.0.5.orig/cmake/modules/FindWcecompat.cmake	Thu Jan  1 00:00:00 1970
-+++ bzip2-1.0.5/cmake/modules/FindWcecompat.cmake	Wed May 12 13:23:08 2010
+ 
+diff -rupdN bzip2-1.0.6.orig/cmake/modules/FindWcecompat.cmake bzip2-1.0.6/cmake/modules/FindWcecompat.cmake
+--- bzip2-1.0.6.orig/cmake/modules/FindWcecompat.cmake	1970-01-01 01:00:00.000000000 +0100
++++ bzip2-1.0.6/cmake/modules/FindWcecompat.cmake	2011-01-21 01:06:50.000000000 +0100
 @@ -0,0 +1,33 @@
 +# Try to find Wcecompat functionality
 +# Once done this will define
