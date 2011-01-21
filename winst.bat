@@ -6,9 +6,13 @@
 @IF "%1"=="/?" ( 
 @echo.
 @echo Usage: 
-@echo   %0 /?                   This help
-@echo   %0 [CMake parameters]   Download and build Wt and its dependencies. CMake parameters are optional.
-@echo   %0 fetch                Download dependencies, do not build anything now [for later usage]
+@echo   %0 /?                       This help
+@echo   %0 fetch                    Download dependencies, do not build anything now
+@echo   %0 [CMake parameters]       Download and build Wt and its dependencies
+@echo   %0 git [CMake parameters]   Download and build Wt (git version) and its dependencies
+@echo.
+@echo   Example: winst git -G "NMake Makefiles"
+@echo.
 @GOTO:EOF
 )
 )
@@ -90,15 +94,22 @@
         cd ..\build
         ..\bin\cmake -DFETCH_ONLY:BOOL=1 %* ..
     ) ELSE (
+        @IF /I "%1"=="git" (
+            set WTGIT=-DWTGIT:BOOL=1
+        ) ELSE (
+            set WTGIT=-DWTGIT:BOOL=0
+        )
+        echo WTGIT = %WTGIT%
+        
         @IF EXIST ..\build\fetch-only (
             @rd /q /s ..\build
             @mkdir ..\build
             @cd ..\build
-            ..\bin\cmake %* ..
+            ..\bin\cmake %WTGIT% %* ..
         ) ELSE (
             @IF EXIST ..\build\Nul (
                 @cd ..\build
-                ..\bin\cmake %* ..
+                ..\bin\cmake %WTGIT% %* ..
             )
         )
     )

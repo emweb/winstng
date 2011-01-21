@@ -24,6 +24,7 @@ REQUIREMENTS
 
 Administrator/root permissions are not needed
 
+To build the bleeding edge Wt, you also need Git *in path*.
 
 USAGE
  
@@ -42,7 +43,12 @@ directory, run "nmake". You can pass CMake options to winst.
 you want to download in your machine and then build on another machine.
 Dependencies for Windows builds must be downloaded on a Windows machine.
 
+"winst git" downloads Wt from git and builds it.
 
+  > winst git -G "NMake Makefiles"
+  > nmake
+
+  
 Unix
 -----
 
@@ -62,7 +68,13 @@ in a "downloads" directory. Useful if you want to download in your machine and
 then build on another machine. Dependencies for Unix builds must be downloaded 
 on a Unix machine.
 
+"winst git" downloads Wt from git and builds it.
 
+  $ ./winst git -G "NMake Makefiles"
+  $ cd build
+  $ make
+
+  
 EXAMPLES
 
 winstng installs wrapper scripts to run the examples:
@@ -75,7 +87,46 @@ Wrapper scripts have the same name as the example but need no parameters (you
 can still pass parameters, if you want to). Examples are started in port 8080.
 
 
+PLATFORMS
+
+Tested on:
+
+ - Windows XP SP3 32-bit with MSVC2010 SP1 and Windows SDK 7.1
+ - Mac OS X 10.6.6 64-bit with XCode 3.2.5
+ - Ubuntu Maverick 10.10 32-bit with gcc 4.4
+ 
+
 KNOWN ISSUES
+
+- Race conditions. Especially on Windows, when building some package, winstng 
+  some times fails in the "download" stage when unpacking: 
+  
+  [ 27%] Performing download step (download, verify and extract) for 'libpng'
+  CMake Error at libpng-stamp/libpng-download.cmake:17 (message):
+  Command failed: 1
+
+   'G:/winst/winstng/bin/cmake.exe' '-Dmake=' '-Dconfig=' '-P' 'G:/winst/winstng
+   /build/libpng-prefix/src/libpng-stamp/libpng-download-impl.cmake'
+
+  See also
+
+    G:/winst/winstng/build/libpng-prefix/src/libpng-stamp/libpng-download-*.log
+
+  NMAKE : fatal error U1077: 'G:\winst\winstng\bin\cmake.exe' : return code '0x1'
+  Stop.
+  NMAKE : fatal error U1077: '"C:\Program Files\Microsoft Visual Studio 10.0\VC\BI
+  N\nmake.exe"' : return code '0x2'
+  Stop.
+  NMAKE : fatal error U1077: '"C:\Program Files\Microsoft Visual Studio 10.0\VC\BI
+  N\nmake.exe"' : return code '0x2'
+  Stop.
+
+  There is no solution to this yet (it's a CMake issue with ExternalProject). For 
+  now, if you see an error in a "download" step, just delete the offending package 
+  prefix and run make again:
+  
+  G:\winst\winstng\build>rd /q /s libpng-prefix
+  G:\winst\winstng\build>nmake
 
 - Cross-compilation does not work (yet). To make it work, CMake, GNU patch and 
   bjam have to be built for the host platform instead of the target platform.
@@ -106,8 +157,17 @@ KNOWN ISSUES
   really be ported to use Wt Dbo.
 
 - Not really an issue but worth noting: patches have DOS line-endings, otherwise 
-  GNU patch on Windows crashes.
+  GNU patch crashes on Windows.
 
+
+TODO
+
+- Do not attempt to build everything but use find_package to locate existing 
+  depenencies. If dependencies are not found, build them.
+
+- Support more platforms
+
+- Cross-compilation
 
 LICENSE
 

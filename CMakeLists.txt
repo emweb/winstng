@@ -4,9 +4,6 @@ cmake_minimum_required(VERSION 2.8)
 
 include (ExternalProject)
 
-# TODO MinGW support
-# TODO Cross-compilation support. I think I only need to build nasm and patch for the host platform.
-
 # Make sure we use bootstrapped dependencies
 set(CMAKE_PREFIX_PATH ${PROJECT_SOURCE_DIR} )
 
@@ -62,6 +59,17 @@ if( WIN32 AND NOT UNIX )
     set( nasm_MD5 c20205076b91a338dc13a3f6e63ef153)
     set( _PACKAGES ${_PACKAGES} nasm )
 
+#    if( FETCH_ONLY OR WTGIT )
+        # set( 7zip_URL http://prdownloads.sourceforge.net/sevenzip/7za920.zip )
+        # set( 7zip_MD5 2fac454a90ae96021f4ffc607d4c00f8 )
+        # set( _PACKAGES ${_PACKAGES} 7zip )
+        
+        #set( git_ZIPFILE PortableGit-1.7.3.1-preview20101002.7z )
+#        set( git_URL http://msysgit.googlecode.com/files/${git_ZIPFILE} )
+#        SET( git_MD5 36c26ebc6b6e58d995efd994b8dd85f2 )
+#        set( _PACKAGES ${_PACKAGES} git )
+#    endif( FETCH_ONLY OR WTGIT )
+    
     if( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Win 64-bit
         if( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
         
@@ -112,13 +120,15 @@ else( WIN32 AND NOT UNIX )
     set( nasm_MD5 d5073fba836533a3f2bfa62f0fca98b2 )
     set( _PACKAGES ${_PACKAGES} nasm )
 
+    if( FETCH_ONLY OR WTGIT )
+        set( git_URL http://kernel.org/pub/software/scm/git/git-1.7.3.5.tar.bz2 )
+        set( git_MD5 8a8cd93b8a4dff0a03c0fdc77253af3e )
+        set( _PACKAGES ${_PACKAGES} git )
+    endif( FETCH_ONLY OR WTGIT )
+    
     set( perl_URL http://www.cpan.org/src/5.0/perl-5.12.2.tar.gz )
     set( perl_MD5 af2df531d46b77fdf0d97eecb03eddb2 )
     set( _PACKAGES ${_PACKAGES} perl )
-
-#    set( readline_URL http://ftp.gnu.org/gnu/readline/readline-6.1.tar.gz )
-#    set( readline_MD5 fc2f7e714fe792db1ce6ddc4c9fb4ef3 )
-#    set( _PACKAGES ${_PACKAGES} readline )
 
     set( postgresql_URL http://ftp3.de.postgresql.org/pub/Mirrors/ftp.postgresql.org/source/v9.0.2/postgresql-9.0.2.tar.bz2 )
     set( postgresql_MD5 fc79ef32b602f75f2ccd37647bc008e9 )
@@ -449,23 +459,41 @@ ELSE ( FETCH_ONLY )
         LOG_INSTALL 1
         )
 
-#     ExternalProject_Add( readline
-# 	DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
-# 	URL ${readline_URL}
-# 	URL_MD5 ${readline_MD5}
-# 	CONFIGURE_COMMAND ./configure --prefix=${PROJECT_SOURCE_DIR}
-# 	BUILD_COMMAND ${CMAKE_BUILD_TOOL}
-# 	BUILD_IN_SOURCE 1
-# 	INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
-# 	LOG_DOWNLOAD 1
-# 	LOG_UPDATE 1
-# 	LOG_CONFIGURE 1
-# 	LOG_BUILD 1
-# 	LOG_TEST 1
-# 	LOG_INSTALL 1
-# 	)
-                    
-    # PostgreSQL
+#    if( WIN32 AND NOT UNIX )
+            # ExternalProject_Add( 7zip
+            # DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+            # URL ${7zip_URL}
+            # URL_MD5 ${7zip_MD5}
+            # CONFIGURE_COMMAND ""
+            # BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/7za.exe ${PROJECT_SOURCE_DIR}/bin/
+            # INSTALL_COMMAND ""
+            # LOG_DOWNLOAD 1
+            # LOG_UPDATE 1
+            # LOG_CONFIGURE 1
+            # LOG_BUILD 1
+            # LOG_TEST 1
+            # LOG_INSTALL 1
+	    # )
+
+#        ExternalProject_Add( git
+#            DEPENDS 7zip
+#            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+#            URL ${git_URL}
+#            URL_MD5 ${git_MD5}
+#            BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${PROJECT_SOURCE_DIR}/git
+#            INSTALL_COMMAND ""
+#            LOG_DOWNLOAD 1
+#            LOG_UPDATE 1
+#            LOG_CONFIGURE 1
+#            LOG_BUILD 1
+#            LOG_TEST 1
+#            LOG_INSTALL 1
+#	    )
+#        set( git_EXECUTABLE ${PROJECT_SOURCE_DIR}/git/bin/git.exe )
+#    else( WIN32 AND NOT UNIX )
+        
+#    endif( WIN32 AND NOT UNIX )
+    
     if( WIN32 AND NOT UNIX )
       ExternalProject_Add( postgresql
 	    DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
@@ -483,7 +511,6 @@ ELSE ( FETCH_ONLY )
 	    )
     else( WIN32 AND NOT UNIX )
         ExternalProject_Add( postgresql
-#	    DEPENDS readline perl openssl zlib
 	    DEPENDS perl openssl zlib
             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
             URL ${postgresql_URL}
@@ -562,8 +589,6 @@ ELSE ( FETCH_ONLY )
 	    )
     else( WIN32 )
         ExternalProject_Add( mysql
-#	    DEPENDS zlib openssl readline
-#	    DEPENDS zlib openssl ncurses readline
 	    DEPENDS zlib openssl ncurses
             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
             URL ${mysql_URL}
@@ -599,20 +624,14 @@ ELSE ( FETCH_ONLY )
             LOG_INSTALL 1
             )
     endif(UNIX)
-
-#
-# Build step
-#
         
     ExternalProject_Add( libharu
         DEPENDS zlib libpng patch
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${libharu_URL}
         URL_MD5 ${libharu_MD5}
-#	LIST_SEPARATOR ^^
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/libharu-2.2.1-cmake.patch
         CMAKE_ARGS 
-#	-DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include 
 	    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -671,23 +690,39 @@ ELSE ( FETCH_ONLY )
     if(UNIX)
         set( WT_UNIXONLY_DEPENDENCIES mysqlpp fcgi )
     endif(UNIX)
-    ExternalProject_Add( wt
-        DEPENDS zlib libpng libharu openssl boost libgd2 ${WT_UNIXONLY_DEPENDENCIES}
-        DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
-        URL ${wt_URL}
-        URL_MD5 ${wt_MD5}
-#	LIST_SEPARATOR ^^
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/wt-3.1.7a.patch
-        CMAKE_ARGS 
-#	-DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include 
-	-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR} -DWT_CMAKE_FINDER_INSTALL_DIR:PATH=/share/cmake-2.8/Modules -DBoost_NO_SYSTEM_PATHS:BOOL=1 -DBOOST_ROOT:PATH=${PROJECT_SOURCE_DIR} -DCONFIGDIR:PATH=${PROJECT_SOURCE_DIR}/etc/wt -DFCGI_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DGM_PREFIX=${PROJECT_SOURCE_DIR} -DHARU_PREFIX=${PROJECT_SOURCE_DIR} -DPOSTGRES_PREFIX=${PROJECT_SOURCE_DIR} -DZLIB_PREFIX=${PROJECT_SOURCE_DIR} -DRUNDIR=${PROJECT_SOURCE_DIR}/var/run/wt -DEXAMPLES_DESTINATION=lib/Wt/examples
-        LOG_DOWNLOAD 1
-        LOG_UPDATE 1
-        LOG_CONFIGURE 1
-        LOG_BUILD 1
-        LOG_TEST 1
-        LOG_INSTALL 1
-# 	TEST_AFTER_INSTALL 1
-# 	TEST_COMMAND ${CMAKE_BUILD_TOOL} test
+    
+    set( wt_CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR} -DWT_CMAKE_FINDER_INSTALL_DIR:PATH=/share/cmake-2.8/Modules -DBoost_NO_SYSTEM_PATHS:BOOL=1 -DBOOST_ROOT:PATH=${PROJECT_SOURCE_DIR} -DCONFIGDIR:PATH=${PROJECT_SOURCE_DIR}/etc/wt -DFCGI_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DGM_PREFIX=${PROJECT_SOURCE_DIR} -DHARU_PREFIX=${PROJECT_SOURCE_DIR} -DPOSTGRES_PREFIX=${PROJECT_SOURCE_DIR} -DZLIB_PREFIX=${PROJECT_SOURCE_DIR} -DRUNDIR=${PROJECT_SOURCE_DIR}/var/run/wt -DEXAMPLES_DESTINATION=lib/Wt/examples )
+
+    if( WTGIT )
+        ExternalProject_Add( wtgit
+            DEPENDS zlib libpng libharu openssl boost libgd2 ${WT_UNIXONLY_DEPENDENCIES}
+            # git
+            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+            GIT_REPOSITORY http://www.webtoolkit.eu/git/wt.git
+            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/wt-git.patch
+            CMAKE_ARGS ${wt_CMAKE_ARGS}            
+            LOG_DOWNLOAD 1
+            LOG_UPDATE 1
+            LOG_CONFIGURE 1
+            LOG_BUILD 1
+            LOG_TEST 1
+            LOG_INSTALL 1
         )
+    else( WTGIT )
+        ExternalProject_Add( wt
+            DEPENDS zlib libpng libharu openssl boost libgd2 ${WT_UNIXONLY_DEPENDENCIES}
+            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+            URL ${wt_URL}
+            URL_MD5 ${wt_MD5}
+            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/wt-3.1.7a.patch
+            CMAKE_ARGS ${wt_CMAKE_ARGS}            
+            LOG_DOWNLOAD 1
+            LOG_UPDATE 1
+            LOG_CONFIGURE 1
+            LOG_BUILD 1
+            LOG_TEST 1
+            LOG_INSTALL 1
+        )
+    endif( WTGIT )
+    
 ENDIF( FETCH_ONLY )
