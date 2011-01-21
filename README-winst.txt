@@ -1,11 +1,13 @@
 winstng 0.1
   - a witty bootstrapper
-
+    http://gitorious.org/winstng
+    
 (c) 2011 Pau Garcia i Quiles <pgquiles@elpauer.org>
+
 
 WHAT AND WHY
 
-Wt depends on a number of libraries which are not easily buildable, such as 
+Wt ( http://webtoolkit.eu ) depends on a number of libraries which are not easily buildable, such as 
 Boost, PostgreSQL, MySQL, etc. On Windows, in particular, the situation is not 
 good. winstng also downloads and bootstraps CMake.
 
@@ -22,14 +24,18 @@ REQUIREMENTS
 
 Administrator/root permissions are not needed
 
-USAGE
 
+USAGE
+ 
 Windows
 --------
 
 Unpack the tarball and run "winst" to download and bootstrap. In the 'build' 
-directory, run "nmake".
+directory, run "nmake". You can pass CMake options to winst.
 
+  > winst -G "NMake Makefiles"
+  > nmake
+  
 "winst /?" shows help
 
 "winst fetch" downloads the dependencies in a "downloads" directory. Useful if 
@@ -41,7 +47,13 @@ Unix
 -----
 
 Unpack the tarball and run "./winst". Change to the 'build' directory and 
-run 'make'.
+run 'make'. You can pass CMake options to winst.
+
+  $ tar xf winstng.tar.gz
+  $ cd winstng
+  $ ./winst
+  $ cd build
+  $ make
 
 "./winst help", "./winst --help" or "./winst -h" shows help
 
@@ -49,6 +61,7 @@ run 'make'.
 in a "downloads" directory. Useful if you want to download in your machine and 
 then build on another machine. Dependencies for Unix builds must be downloaded 
 on a Unix machine.
+
 
 EXAMPLES
 
@@ -58,15 +71,18 @@ winstng installs wrapper scripts to run the examples:
 
 * Unix: installed in 'lib/Wt/examples/<example subdir>
 
+Wrapper scripts have the same name as the example but need no parameters (you 
+can still pass parameters, if you want to).
+
 
 KNOWN ISSUES
 
-- Cross-compilation does not work (yet). To make it work, CMake and GNU patch 
-  have to be built for the host platform instead of the target platform.
+- Cross-compilation does not work (yet). To make it work, CMake, GNU patch and 
+  bjam have to be built for the host platform instead of the target platform.
 
 - On Unix, some libraries which use autotools are built with rpath, which means 
   you cannot move the winst directory to some other place. This will be solved 
-  with chrpath soon. 
+  with chrpath soon.
 
   This problem does not exist on Windows: you can move the winst directory 
   with all its contents to wherever you want (but make sure you preserve the 
@@ -85,12 +101,13 @@ KNOWN ISSUES
   interaction. This will be fixed by making VisualMagick work from the command 
   line.
 
-- On Windows, MySQL++ is not available (= hangman example not built) because it 
-  uses a not-so-good build system (Bakefile) and, well, Emweb should really 
-  port hangman to Wt Dbo.
+- On Windows, MySQL++ is not available (= hangman example not built) because 
+  MySQL++ uses a not-so-good build system (Bakefile) and, well, hangman should 
+  really be ported to use Wt Dbo.
 
 - Not really an issue but worth noting: patches have DOS line-endings, otherwise 
   GNU patch on Windows crashes.
+
 
 LICENSE
 
@@ -98,8 +115,8 @@ winst itself is under the MIT license.
 
 The various patches have the same license as the software they apply for
 
-Some patches are taken from the KDE on Windows project.
-
+Most patches to provide a CMake build system are taken from the 
+KDE on Windows project ( http://windows.kde.org ).
 
 
 The MIT License
