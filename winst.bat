@@ -2,8 +2,6 @@
 @echo *                  Wt bootstrapper                    *
 @echo *******************************************************
 
-rem @echo OFF
-
 @IF NOT !%1!==!! (
 @IF "%1"=="/?" ( 
 @echo.
@@ -69,9 +67,6 @@ rem @echo OFF
 :INSTALLSTEP
 @echo Setting up prerequisites...
 @cd ..\devutil
-rem @IF NOT [%1]==[] (
-rem @IF /I "%1"=="fetch" GOTO BOOTSTRAP
-rem )
 
 :INSTALLUNZIP
 @echo Setting up unzip...
@@ -102,10 +97,9 @@ rem )
             ..\bin\cmake %* ..
         ) ELSE (
             @IF EXIST ..\build\Nul (
-                cd ..\build
+                @cd ..\build
                 ..\bin\cmake %* ..
             )
-rem             @echo There is something wrong with your build directory, please remove it and start again
         )
     )
 ) ELSE (
