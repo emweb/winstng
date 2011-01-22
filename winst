@@ -20,9 +20,10 @@ PREFIX=`dirname "$PATH_TO_SCRIPT"`
 if [ -n $1 ] && ( [ "$1" = "help" ] || [ "$1" = "--help" ] || [ "$1" = "-h" ] )
 then
   echo "Usage:" 
-  echo "  $0 -h | --help          This help"
-  echo "  $0 [CMake parameters]   Download and build Wt and its dependencies. CMake parameters are optional."
-  echo "  $0 --fetch              Download dependencies, do not build anything now [for later usage]"
+  echo "  $0 help | -h | --help                     This help"
+  echo "  $0 fetch | -f | --fetch                   Download dependencies, do not build anything now [for later usage]"
+  echo "  $0 [CMake parameters]                     Download and build Wt and its dependencies. CMake parameters are optional."
+  echo "  $0 git | --git | -g [CMake parameters]    Download and build Wt and its dependencies. CMake parameters are optional."
   exit
 fi
 
@@ -59,11 +60,20 @@ then
   cd ../build
   ../bin/cmake -DFETCH_ONLY:BOOL=1 $@ ..
 else
+
+  if [ -n $1 ] && ( [ "$1" = "git" ] || [ "$1" = "--git" ] || [ "$1" = "-g" ] )
+  then
+    WTGIT=-DWTGIT:BOOL=1
+  else
+    WTGIT=-DWTGIT:BOOL=1
+  fi
+
   if [ -f ../build/fetch-only ]
   then
     rm -rf ../build
     mkdir ../build
   fi
+
   cd ../build
-  ../bin/cmake $@ ..
+  ../bin/cmake $WTGIT $@ ..
 fi
