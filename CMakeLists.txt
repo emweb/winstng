@@ -624,6 +624,7 @@ ELSE ( FETCH_ONLY )
     # TODO GM seems impossible to build silently with Visual C++ :-/
     if( UNIX AND NOT WIN32 )
         ExternalProject_Add( graphicsmagick
+            DEPENDS libpng zlib bzip2 libjpeg
             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
             URL ${graphicsmagick_URL}
             URL_MD5 ${graphicsmagick_MD5}
