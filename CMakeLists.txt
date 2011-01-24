@@ -17,8 +17,8 @@ set( bzip2_URL http://bzip.org/1.0.6/bzip2-1.0.6.tar.gz )
 set( bzip2_MD5 00b516f4704d4a7cb50a1d97e6e8e15b )
 set( _PACKAGES ${_PACKAGES} bzip2 )
 
-set( libpng_URL http://prdownloads.sourceforge.net/libpng/libpng-1.5.0.tar.gz )
-set( libpng_MD5 32a9f9c8f7f020bf7867a453d81fcb51 )
+set( libpng_URL http://sourceforge.net/projects/libpng/files/libpng14/older-releases/1.4.3/libpng-1.4.3.tar.gz ) 
+set( libpng_MD5 df3521f61a1b8b69489d297c0ca8c1f8 )
 set( _PACKAGES ${_PACKAGES} libpng )
 
 set( libjpeg_URL http://www.ijg.org/files/jpegsrc.v8b.tar.gz )
@@ -28,10 +28,6 @@ set( _PACKAGES ${_PACKAGES} libjpeg )
 set( freetype_URL http://download.savannah.gnu.org/releases/freetype/freetype-2.3.12.tar.bz2 )
 set( freetype_MD5 e974a82e5939be8e05ee65f07275d7c5 )
 set( _PACKAGES ${_PACKAGES} freetype )
-
-set( libgd2_URL http://www.libgd.org/releases/gd-2.0.36RC1.tar.bz2 )
-set( libgd2_MD5 e876979ca3130623a4e7866d9579171a )
-set( _PACKAGES ${_PACKAGES} libgd2 )
 
 set( openssl_URL http://openssl.org/source/openssl-1.0.0c.tar.gz )
 set( openssl_MD5 ff8fb85610aef328315a9decbb2712e4 )
@@ -134,12 +130,12 @@ else( WIN32 AND NOT UNIX )
     set( postgresql_MD5 fc79ef32b602f75f2ccd37647bc008e9 )
     set( _PACKAGES ${_PACKAGES} postgresql )
 
-#    set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/GraphicsMagick-1.3.12.tar.bz2 )
-#    set( graphicsmagick_MD5 55182f371f82d5f9367bce04e59bbf25 )
-#    set( _PACKAGES ${_PACKAGES} graphicsmagick )
-    set( graphicsmagick_URL ftp://ftp.graphicsmagick.org/pub/GraphicsMagick/snapshots/GraphicsMagick-1.4.020110109.tar.bz2 )
-    set( graphicsmagick_MD5 6a92d27d7b326b176ff0dcfca828aa24 )
+    set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/GraphicsMagick-1.3.12.tar.bz2 )
+    set( graphicsmagick_MD5 55182f371f82d5f9367bce04e59bbf25 )
     set( _PACKAGES ${_PACKAGES} graphicsmagick )
+#    set( graphicsmagick_URL ftp://ftp.graphicsmagick.org/pub/GraphicsMagick/snapshots/GraphicsMagick-1.4.020110109.tar.bz2 )
+#    set( graphicsmagick_MD5 6a92d27d7b326b176ff0dcfca828aa24 )
+#    set( _PACKAGES ${_PACKAGES} graphicsmagick )
 
     set( fcgi_URL http://www.fastcgi.com/dist/fcgi-2.4.0.tar.gz )
     set( fcgi_MD5 d15060a813b91383a9f3c66faf84867e )
@@ -358,22 +354,6 @@ ELSE ( FETCH_ONLY )
 	LIST_SEPARATOR ^^
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/freetype-2.3.12.patch
         CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR} 
-        LOG_DOWNLOAD 1
-        LOG_UPDATE 1
-        LOG_CONFIGURE 1
-        LOG_BUILD 1
-        LOG_TEST 1
-        LOG_INSTALL 1
-        )
-
-    ExternalProject_Add( libgd2
-        DEPENDS libpng zlib bzip2 libjpeg patch
-        DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
-        URL ${libgd2_URL}
-        URL_MD5 ${libgd2_MD5}
-	LIST_SEPARATOR ^^
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/gd.patch
-        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -695,7 +675,7 @@ ELSE ( FETCH_ONLY )
 
     if( WTGIT )
         ExternalProject_Add( wtgit
-            DEPENDS zlib libpng libharu openssl boost libgd2 ${WT_UNIXONLY_DEPENDENCIES}
+            DEPENDS zlib libpng libharu openssl boost ${WT_UNIXONLY_DEPENDENCIES}
             # git
             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
             GIT_REPOSITORY http://www.webtoolkit.eu/git/wt.git
@@ -710,7 +690,7 @@ ELSE ( FETCH_ONLY )
         )
     else( WTGIT )
         ExternalProject_Add( wt
-            DEPENDS zlib libpng libharu openssl boost libgd2 ${WT_UNIXONLY_DEPENDENCIES}
+            DEPENDS zlib libpng libharu openssl boost ${WT_UNIXONLY_DEPENDENCIES}
             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
             URL ${wt_URL}
             URL_MD5 ${wt_MD5}
