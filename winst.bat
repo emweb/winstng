@@ -9,7 +9,7 @@
 @echo   %0 /?                       This help
 @echo   %0 fetch                    Download dependencies, do not build anything now
 @echo   %0 [CMake parameters]       Download and build Wt and its dependencies
-@echo   %0 git [CMake parameters]   Download and build Wt (git version) and its dependencies
+@echo   %0 git [CMake parameters]   Download and build Wt -git version- and its dependencies
 @echo.
 @echo   Example: winst git -G "NMake Makefiles"
 @echo.
