@@ -25,9 +25,9 @@
 @SET UNZIP_FULLURL=ftp://ftp.info-zip.org/pub/infozip/win32/%UNZIP_SFX%
 
 @SET WGET_FTP_PATH=%WGET_FTP_DIRECTORY%/%WGET_FILENAME%
-@SET CMAKE_ZIP=cmake-2.8.3.20110115-gf8614-win32-x86.zip
-@SET CMAKE_FULLURL=http://www.cmake.org/files/vCVS/%CMAKE_ZIP%
-@SET CMAKE_DIRECTORY=cmake-2.8.3.20110115-gf8614-win32-x86
+@SET CMAKE_ZIP=cmake-2.8.4-win32-x86.zip
+@SET CMAKE_FULLURL=http://www.cmake.org/files/v2.8/%CMAKE_ZIP%
+@SET CMAKE_DIRECTORY=cmake-2.8.4-win32-x86
 
 @IF EXIST devutil GOTO MKDIRDOWNLOADS
 @mkdir devutil
