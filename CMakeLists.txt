@@ -680,7 +680,7 @@ ELSE ( FETCH_ONLY )
             # git
             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
             GIT_REPOSITORY http://www.webtoolkit.eu/git/wt.git
-            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/wt-git.patch
+            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/wt-3.1.8.patch
             CMAKE_ARGS ${wt_CMAKE_ARGS}            
             LOG_DOWNLOAD 1
             LOG_UPDATE 1
@@ -695,7 +695,7 @@ ELSE ( FETCH_ONLY )
             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
             URL ${wt_URL}
             URL_MD5 ${wt_MD5}
-            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/wt-3.1.7a.patch
+            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/wt-3.1.8.patch
             CMAKE_ARGS ${wt_CMAKE_ARGS}            
             LOG_DOWNLOAD 1
             LOG_UPDATE 1
