@@ -1,0 +1,16 @@
+diff -rupdN wt-3.2.0.orig/CMakeLists.txt wt-3.2.0/CMakeLists.txt
+--- wt-3.2.0.orig/CMakeLists.txt	Tue Nov 30 10:59:02 2010
++++ wt-3.2.0/CMakeLists.txt	Fri Jan 21 11:42:34 2011
+@@ -223,7 +228,11 @@ SET(EXAMPLES_CONNECTOR wthttp CACHE STRI
+ 
+ INCLUDE(cmake/WtFindBoost.txt)
+ INCLUDE(cmake/WtFindFcgi.txt)
+-INCLUDE(cmake/WtFindZlib.txt)
++IF( ${CMAKE_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION} LESS 2.8.3 )
++  INCLUDE(cmake/WtFindZlib.txt)
++ELSE( ${CMAKE_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION} LESS 2.8.3 )
++  FIND_PACKAGE(ZLIB)
++ENDIF( ${CMAKE_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION} LESS 2.8.3 )
+ INCLUDE(cmake/WtFindSsl.txt)
+ INCLUDE(cmake/WtFindMysqlpp.txt)
+ INCLUDE(cmake/WtFindPostgresql.txt)

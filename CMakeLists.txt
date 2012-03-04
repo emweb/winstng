@@ -25,28 +25,28 @@ set( libjpeg_URL http://www.ijg.org/files/jpegsrc.v8b.tar.gz )
 set( libjpeg_MD5 e022acbc5b36cd2cb70785f5b575661e )
 set( _PACKAGES ${_PACKAGES} libjpeg )
 
-set( freetype_URL http://download.savannah.gnu.org/releases/freetype/freetype-2.3.12.tar.bz2 )
-set( freetype_MD5 e974a82e5939be8e05ee65f07275d7c5 )
+#set( freetype_URL http://download.savannah.gnu.org/releases/freetype/freetype-2.3.12.tar.bz2 )
+#set( freetype_MD5 e974a82e5939be8e05ee65f07275d7c5 )
+set( freetype_URL http://download.savannah.gnu.org/releases/freetype/freetype-2.4.8.tar.bz2 )
+set( freetype_MD5 dbf2caca1d3afd410a29217a9809d397 )
 set( _PACKAGES ${_PACKAGES} freetype )
 
-set( openssl_URL http://openssl.org/source/openssl-1.0.0c.tar.gz )
-#set( openssl_URL http://openssl.org/source/openssl-1.0.0g.tar.gz )
-set( openssl_MD5 ff8fb85610aef328315a9decbb2712e4 )
-#set( openssl_MD5 07ecbe4324f140d157478637d6beccf1 )
+set( openssl_URL http://openssl.org/source/openssl-1.0.0g.tar.gz )
+set( openssl_MD5 07ecbe4324f140d157478637d6beccf1 )
 set( _PACKAGES ${_PACKAGES} openssl )
 
-set( libharu_URL http://libharu.org/files/libharu-2.2.1.tar.bz2 )
-#set( libharu_URL http://libharu.org/files/libhpdf-2.3.0RC2.tar.bz2 )
-set( libharu_MD5 4febd7e677b1c5d54db59a608b84e79f )
-#set( libharu_MD5 504afd61fc26b65279a2179a2b0aa948 )
+set( libharu_URL http://libharu.org/files/libhpdf-2.3.0RC2.tar.bz2 )
+set( libharu_MD5 504afd61fc26b65279a2179a2b0aa948 )
 set( _PACKAGES ${_PACKAGES} libharu )
 
-set( boost_URL http://prdownloads.sourceforge.net/boost/boost_1_45_0.tar.bz2 )
-set( boost_MD5 d405c606354789d0426bc07bea617e58 )
+set( boost_URL http://prdownloads.sourceforge.net/boost/boost_1_49_0.tar.bz2 )
+set( boost_MD5 0d202cb811f934282dea64856a175698 )
 set( _PACKAGES ${_PACKAGES} boost )
 
-set( wt_URL http://prdownloads.sourceforge.net/witty/wt-3.1.8.tar.gz )
-set( wt_MD5 e125089222543e707f1fd659f4377397 )
+#set( wt_URL http://prdownloads.sourceforge.net/witty/wt-3.1.8.tar.gz )
+#set( wt_MD5 e125089222543e707f1fd659f4377397 )
+set( wt_URL http://prdownloads.sourceforge.net/witty/wt-3.2.0.tar.gz )
+set( wt_MD5 82ff039bccf7a941b37142c9d3fc7f32 )
 set( _PACKAGES ${_PACKAGES} wt )
 
 if( WIN32 AND NOT UNIX )
@@ -55,8 +55,10 @@ if( WIN32 AND NOT UNIX )
     set( patch_MD5 b9c8b31d62f4b2e4f1887bbb63e8a905)
     set( _PACKAGES ${_PACKAGES} patch )
 
-    set( nasm_URL http://www.nasm.us/pub/nasm/releasebuilds/2.10rc3/win32/nasm-2.10rc3-win32.zip )
-    set( nasm_MD5 c20205076b91a338dc13a3f6e63ef153)
+#    set( nasm_URL http://www.nasm.us/pub/nasm/releasebuilds/2.10rc3/win32/nasm-2.10rc3-win32.zip )
+#    set( nasm_MD5 c20205076b91a338dc13a3f6e63ef153)
+    set( nasm_URL http://www.nasm.us/pub/nasm/releasebuilds/2.10rc13/win32/nasm-2.10rc13-win32.zip )
+    set( nasm_MD5 d859152524804f469e71191ba00b4e8b )
     set( _PACKAGES ${_PACKAGES} nasm )
 
 #    if( FETCH_ONLY OR WTGIT )
@@ -437,7 +439,7 @@ ELSE ( FETCH_ONLY )
         DEPENDS zlib perl patch nasm
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${openssl_URL}
-        URL_MD5 ff8fb85610aef328315a9decbb2712e4
+        URL_MD5 ${openssl_MD5}
 	LIST_SEPARATOR ^^
         UPDATE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${PROJECT_SOURCE_DIR} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_CONFIGURE_COMMAND:STRING=${OPENSSL_CONFIGURE_COMMAND} -P ${PROJECT_SOURCE_DIR}/configure-openssl.cmake
    #    PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/openssl-1.0.0c.patch
@@ -624,7 +626,7 @@ ELSE ( FETCH_ONLY )
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
         URL ${libharu_URL}
         URL_MD5 ${libharu_MD5}
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/libharu-2.2.1-cmake.patch
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/libharu-2.3.0RC2.patch
         CMAKE_ARGS 
 	    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
         LOG_DOWNLOAD 1
@@ -686,7 +688,7 @@ ELSE ( FETCH_ONLY )
         set( WT_UNIXONLY_DEPENDENCIES mysqlpp fcgi )
     endif(UNIX)
     
-    set( wt_CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR} -DWT_CMAKE_FINDER_INSTALL_DIR:PATH=/share/cmake-2.8/Modules -DBoost_NO_SYSTEM_PATHS:BOOL=1 -DBOOST_ROOT:PATH=${PROJECT_SOURCE_DIR} -DCONFIGDIR:PATH=${PROJECT_SOURCE_DIR}/etc/wt -DFCGI_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DGM_PREFIX=${PROJECT_SOURCE_DIR} -DHARU_PREFIX=${PROJECT_SOURCE_DIR} -DPOSTGRES_PREFIX=${PROJECT_SOURCE_DIR} -DZLIB_PREFIX=${PROJECT_SOURCE_DIR} -DRUNDIR=${PROJECT_SOURCE_DIR}/var/run/wt -DEXAMPLES_DESTINATION=lib/Wt/examples )
+    set( wt_CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR} -DWT_CMAKE_FINDER_INSTALL_DIR:PATH=/share/cmake-2.8/Modules -DBoost_NO_SYSTEM_PATHS:BOOL=1 -DBOOST_ROOT:PATH=${PROJECT_SOURCE_DIR} -DCONFIGDIR:PATH=${PROJECT_SOURCE_DIR}/etc/wt -DFCGI_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DGM_PREFIX=${PROJECT_SOURCE_DIR} -DHARU_PREFIX=${PROJECT_SOURCE_DIR} -DPOSTGRES_PREFIX=${PROJECT_SOURCE_DIR} -DZLIB_PREFIX=${PROJECT_SOURCE_DIR} -DRUNDIR=${PROJECT_SOURCE_DIR}/var/run/wt -DINSTALL_EXAMPLES:BOOL=1 -DSSL_PREFIX=${PROJECT_SOURCE_DIR} -DEXAMPLES_DESTINATION=lib/Wt/examples )
 
     if( WTGIT )
         ExternalProject_Add( wtgit
@@ -709,7 +711,7 @@ ELSE ( FETCH_ONLY )
             DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
             URL ${wt_URL}
             URL_MD5 ${wt_MD5}
-            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/wt-3.1.8.patch
+            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/wt-3.2.0.patch
             CMAKE_ARGS ${wt_CMAKE_ARGS}            
             LOG_DOWNLOAD 1
             LOG_UPDATE 1
