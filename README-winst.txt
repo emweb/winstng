@@ -1,8 +1,8 @@
-winstng 0.1
+winstng 0.2
   - a witty bootstrapper
     http://gitorious.org/winstng
     
-(c) 2011 Pau Garcia i Quiles <pgquiles@elpauer.org>
+(c) 2011-2012 Pau Garcia i Quiles <pgquiles@elpauer.org>
 
 
 WHAT AND WHY
@@ -181,7 +181,7 @@ KDE on Windows project ( http://windows.kde.org ).
 
 The MIT License
 
-Copyright (c) 2011 Pau Garcia i Quiles <pgquiles@elpauer.org>
+Copyright (c) 2011-2012 Pau Garcia i Quiles <pgquiles@elpauer.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

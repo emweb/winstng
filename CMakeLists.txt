@@ -30,11 +30,15 @@ set( freetype_MD5 e974a82e5939be8e05ee65f07275d7c5 )
 set( _PACKAGES ${_PACKAGES} freetype )
 
 set( openssl_URL http://openssl.org/source/openssl-1.0.0c.tar.gz )
+#set( openssl_URL http://openssl.org/source/openssl-1.0.0g.tar.gz )
 set( openssl_MD5 ff8fb85610aef328315a9decbb2712e4 )
+#set( openssl_MD5 07ecbe4324f140d157478637d6beccf1 )
 set( _PACKAGES ${_PACKAGES} openssl )
 
 set( libharu_URL http://libharu.org/files/libharu-2.2.1.tar.bz2 )
+#set( libharu_URL http://libharu.org/files/libhpdf-2.3.0RC2.tar.bz2 )
 set( libharu_MD5 4febd7e677b1c5d54db59a608b84e79f )
+#set( libharu_MD5 504afd61fc26b65279a2179a2b0aa948 )
 set( _PACKAGES ${_PACKAGES} libharu )
 
 set( boost_URL http://prdownloads.sourceforge.net/boost/boost_1_45_0.tar.bz2 )
@@ -69,16 +73,21 @@ if( WIN32 AND NOT UNIX )
     if( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Win 64-bit
         if( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
         
-            set( perl_URL http://downloads.activestate.com/ActivePerl/releases/5.12.2.1203/ActivePerl-5.12.2.1203-MSWin32-x64-294165.zip )
-            set( perl_MD5 4e6e4ece324da1a5d8073faa9c1c53cf)
+            #set( perl_URL http://downloads.activestate.com/ActivePerl/releases/5.12.2.1203/ActivePerl-5.12.2.1203-MSWin32-x64-294165.zip )
+            set( perl_URL http://strawberry-perl.googlecode.com/files/strawberry-perl-5.14.2.1-64bit-portable.zip )
+            #set( perl_MD5 4e6e4ece324da1a5d8073faa9c1c53cf)
+            set( perl_MD5 6d9a73148b6ce6c1042c4996815d7828 )
             set( _PACKAGES ${_PACKAGES} perl )
 
-            set( postgresql_URL http://get.enterprisedb.com/postgresql/postgresql-9.0.2-1-windows_x64-binaries.zip )
-            set( postgresql_MD5 63b1a4fc268fd2a719fa65fa668575e2 )
+            #set( postgresql_URL http://get.enterprisedb.com/postgresql/postgresql-9.0.2-1-windows_x64-binaries.zip )
+            set( postgresql_URL http://get.enterprisedb.com/postgresql/postgresql-9.1.3-1-windows-x64-binaries.zip )
+            #set( postgresql_MD5 63b1a4fc268fd2a719fa65fa668575e2 )
+            set( postgresql_MD5 7489ef884983dc954b624187825175a5 )
             set( _PACKAGES ${_PACKAGES} postgresql )
 
-            set( mysql_URL http://artfiles.org/mysql/Downloads/MySQL-5.1/mysql-noinstall-5.1.54-winx64.zip )
-            set( mysql_MD5 b7e23ff588ac235a47b440cfbeffabcc )
+            #set( mysql_URL http://artfiles.org/mysql/Downloads/MySQL-5.1/mysql-noinstall-5.1.54-winx64.zip )
+            set( mysql_URL http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.5/mysql-5.5.21-winx64.zip )
+            set( mysql_MD5 839651396b6250cc80895bbf7991be09 )
             set( _PACKAGES ${_PACKAGES} mysql )
 
         else( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
@@ -89,16 +98,21 @@ if( WIN32 AND NOT UNIX )
         
     else( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Win 32-bit
     
-        set( perl_URL http://downloads.activestate.com/ActivePerl/releases/5.12.2.1203/ActivePerl-5.12.2.1203-MSWin32-x86-294165.zip )
-        set( perl_MD5 2119e59745a86a0f003b34998db14ffe)
+        #set( perl_URL http://downloads.activestate.com/ActivePerl/releases/5.12.2.1203/ActivePerl-5.12.2.1203-MSWin32-x86-294165.zip )
+        set( perl_URL http://strawberry-perl.googlecode.com/files/strawberry-perl-5.14.2.1-32bit-portable.zip )
+        #set( perl_MD5 2119e59745a86a0f003b34998db14ffe)
+        set (perl_MD5 463684d6d3a9c95161140742e2681c55 )
         set( _PACKAGES ${_PACKAGES} perl )
 
-        set( postgresql_URL http://get.enterprisedb.com/postgresql/postgresql-9.0.2-1-windows-binaries.zip )
-        set( postgresql_MD5 5557b14f1a7e3824f47eaf1427467d1a)
+        #set( postgresql_URL http://get.enterprisedb.com/postgresql/postgresql-9.0.2-1-windows-binaries.zip )
+        set( postgresql_URL http://get.enterprisedb.com/postgresql/postgresql-9.1.3-1-windows-binaries.zip )
+        #set( postgresql_MD5 5557b14f1a7e3824f47eaf1427467d1a)
+        set( postgesql_MD5 98f00d6314134daad9bbd7a758372c31 )
         set( _PACKAGES ${_PACKAGES} postgresql )
         
-        set( mysql_URL http://artfiles.org/mysql/Downloads/MySQL-5.1/mysql-noinstall-5.1.54-win32.zip )
-        set( mysql_MD5 0b0d5477303a0ddf18b6d9d66e74180b )
+        #set( mysql_URL http://artfiles.org/mysql/Downloads/MySQL-5.1/mysql-noinstall-5.1.54-win32.zip )
+        set( mysql_URL http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.5/mysql-5.5.21-win32.zip )
+        set( mysql_MD5 dca3a056598a3796e5894bc4c1d87f2f )
         set( _PACKAGES ${_PACKAGES} mysql )
              
     endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
@@ -287,7 +301,7 @@ ELSE ( FETCH_ONLY )
         URL_MD5 ${zlib_MD5}
 	LIST_SEPARATOR ^^
         PATCH_COMMAND ${CMAKE_COMMAND} -E remove zconf.h
-        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR}
+        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_PREFIX_PATH:PATH=${PROJECT_SOURCE_DIR} -DCMAKE_C_FLAGS="/I .."
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
