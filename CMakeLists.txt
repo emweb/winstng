@@ -9,8 +9,8 @@ set(CMAKE_PREFIX_PATH ${PROJECT_SOURCE_DIR} )
 
 # Files to download
 
-set( zlib_URL http://prdownloads.sourceforge.net/libpng/zlib-1.2.5.tar.bz2 )
-set( zlib_MD5 be1e89810e66150f5b0327984d8625a0 )
+set( zlib_URL http://prdownloads.sourceforge.net/libpng/zlib-1.2.7.tar.bz2 )
+set( zlib_MD5 2ab442d169156f34c379c968f3f482dd )
 set( _PACKAGES ${_PACKAGES} zlib )
 
 set( bzip2_URL http://bzip.org/1.0.6/bzip2-1.0.6.tar.gz )
@@ -25,28 +25,24 @@ set( libjpeg_URL http://www.ijg.org/files/jpegsrc.v8b.tar.gz )
 set( libjpeg_MD5 e022acbc5b36cd2cb70785f5b575661e )
 set( _PACKAGES ${_PACKAGES} libjpeg )
 
-#set( freetype_URL http://download.savannah.gnu.org/releases/freetype/freetype-2.3.12.tar.bz2 )
-#set( freetype_MD5 e974a82e5939be8e05ee65f07275d7c5 )
-set( freetype_URL http://download.savannah.gnu.org/releases/freetype/freetype-2.4.8.tar.bz2 )
-set( freetype_MD5 dbf2caca1d3afd410a29217a9809d397 )
+set( freetype_URL http://download.savannah.gnu.org/releases/freetype/freetype-2.4.11.tar.bz2 )
+set( freetype_MD5 b93435488942486c8d0ca22e8f768034 )
 set( _PACKAGES ${_PACKAGES} freetype )
 
-set( openssl_URL http://openssl.org/source/openssl-1.0.0g.tar.gz )
-set( openssl_MD5 07ecbe4324f140d157478637d6beccf1 )
+set( openssl_URL http://openssl.org/source/openssl-1.0.1e.tar.gz )
+set( openssl_MD5 66bf6f10f060d561929de96f9dfe5b8c )
 set( _PACKAGES ${_PACKAGES} openssl )
 
 set( libharu_URL http://libharu.org/files/libhpdf-2.3.0RC2.tar.bz2 )
 set( libharu_MD5 504afd61fc26b65279a2179a2b0aa948 )
 set( _PACKAGES ${_PACKAGES} libharu )
 
-set( boost_URL http://prdownloads.sourceforge.net/boost/boost_1_49_0.tar.bz2 )
-set( boost_MD5 0d202cb811f934282dea64856a175698 )
+set( boost_URL http://prdownloads.sourceforge.net/boost/boost_1_53_0.tar.bz2 )
+set( boost_MD5  )
 set( _PACKAGES ${_PACKAGES} boost )
 
-#set( wt_URL http://prdownloads.sourceforge.net/witty/wt-3.1.8.tar.gz )
-#set( wt_MD5 e125089222543e707f1fd659f4377397 )
-set( wt_URL http://prdownloads.sourceforge.net/witty/wt-3.2.0.tar.gz )
-set( wt_MD5 82ff039bccf7a941b37142c9d3fc7f32 )
+set( wt_URL http://prdownloads.sourceforge.net/witty/wt-3.3.0.tar.gz )
+set( wt_MD5 b2331942ad01c4fda376abf30c6a503a )
 set( _PACKAGES ${_PACKAGES} wt )
 
 if( WIN32 AND NOT UNIX )
@@ -55,10 +51,8 @@ if( WIN32 AND NOT UNIX )
     set( patch_MD5 b9c8b31d62f4b2e4f1887bbb63e8a905)
     set( _PACKAGES ${_PACKAGES} patch )
 
-#    set( nasm_URL http://www.nasm.us/pub/nasm/releasebuilds/2.10rc3/win32/nasm-2.10rc3-win32.zip )
-#    set( nasm_MD5 c20205076b91a338dc13a3f6e63ef153)
-    set( nasm_URL http://www.nasm.us/pub/nasm/releasebuilds/2.10rc13/win32/nasm-2.10rc13-win32.zip )
-    set( nasm_MD5 d859152524804f469e71191ba00b4e8b )
+    set( nasm_URL http://www.nasm.us/pub/nasm/releasebuilds/2.10.07/win32/nasm-2.10.07-win32.zip )
+    set( nasm_MD5 1dafe433d8c83854188934617eec3032 )
     set( _PACKAGES ${_PACKAGES} nasm )
 
 #    if( FETCH_ONLY OR WTGIT )
@@ -71,25 +65,24 @@ if( WIN32 AND NOT UNIX )
 #        SET( git_MD5 36c26ebc6b6e58d995efd994b8dd85f2 )
 #        set( _PACKAGES ${_PACKAGES} git )
 #    endif( FETCH_ONLY OR WTGIT )
-    
+
     if( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Win 64-bit
         if( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
         
-            #set( perl_URL http://downloads.activestate.com/ActivePerl/releases/5.12.2.1203/ActivePerl-5.12.2.1203-MSWin32-x64-294165.zip )
-            set( perl_URL http://strawberry-perl.googlecode.com/files/strawberry-perl-5.14.2.1-64bit-portable.zip )
-            #set( perl_MD5 4e6e4ece324da1a5d8073faa9c1c53cf)
-            set( perl_MD5 6d9a73148b6ce6c1042c4996815d7828 )
+            set( perl_URL http://strawberryperl.com/download/5.16.3.1/strawberry-perl-5.16.3.1-64bit-portable.zip )
+            set( perl_MD5 2f00e848a678c425b9affb593c664537 )
             set( _PACKAGES ${_PACKAGES} perl )
 
-            #set( postgresql_URL http://get.enterprisedb.com/postgresql/postgresql-9.0.2-1-windows_x64-binaries.zip )
-            set( postgresql_URL http://get.enterprisedb.com/postgresql/postgresql-9.1.3-1-windows-x64-binaries.zip )
-            #set( postgresql_MD5 63b1a4fc268fd2a719fa65fa668575e2 )
-            set( postgresql_MD5 7489ef884983dc954b624187825175a5 )
+            set( postgresql_URL http://get.enterprisedb.com/postgresql/postgresql-9.2.4-1-windows-x64-binaries.zip )
+            set( postgresql_MD5 a0388908fdce75f9c642454c7435e898 )
             set( _PACKAGES ${_PACKAGES} postgresql )
 
-            #set( mysql_URL http://artfiles.org/mysql/Downloads/MySQL-5.1/mysql-noinstall-5.1.54-winx64.zip )
-            set( mysql_URL http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.5/mysql-5.5.21-winx64.zip )
-            set( mysql_MD5 839651396b6250cc80895bbf7991be09 )
+	    set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/graphicsmagick-binaries/1.3.18/GraphicsMagick-1.3.18-Q8-win64-dll.exe )
+	    set( graphicsmagick_MD5 bd25adb9e8218aabcd68a034116396e6 )
+	    set( _PACKAGES ${_PACKAGES} graphicsmagick )
+
+            set( mysql_URL http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.6/mysql-5.6.11-winx64.zip )
+            set( mysql_MD5 53f1eb50c241b54eb03b0560068663ba )
             set( _PACKAGES ${_PACKAGES} mysql )
 
         else( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
@@ -100,74 +93,69 @@ if( WIN32 AND NOT UNIX )
         
     else( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Win 32-bit
     
-        #set( perl_URL http://downloads.activestate.com/ActivePerl/releases/5.12.2.1203/ActivePerl-5.12.2.1203-MSWin32-x86-294165.zip )
-        set( perl_URL http://strawberry-perl.googlecode.com/files/strawberry-perl-5.14.2.1-32bit-portable.zip )
-        #set( perl_MD5 2119e59745a86a0f003b34998db14ffe)
-        set (perl_MD5 463684d6d3a9c95161140742e2681c55 )
+        set( perl_URL http://strawberryperl.com/download/5.16.3.1/strawberry-perl-5.16.3.1-32bit-portable.zip )
+        set (perl_MD5 8f3ef667e9a2b7fc402610da29bb8074 )
         set( _PACKAGES ${_PACKAGES} perl )
 
-        #set( postgresql_URL http://get.enterprisedb.com/postgresql/postgresql-9.0.2-1-windows-binaries.zip )
-        set( postgresql_URL http://get.enterprisedb.com/postgresql/postgresql-9.1.3-1-windows-binaries.zip )
-        #set( postgresql_MD5 5557b14f1a7e3824f47eaf1427467d1a)
-        set( postgesql_MD5 98f00d6314134daad9bbd7a758372c31 )
+        set( postgresql_URL http://get.enterprisedb.com/postgresql/postgresql-9.2.4-1-windows-binaries.zip )
+        set( postgesql_MD5 516ce6950a74646c80665435f74ae757 )
         set( _PACKAGES ${_PACKAGES} postgresql )
+
+# GraphicsMagick-1.3.18-Q8-win32-dll.exe /VERYSILENT /NORESTART /DIR="c:\graphicsmagick" /NOICONS /SP-
+
+	set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/graphicsmagick-binaries/1.3.18/GraphicsMagick-1.3.18-Q8-win32-dll.exe )
+	set( graphicsmagick_MD5 9ea52d767dff3628c3918c5ee5774be1 )
+	set( _PACKAGES ${_PACKAGES} graphicsmagick )
         
-        #set( mysql_URL http://artfiles.org/mysql/Downloads/MySQL-5.1/mysql-noinstall-5.1.54-win32.zip )
-        set( mysql_URL http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.5/mysql-5.5.21-win32.zip )
-        set( mysql_MD5 dca3a056598a3796e5894bc4c1d87f2f )
+        set( mysql_URL http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.6/mysql-5.6.11-win32.zip )
+        set( mysql_MD5 55b368e4e139ed151cf4e16563ff451a )
         set( _PACKAGES ${_PACKAGES} mysql )
              
     endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
 else( WIN32 AND NOT UNIX )
 
-#    set( patch_URL http://ftp.gnu.org/gnu/patch/patch-2.6.1.tar.bz2 )
-#    set( patch_MD5 0818d1763ae0c4281bcdc63cdac0b2c0 )
-#    set( _PACKAGES ${_PACKAGES} patch )
-    set( patch_URL http://alpha.gnu.org/gnu/patch/patch-2.6.1.116-33c4.tar.gz )
-    set( patch_MD5 4629f229291ebdd210f4d6f247d113fb )
+    set( patch_URL http://ftp.gnu.org/gnu/patch/patch-2.7.tar.bz2 )
+    set( patch_MD5 1f3a075ea06705f194a2a4ce7045f072 )
     set( _PACKAGES ${_PACKAGES} patch )
 
-    set( nasm_URL http://www.nasm.us/pub/nasm/releasebuilds/2.10rc3/nasm-2.10rc3.tar.bz2 )
-    set( nasm_MD5 d5073fba836533a3f2bfa62f0fca98b2 )
+    set( nasm_URL http://www.nasm.us/pub/nasm/releasebuilds/2.10.07/nasm-2.10.07.tar.bz2 )
+    set( nasm_MD5 af1cd6669f5e98148cd5ec42dee90f19 )
     set( _PACKAGES ${_PACKAGES} nasm )
 
     if( FETCH_ONLY OR WTGIT )
-        set( git_URL http://kernel.org/pub/software/scm/git/git-1.7.3.5.tar.bz2 )
-        set( git_MD5 8a8cd93b8a4dff0a03c0fdc77253af3e )
+        set( git_URL https://git-core.googlecode.com/files/git-1.8.2.2.tar.gz )
+        set( git_MD5 f7407df37facf579dcaa979266cc3c59 )
         set( _PACKAGES ${_PACKAGES} git )
     endif( FETCH_ONLY OR WTGIT )
     
-    set( perl_URL http://www.cpan.org/src/5.0/perl-5.12.2.tar.gz )
-    set( perl_MD5 af2df531d46b77fdf0d97eecb03eddb2 )
+    set( perl_URL http://www.cpan.org/src/5.0/perl-5.16.3.tar.gz )
+    set( perl_MD5 eb5c40f2575df6c155bc99e3fe0a9d82 )
     set( _PACKAGES ${_PACKAGES} perl )
 
-    set( postgresql_URL http://ftp3.de.postgresql.org/pub/Mirrors/ftp.postgresql.org/source/v9.0.2/postgresql-9.0.2.tar.bz2 )
-    set( postgresql_MD5 fc79ef32b602f75f2ccd37647bc008e9 )
+    set( postgresql_URL http://ftp3.de.postgresql.org/pub/Mirrors/ftp.postgresql.org/source/v9.2.4/postgresql-9.2.4.tar.bz2 )
+    set( postgresql_MD5 6ee5bb53b97da7c6ad9cb0825d3300dd )
     set( _PACKAGES ${_PACKAGES} postgresql )
 
-    set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/GraphicsMagick-1.3.12.tar.bz2 )
-    set( graphicsmagick_MD5 55182f371f82d5f9367bce04e59bbf25 )
+    set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/GraphicsMagick-1.3.18.tar.bz2 )
+    set( graphicsmagick_MD5 b2c7f2fbfc0862525b047655953efd62 )
     set( _PACKAGES ${_PACKAGES} graphicsmagick )
-#    set( graphicsmagick_URL ftp://ftp.graphicsmagick.org/pub/GraphicsMagick/snapshots/GraphicsMagick-1.4.020110109.tar.bz2 )
-#    set( graphicsmagick_MD5 6a92d27d7b326b176ff0dcfca828aa24 )
-#    set( _PACKAGES ${_PACKAGES} graphicsmagick )
 
     set( fcgi_URL http://www.fastcgi.com/dist/fcgi-2.4.0.tar.gz )
     set( fcgi_MD5 d15060a813b91383a9f3c66faf84867e )
     set( _PACKAGES ${_PACKAGES} fcgi )
 
     # TODO Move to pdcurses? (it's buildable on Win32 with nmake and others, might need win32a - http://www.projectpluto.com/win32a.htm )
-    set( ncurses_URL http://ftp.gnu.org/pub/gnu/ncurses/ncurses-5.7.tar.gz )
-    set( ncurses_MD5 cce05daf61a64501ef6cd8da1f727ec6 )
+    set( ncurses_URL http://ftp.gnu.org/pub/gnu/ncurses/ncurses-5.9.tar.gz )
+    set( ncurses_MD5 8cb9c412e5f2d96bc6f459aa8c6282a1 )
     set( _PACKAGES ${_PACKAGES} ncurses )
 #    set( ncurses_URL http://prdownloads.sourceforge.net/pdcurses/PDCurses-3.4.tar.gz )
 #    set( ncurses_MD5 4e04e4412d1b1392a7f9a489b95b331a )
 #    set( _PACKAGES ${_PACKAGES} ncurses )
 
     # TODO Build MySQL on Unix - On Windows, too?
-    set( mysql_URL http://www.mirrorservice.org/sites/ftp.mysql.com/Downloads/MySQL-5.5/mysql-5.5.8.tar.gz )
-    set( mysql_MD5 42e866302b61f5e213afd33e04677017 )
+    set( mysql_URL http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.6/mysql-5.6.11.tar.gz )
+    set( mysql_MD5 9241be729964ab4594de11baa30aec48 )
     set( _PACKAGES ${_PACKAGES} mysql )
 
     # TODO Build on Windows using Bakefile ( http://bakefile.org )
@@ -655,6 +643,22 @@ ELSE ( FETCH_ONLY )
             LOG_TEST 1
             LOG_INSTALL 1
             )
+    else( UNIX AND NOT WIN32 )
+      ExternalProject_Add( graphicsmagick
+	    DOWNLOAD_NAME graphicsmagick.exe
+	    DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+	    URL ${graphicsmagick_URL}
+	    URL_MD5 ${graphicsmagick_MD5}
+	    CONFIGURE_COMMAND ""
+	    BUILD_COMMAND "<DOWNLOAD_DIR>graphicsmagick.exe /VERYSILENT /NORESTART /DIR=\"${PROJECT_SOURCE_DIR}\\bin\" /NOICONS /SP-"
+	    INSTALL_COMMAND ""
+	    LOG_DOWNLOAD 1
+	    LOG_UPDATE 1
+	    LOG_CONFIGURE 1
+	    LOG_BUILD 1
+	    LOG_TEST 1
+	    LOG_INSTALL 1
+	    )
     endif( UNIX AND NOT WIN32 )
 
     if( WIN32 AND NOT UNIX )
