@@ -9,8 +9,8 @@ set(CMAKE_PREFIX_PATH ${PROJECT_SOURCE_DIR} )
 
 # Files to download
 
-set( zlib_URL http://prdownloads.sourceforge.net/libpng/zlib-1.2.7.tar.bz2 )
-set( zlib_MD5 2ab442d169156f34c379c968f3f482dd )
+set( zlib_URL http://prdownloads.sourceforge.net/libpng/zlib-1.2.7.tar.gz )
+set( zlib_MD5 60df6a37c56e7c1366cca812414f7b85 )
 set( _PACKAGES ${_PACKAGES} zlib )
 
 set( bzip2_URL http://bzip.org/1.0.6/bzip2-1.0.6.tar.gz )
