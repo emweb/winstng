@@ -15,7 +15,7 @@ else
 fi
 
 PATH_TO_SCRIPT=$(cd ${0%/*} && echo $PWD/${0##*/})
-PREFIX=`dirname "$PATH_TO_SCRIPT"`
+PREFIX=`dirname "$PATH_TO_SCRIPT"`/prefix
 
 if [ -n $1 ] && ( [ "$1" = "help" ] || [ "$1" = "--help" ] || [ "$1" = "-h" ] )
 then
