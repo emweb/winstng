@@ -9,7 +9,9 @@ cmake_minimum_required(VERSION 2.8)
 
 include (ExternalProject)
 
-set(WINST_PREFIX ${PROJECT_SOURCE_DIR}/prefix)
+# This variable is set in the bootstrapping script (winst/winst.bat)
+#set(WINST_PREFIX ${PROJECT_SOURCE_DIR}/prefix)
+#set(WINST_BASEDIR ${PROJECT_SOURCE_DIR}/..
 
 # Make sure we use bootstrapped dependencies
 set(CMAKE_PREFIX_PATH ${WINST_PREFIX} )
@@ -172,7 +174,7 @@ if (FETCH_ONLY )
     foreach( pkg ${_PACKAGES} )
 	message( STATUS "Downloading ${pkg}" )
         get_filename_component( fn ${${pkg}_URL} NAME )
-        file( DOWNLOAD ${${pkg}_URL} ${PROJECT_SOURCE_DIR}/downloads/${fn} EXPECTED_MD5 ${${pkg}_MD5} SHOW_PROGRESS )
+        file( DOWNLOAD ${${pkg}_URL} ${WINST_BASEDIR}/downloads/${fn} EXPECTED_MD5 ${${pkg}_MD5} SHOW_PROGRESS )
     endforeach(pkg)
     
     file( WRITE ${PROJECT_BINARY_DIR}/fetch-only "" )
@@ -182,7 +184,7 @@ ELSE ( FETCH_ONLY )
     # GNU patch
     if( WIN32 AND NOT UNIX )
         ExternalProject_Add( patch
-            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
             URL ${patch_URL}
             URL_MD5 ${patch_MD5}
             CONFIGURE_COMMAND ""
@@ -198,7 +200,7 @@ ELSE ( FETCH_ONLY )
         set( PATCH_EXECUTABLE ${WINST_PREFIX}\\bin\\patch.exe )
     else( WIN32 AND NOT UNIX )
         ExternalProject_Add( patch
-            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
+            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
             URL ${patch_URL}
             URL_MD5 ${patch_MD5}
             CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX}
@@ -221,7 +223,7 @@ ELSE ( FETCH_ONLY )
     # Netwide Assembler
     if( WIN32 AND NOT UNIX )
         ExternalProject_Add( nasm
-            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
             URL ${nasm_URL}
             URL_MD5 ${nasm_MD5}
             CONFIGURE_COMMAND ""
@@ -236,7 +238,7 @@ ELSE ( FETCH_ONLY )
             )
     else( WIN32 AND NOT UNIX )
         ExternalProject_Add( nasm
-            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
+            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
             URL ${nasm_URL}
             URL_MD5 ${nasm_MD5}
             CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX}
@@ -255,7 +257,7 @@ ELSE ( FETCH_ONLY )
     # Perl - required for OpenSSL
     if( WIN32 AND NOT UNIX )
         ExternalProject_Add( perl
-                DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+                DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
                 URL ${perl_URL}
                 URL_MD5 ${perl_MD5}
                 CONFIGURE_COMMAND ""
@@ -270,7 +272,7 @@ ELSE ( FETCH_ONLY )
                 )
     else( WIN32 AND NOT UNIX )
         ExternalProject_Add( perl
-            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
+            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
             URL ${perl_URL}
             URL_MD5 ${perl_MD5}
             CONFIGURE_COMMAND ./Configure -de -Dprefix=${WINST_PREFIX}
@@ -288,7 +290,7 @@ ELSE ( FETCH_ONLY )
     endif( WIN32 AND NOT UNIX )
 
     ExternalProject_Add( zlib
-        DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
         URL ${zlib_URL}
         URL_MD5 ${zlib_MD5}
 	LIST_SEPARATOR ^^
@@ -304,11 +306,11 @@ ELSE ( FETCH_ONLY )
 
 	    ExternalProject_Add( bzip2
             DEPENDS patch
-	        DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+	        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
 	        URL ${bzip2_URL}
 	        URL_MD5 ${bzip2_MD5}
 		LIST_SEPARATOR ^^
-	        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/bzip2.patch
+	        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BASEDIR}/patches/bzip2.patch
 	        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
 	        LOG_DOWNLOAD 1
 	        LOG_UPDATE 1
@@ -320,11 +322,11 @@ ELSE ( FETCH_ONLY )
 
     ExternalProject_Add( libpng
         DEPENDS zlib
-        DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
         URL ${libpng_URL}
         URL_MD5 ${libpng_MD5}
 #	LIST_SEPARATOR ^^
-#	PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/libpng-export.patch
+#	PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BASEDIR}/patches/libpng-export.patch
         CMAKE_ARGS 
 	# -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include 
 	-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
@@ -338,11 +340,11 @@ ELSE ( FETCH_ONLY )
 
     ExternalProject_Add( libjpeg
         DEPENDS patch
-        DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
         URL ${libjpeg_URL}
         URL_MD5 ${libjpeg_MD5}
 	LIST_SEPARATOR ^^
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/jpeg8.patch
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BASEDIR}/patches/jpeg8.patch
         CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -354,11 +356,11 @@ ELSE ( FETCH_ONLY )
         
     ExternalProject_Add( freetype
         DEPENDS zlib libpng patch
-        DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
         URL ${freetype_URL}
         URL_MD5 ${freetype_MD5}
 	LIST_SEPARATOR ^^
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/freetype-2.3.12.patch
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BASEDIR}/patches/freetype-2.3.12.patch
         CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX} 
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -427,16 +429,16 @@ ELSE ( FETCH_ONLY )
     set( ENV{PATH} "${_NEWPATH}" )
     ExternalProject_Add( openssl
         DEPENDS zlib perl patch nasm
-        DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
         URL ${openssl_URL}
         URL_MD5 ${openssl_MD5}
 	LIST_SEPARATOR ^^
-        UPDATE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_CONFIGURE_COMMAND:STRING=${OPENSSL_CONFIGURE_COMMAND} -P ${PROJECT_SOURCE_DIR}/configure-openssl.cmake
-   #    PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/openssl-1.0.1e.patch
-        CONFIGURE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_GENASM_COMMAND=${OPENSSL_GENASM_COMMAND} -P ${PROJECT_SOURCE_DIR}/genasm-openssl.cmake
-        BUILD_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_BUILD_COMMAND=${OPENSSL_BUILD_COMMAND} -P ${PROJECT_SOURCE_DIR}/build-openssl.cmake
+        UPDATE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_CONFIGURE_COMMAND:STRING=${OPENSSL_CONFIGURE_COMMAND} -P ${WINST_BASEDIR}/cmake/configure-openssl.cmake
+   #    PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BASEDIR}/patches/openssl-1.0.1e.patch
+        CONFIGURE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_GENASM_COMMAND=${OPENSSL_GENASM_COMMAND} -P ${WINST_BASEDIR}/cmake/genasm-openssl.cmake
+        BUILD_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_BUILD_COMMAND=${OPENSSL_BUILD_COMMAND} -P ${WINST_BASEDIR}/cmake/build-openssl.cmake
         BUILD_IN_SOURCE 1
-        INSTALL_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_INSTALL_COMMAND=${OPENSSL_INSTALL_COMMAND} -P ${PROJECT_SOURCE_DIR}/install-openssl.cmake
+        INSTALL_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_INSTALL_COMMAND=${OPENSSL_INSTALL_COMMAND} -P ${WINST_BASEDIR}/cmake/install-openssl.cmake
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -447,7 +449,7 @@ ELSE ( FETCH_ONLY )
 
 #    if( WIN32 AND NOT UNIX )
             # ExternalProject_Add( 7zip
-            # DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+            # DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
             # URL ${7zip_URL}
             # URL_MD5 ${7zip_MD5}
             # CONFIGURE_COMMAND ""
@@ -463,7 +465,7 @@ ELSE ( FETCH_ONLY )
 
 #        ExternalProject_Add( git
 #            DEPENDS 7zip
-#            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+#            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
 #            URL ${git_URL}
 #            URL_MD5 ${git_MD5}
 #            BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${WINST_PREFIX}/git
@@ -482,7 +484,7 @@ ELSE ( FETCH_ONLY )
     
     if( WIN32 AND NOT UNIX )
       ExternalProject_Add( postgresql
-	    DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+	    DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
 	    URL ${postgresql_URL}
 	    URL_MD5 ${postgresql_MD5}
 	    CONFIGURE_COMMAND ""
@@ -498,7 +500,7 @@ ELSE ( FETCH_ONLY )
     else( WIN32 AND NOT UNIX )
         ExternalProject_Add( postgresql
 	    DEPENDS perl openssl zlib
-            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
+            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
             URL ${postgresql_URL}
             URL_MD5 ${postgresql_MD5}
             CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX}  --without-readline
@@ -518,10 +520,10 @@ ELSE ( FETCH_ONLY )
     if(NOT WIN32)
         ExternalProject_Add( fcgi
             DEPENDS patch
-            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
+            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
             URL ${fcgi_URL}
             URL_MD5 ${fcgi_MD5}
-            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/fcgi-2.4.0-cstdiofix.patch
+            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BASEDIR}/patches/fcgi-2.4.0-cstdiofix.patch
             CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX}
             BUILD_COMMAND ${CMAKE_BUILD_TOOL}
             BUILD_IN_SOURCE 1
@@ -541,7 +543,7 @@ ELSE ( FETCH_ONLY )
 		  set( PLATFORM_SPECIFIC_FLAGS -with-shared )
 		endif(APPLE)
         ExternalProject_Add( ncurses
-        DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
+        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
         URL ${ncurses_URL}
         URL_MD5 ${ncurses_MD5}
         CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX} ${PLATFORM_SPECIFIC_FLAGS} --with-shared --disable-rpath --without-progs --without-debug --without-ada
@@ -560,7 +562,7 @@ ELSE ( FETCH_ONLY )
     if( WIN32 )
 	# Download and extract MySQL binaries. Or build it?
         ExternalProject_Add( mysql
-            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
             URL ${mysql_URL}
             URL_MD5 ${mysql_MD5}
             CONFIGURE_COMMAND ""
@@ -576,7 +578,7 @@ ELSE ( FETCH_ONLY )
     else( WIN32 )
         ExternalProject_Add( mysql
 	    DEPENDS zlib openssl ncurses
-            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
+            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
             URL ${mysql_URL}
             URL_MD5 ${mysql_MD5}
 	    LIST_SEPARATOR ^^
@@ -592,10 +594,10 @@ ELSE ( FETCH_ONLY )
 
     ExternalProject_Add( libharu
         DEPENDS zlib libpng patch
-        DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
         URL ${libharu_URL}
         URL_MD5 ${libharu_MD5}
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/libharu-2.3.0RC2.patch
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BASEDIR}/patches/libharu-2.3.0RC2.patch
         CMAKE_ARGS 
 	    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
         LOG_DOWNLOAD 1
@@ -610,7 +612,7 @@ ELSE ( FETCH_ONLY )
     if( UNIX AND NOT WIN32 )
         ExternalProject_Add( graphicsmagick
             DEPENDS libpng zlib bzip2 libjpeg
-            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
+            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
             URL ${graphicsmagick_URL}
             URL_MD5 ${graphicsmagick_MD5}
             CONFIGURE_COMMAND ./configure --enable-shared --prefix=${WINST_PREFIX}
@@ -627,7 +629,7 @@ ELSE ( FETCH_ONLY )
     else( UNIX AND NOT WIN32 )
       ExternalProject_Add( graphicsmagick
 	    DOWNLOAD_NAME graphicsmagick.exe
-	    DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+	    DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
 	    URL ${graphicsmagick_URL}
 	    URL_MD5 ${graphicsmagick_MD5}
 	    CONFIGURE_COMMAND ""
@@ -654,7 +656,7 @@ ELSE ( FETCH_ONLY )
     set( boost_COMMAND ${boost_BJAM} --prefix=${WINST_PREFIX} --build-type=minimal --variant=release --without-python ${boost_LINKAGE} threading=multi include=${WINST_PREFIX}/include linkflags=-L${WINST_PREFIX}/lib )
     ExternalProject_Add( boost
 	DEPENDS zlib bzip2
-        DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
         URL ${boost_URL}
         URL_MD5 ${boost_MD5}
         CONFIGURE_COMMAND ${boost_BOOTSTRAP_COMMAND}
@@ -679,9 +681,9 @@ ELSE ( FETCH_ONLY )
         ExternalProject_Add( wtgit
             DEPENDS zlib libpng libharu openssl boost ${WT_UNIXONLY_DEPENDENCIES}
             # git
-            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
             GIT_REPOSITORY http://www.webtoolkit.eu/git/wt.git
-            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/wt-3.3.0.patch
+            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BASEDIR}/patches/wt-3.3.0.patch
             CMAKE_ARGS ${wt_CMAKE_ARGS}            
             LOG_DOWNLOAD 1
             LOG_UPDATE 1
@@ -693,10 +695,10 @@ ELSE ( FETCH_ONLY )
     else( WTGIT )
         ExternalProject_Add( wt
             DEPENDS zlib libpng libharu openssl boost ${WT_UNIXONLY_DEPENDENCIES}
-            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
+            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
             URL ${wt_URL}
             URL_MD5 ${wt_MD5}
-            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/wt-3.3.0.patch
+            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BASEDIR}/patches/wt-3.3.0.patch
             CMAKE_ARGS ${wt_CMAKE_ARGS}            
             LOG_DOWNLOAD 1
             LOG_UPDATE 1

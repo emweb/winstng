@@ -15,7 +15,8 @@ else
 fi
 
 PATH_TO_SCRIPT=$(cd ${0%/*} && echo $PWD/${0##*/})
-PREFIX=`dirname "$PATH_TO_SCRIPT"`/prefix
+BASEDIR=`dirname "$PATH_TO_SCRIPT"`
+PREFIX=$BASEDIR/prefix
 
 if [ -n $1 ] && ( [ "$1" = "help" ] || [ "$1" = "--help" ] || [ "$1" = "-h" ] )
 then
@@ -32,7 +33,6 @@ CMAKE_FULLURL=http://www.cmake.org/files/v2.8/$CMAKE_ZIP
 CMAKE_DIRECTORY=cmake-2.8.10.2
 
 echo "Checking directories..."
-[ -d devutil ] || mkdir devutil
 [ -d downloads ] || mkdir downloads
 [ -d build ] || mkdir build
 
@@ -40,10 +40,10 @@ echo "Downloading CMake..."
 cd downloads
 [ -f $CMAKE_ZIP ] || $DOWNLOADER $CMAKE_FULLURL
 
-if [ ! -f ../bin/cmake ]
+if [ ! -f $PREFIX/bin/cmake ]
 then
   echo "Building and installing CMake..."
-  tar xf ../downloads/$CMAKE_ZIP
+  tar xf $BASEDIR/downloads/$CMAKE_ZIP
   cd $CMAKE_DIRECTORY
   ./bootstrap --prefix=$PREFIX
   make
@@ -57,23 +57,23 @@ echo "Bootstrapping..."
 if [ -n $1 ] && ( [ "$1" = "fetch" ] || [ "$1" = "--fetch" ] || [ "$1" = "-f" ] )
 then
   shift
-  cd ../build
-  ../bin/cmake -DFETCH_ONLY:BOOL=1 $@ ..
+  cd $BASEDIR/build
+  $PREFIX/bin/cmake -DWINST_BASEDIR:PATH=$BASEDIR -DWINST_PREFIX:PATH=$PREFIX -DFETCH_ONLY:BOOL=1 $@ $BASEDIR/cmake
 else
 
   if [ -n $1 ] && ( [ "$1" = "git" ] || [ "$1" = "--git" ] || [ "$1" = "-g" ] )
   then
     WTGIT=-DWTGIT:BOOL=1
   else
-    WTGIT=-DWTGIT:BOOL=1
+    WTGIT=-DWTGIT:BOOL=0
   fi
 
-  if [ -f ../build/fetch-only ]
+  if [ -f $BASEDIR/build/fetch-only ]
   then
-    rm -rf ../build
-    mkdir ../build
+    rm -rf $BASEDIR/build
+    mkdir $BASEDIR/build
   fi
 
-  cd ../build
-  ../bin/cmake $WTGIT $@ ..
+  cd $BASEDIR/build
+  $PREFIX/bin/cmake -DWINST_BASEDIR:PATH=$BASEDIR -DWINST_PREFIX:PATH=$PREFIX $WTGIT $@ $BASEDIR/cmake
 fi
