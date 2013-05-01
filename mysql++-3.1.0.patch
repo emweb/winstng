@@ -9,3 +9,14 @@ diff -rupd mysql++-3.1.0.orig/ssx/genv2.cpp mysql++-3.1.0/ssx/genv2.cpp
  #include <iostream>
  #include <fstream>
  #include <typeinfo>
+diff -rupd mysql++-3.1.0.orig/lib/refcounted.h mysql++-3.1.0/lib/refcounted.h
+--- mysql++-3.1.0.orig/lib/refcounted.h	2013-05-02 01:01:51.496358000 +0200
++++ mysql++-3.1.0/lib/refcounted.h	2013-05-02 01:02:29.772358000 +0200
+@@ -28,6 +28,7 @@
+ #if !defined(MYSQLPP_REFCOUNTED_H)
+ #define MYSQLPP_REFCOUNTED_H
+ 
++#include <cstddef>
+ #include <memory>
+ 
+ namespace mysqlpp {

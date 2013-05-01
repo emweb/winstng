@@ -1,5 +1,5 @@
 set( _OLDPATH $ENV{PATH} )
-set( _NEWPATH ${PROJECT_SOURCE_DIR}\\bin ${_OLDPATH} )
+set( _NEWPATH ${WINST_DIR}\\bin ${_OLDPATH} )
 set( ENV{PATH} "${_NEWPATH}" )
 
 #separate_arguments( OPENSSL_CONFIGURE_COMMAND )
