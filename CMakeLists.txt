@@ -4,7 +4,6 @@ project( winst )
 # - Firebird
 # - Pango (needs glib)
 # - Replace jpeg with jpeg-turbo
-# - Remove MySql++
 
 cmake_minimum_required(VERSION 2.8)
 
@@ -165,11 +164,6 @@ else( WIN32 AND NOT UNIX )
     set( mysql_URL http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.6/mysql-5.6.11.tar.gz )
     set( mysql_MD5 9241be729964ab4594de11baa30aec48 )
     set( _PACKAGES ${_PACKAGES} mysql )
-
-    # TODO Build on Windows using Bakefile ( http://bakefile.org )
-    set( mysqlpp_URL http://tangentsoft.net/mysql++/releases/mysql++-3.1.0.tar.gz )
-    set( mysqlpp_MD5 d92769cc579b87a60e58a77099cc4f0e )
-    set( _PACKAGES ${_PACKAGES} mysqlpp )
 
 endif( WIN32 AND NOT UNIX )
 
@@ -596,27 +590,6 @@ ELSE ( FETCH_ONLY )
             )
     endif( WIN32 )
 
-    if(UNIX)
-	# TODO On Windows, use Bakefile to build
-        ExternalProject_Add( mysqlpp
-	    DEPENDS mysql openssl
-            DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads
-            URL ${mysqlpp_URL}
-            URL_MD5 ${mysqlpp_MD5}
-	    PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${PROJECT_SOURCE_DIR}/mysql++-3.1.0.patch
-            CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX} --with-mysql=${WINST_PREFIX}
-            BUILD_COMMAND ${CMAKE_BUILD_TOOL}
-            BUILD_IN_SOURCE 1
-            INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
-            LOG_DOWNLOAD 1
-            LOG_UPDATE 1
-            LOG_CONFIGURE 1
-            LOG_BUILD 1
-            LOG_TEST 1
-            LOG_INSTALL 1
-            )
-    endif(UNIX)
-        
     ExternalProject_Add( libharu
         DEPENDS zlib libpng patch
         DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/downloads 
