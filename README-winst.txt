@@ -1,20 +1,22 @@
-winstng 0.2
+winstng 0.4
   - a witty bootstrapper
     http://gitorious.org/winstng
     
-(c) 2011-2012 Pau Garcia i Quiles <pgquiles@elpauer.org>
+(c) 2011-2013 Pau Garcia i Quiles <pgquiles@elpauer.org>
 
 
 WHAT AND WHY
 
-Wt ( http://webtoolkit.eu ) depends on a number of libraries which are not easily buildable, such as 
-Boost, PostgreSQL, MySQL, etc. On Windows, in particular, the situation is not 
-good. winstng also downloads and bootstraps CMake.
+Wt ( http://webtoolkit.eu ) depends on a number of libraries which are not 
+easily buildable, such as Boost, PostgreSQL, MySQL, etc. On Windows, in 
+particular, the situation is not good. Winstng also downloads and bootstraps 
+CMake.
 
-winstng is a bootstrapping script for Wt inspired by Emweb's own winst script.
+Winstng is a bootstrapping script for Wt inspired by Emweb's own winst script.
 
-winstng downloads and builds all the dependencies Wt requires, and Wt itself. 
-Everything is installed in a self-contained, user-owned directory.
+Winstng downloads and builds all the dependencies Wt requires, and Wt itself. 
+Everything is installed in a self-contained, user-owned directory called
+'prefix'.
 
 REQUIREMENTS
 
@@ -79,9 +81,9 @@ EXAMPLES
 
 winstng installs wrapper scripts to run the examples:
 
-* Windows: installed in 'bin'
+* Windows: installed in 'prefix\bin'
 
-* Unix: installed in 'lib/Wt/examples/<example subdir>
+* Unix: installed in 'prefix/lib/Wt/examples/<example subdir>
 
 Wrapper scripts have the same name as the example but need no parameters (you 
 can still pass parameters, if you want to). Examples are started in port 8080.
@@ -91,9 +93,9 @@ PLATFORMS
 
 Tested on:
 
- - Windows XP SP3 32-bit with MSVC2010 SP1 and Windows SDK 7.1
+ - Windows 7 SP1 64-bit with MSVC2010 SP1 and Windows SDK 8.0
  - Mac OS X 10.6.6 64-bit with XCode 3.2.5
- - Ubuntu Maverick 10.10 32-bit with gcc 4.4
+ - Ubuntu Raring 13.04 32-bit with gcc 4.7
  
 
 KNOWN ISSUES
@@ -143,18 +145,9 @@ KNOWN ISSUES
   limitation.
 
 - On Windows, winstng does not build from source for everything: GNU patch, 
-  CMake and PostgreSQL are downloaded as binaries because building them implies 
-  a lot of hassle (setting up msys) the binaries available for 32-bit and 64-bit
-  work fine.
-
-- On Windows, GraphicsMagick is not available: public binaries are useless for 
-  development (no headers or import libraries) and VisualMagick requires human 
-  interaction. This will be fixed by making VisualMagick work from the command 
-  line.
-
-- On Windows, MySQL++ is not available (= hangman example not built) because 
-  MySQL++ uses a not-so-good build system (Bakefile) and, well, hangman should 
-  really be ported to use Wt Dbo.
+  CMake, PostgreSQL, MySql and GraphicsMagick are downloaded as binaries 
+  because building them implies a lot of hassle (setting up msys) and the 
+  official ready-made binaries available for 32-bit and 64-bit work fine.
 
 - Not really an issue but worth noting: patches have DOS line-endings, otherwise 
   GNU patch crashes on Windows.
@@ -171,7 +164,7 @@ TODO
 
 LICENSE
 
-winst itself is under the MIT license.
+winstng itself is under the MIT license.
 
 The various patches have the same license as the software they apply for
 
@@ -181,7 +174,7 @@ KDE on Windows project ( http://windows.kde.org ).
 
 The MIT License
 
-Copyright (c) 2011-2012 Pau Garcia i Quiles <pgquiles@elpauer.org>
+Copyright (c) 2011-2013 Pau Garcia i Quiles <pgquiles@elpauer.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
