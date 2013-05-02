@@ -94,6 +94,10 @@ if( WIN32 AND NOT UNIX )
             set( mysql_MD5 53f1eb50c241b54eb03b0560068663ba )
             set( _PACKAGES ${_PACKAGES} mysql )
 
+	    set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0_Win32.zip )
+	    set( firebirdsql_MD5 ae81c884896c9c93ca7a55a4f5d86369 )
+	    set( _PACKAGE ${_PACKAGES} firebirdsql )
+
         else( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
         
             message( ERROR "${CMAKE_SYSTEM_PROCESSOR} architecture is not supported by the Wt bootstrapper, please build manually." )
@@ -119,6 +123,11 @@ if( WIN32 AND NOT UNIX )
         set( mysql_URL http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.6/mysql-5.6.11-win32.zip )
         set( mysql_MD5 55b368e4e139ed151cf4e16563ff451a )
         set( _PACKAGES ${_PACKAGES} mysql )
+
+
+	set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0_x64.zip )
+	set( firebirdsql_MD5 069743c3ed3e8f62179dde3d93bb2333 )
+	set( _PACKAGE ${_PACKAGES} firebirdsql )
              
     endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
@@ -166,6 +175,11 @@ else( WIN32 AND NOT UNIX )
     set( mysql_URL http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.6/mysql-5.6.11.tar.gz )
     set( mysql_MD5 9241be729964ab4594de11baa30aec48 )
     set( _PACKAGES ${_PACKAGES} mysql )
+
+    # TODO Build FirebirdSQL on Unix - On Windows, too?
+    set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0.tar.bz2 )
+    set( firebirdsql_MD5 21154d2004e025c8a3666625b0357bb5 )
+    set( _PACKAGES ${_PACKAGES} firebirdsql )
 
 endif( WIN32 AND NOT UNIX )
 
@@ -592,6 +606,40 @@ ELSE ( FETCH_ONLY )
             )
     endif( WIN32 )
 
+    if( WIN32 )
+	# Download and extract MySQL binaries. Or build it?
+        ExternalProject_Add( firebirdsql
+            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+            URL ${firebirdsql_URL}
+            URL_MD5 ${firebirdsql_MD5}
+            CONFIGURE_COMMAND ""
+            BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${WINST_PREFIX}/
+            INSTALL_COMMAND ""
+            LOG_DOWNLOAD 1
+            LOG_UPDATE 1
+            LOG_CONFIGURE 1
+            LOG_BUILD 1
+            LOG_TEST 1
+            LOG_INSTALL 1
+	    )
+    else( WIN32 )
+        ExternalProject_Add( firebirdsql
+	    DEPENDS 
+            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
+            URL ${firebirdsql_URL}
+            URL_MD5 ${firebirdsql_MD5}
+	    CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX} --enable-superserver --enable-shared
+	    BUILD_IN_SOURCE 1
+	    INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
+            LOG_DOWNLOAD 1
+            LOG_UPDATE 1
+            LOG_CONFIGURE 1
+            LOG_BUILD 1
+            LOG_TEST 1
+            LOG_INSTALL 1
+            )
+    endif( WIN32 )
+
     ExternalProject_Add( libharu
         DEPENDS zlib libpng patch
         DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
@@ -679,7 +727,7 @@ ELSE ( FETCH_ONLY )
 
     if( WTGIT )
         ExternalProject_Add( wtgit
-            DEPENDS zlib libpng libharu openssl boost ${WT_UNIXONLY_DEPENDENCIES}
+            DEPENDS zlib libpng libharu openssl boost firebirdsql mysql ${WT_UNIXONLY_DEPENDENCIES}
             # git
             DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
             GIT_REPOSITORY http://www.webtoolkit.eu/git/wt.git
@@ -694,7 +742,7 @@ ELSE ( FETCH_ONLY )
         )
     else( WTGIT )
         ExternalProject_Add( wt
-            DEPENDS zlib libpng libharu openssl boost ${WT_UNIXONLY_DEPENDENCIES}
+            DEPENDS zlib libpng libharu openssl boost firebirdsql mysql ${WT_UNIXONLY_DEPENDENCIES}
             DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
             URL ${wt_URL}
             URL_MD5 ${wt_MD5}
