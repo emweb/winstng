@@ -176,6 +176,10 @@ else( WIN32 AND NOT UNIX )
     set( mysql_MD5 9241be729964ab4594de11baa30aec48 )
     set( _PACKAGES ${_PACKAGES} mysql )
 
+    set( fakerootng_URL http://prdownloads.sourceforge.net/fakerootng/fakeroot-ng-0.18.tar.gz )
+    set( fakerootng_MD5 7bdfd3a72d00b4847e2023d922c289fa )
+    set( _PACKAGES ${_PACKAGES} fakerootng )
+
     # TODO Build FirebirdSQL on Unix - On Windows, too?
     set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0.tar.bz2 )
     set( firebirdsql_MD5 21154d2004e025c8a3666625b0357bb5 )
@@ -606,6 +610,24 @@ ELSE ( FETCH_ONLY )
             )
     endif( WIN32 )
 
+    if( UNIX )
+        ExternalProject_Add( fakerootng
+            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
+            URL ${fakerootng_URL}
+            URL_MD5 ${fakerootng_MD5}
+	    PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BASEDIR}/patches/fakerootng-0.18-fixBroken32Bit.patch
+	    CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX}
+	    BUILD_IN_SOURCE 1
+	    INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
+            LOG_DOWNLOAD 1
+            LOG_UPDATE 1
+            LOG_CONFIGURE 1
+            LOG_BUILD 1
+            LOG_TEST 1
+            LOG_INSTALL 1
+            )      
+    endif( UNIX )
+
     if( WIN32 )
 	# Download and extract MySQL binaries. Or build it?
         ExternalProject_Add( firebirdsql
@@ -624,13 +646,13 @@ ELSE ( FETCH_ONLY )
 	    )
     else( WIN32 )
         ExternalProject_Add( firebirdsql
-	    DEPENDS 
+	    DEPENDS fakerootng
             DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
             URL ${firebirdsql_URL}
             URL_MD5 ${firebirdsql_MD5}
 	    CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX} --enable-superserver --enable-shared
 	    BUILD_IN_SOURCE 1
-	    INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
+	    INSTALL_COMMAND ${WINST_PREFIX}/bin/fakeroot-ng ${CMAKE_BUILD_TOOL} -C gen install -f Makefile.install buildRoot && mv ./gen/buildRoot/* ${WINST_PREFIX}/
             LOG_DOWNLOAD 1
             LOG_UPDATE 1
             LOG_CONFIGURE 1
