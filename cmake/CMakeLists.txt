@@ -176,8 +176,8 @@ else( WIN32 AND NOT UNIX )
     set( mysql_MD5 9241be729964ab4594de11baa30aec48 )
     set( _PACKAGES ${_PACKAGES} mysql )
 
-    set( fakerootng_URL http://prdownloads.sourceforge.net/fakerootng/fakeroot-ng-0.18.tar.gz )
-    set( fakerootng_MD5 7bdfd3a72d00b4847e2023d922c289fa )
+    set( fakerootng_URL http://prdownloads.sourceforge.net/fakerootng/fakeroot-ng-0.17.tar.gz )
+    set( fakerootng_MD5 972b022a10cdeb0f61052982002f42b4 )
     set( _PACKAGES ${_PACKAGES} fakerootng )
 
     # TODO Build FirebirdSQL on Unix - On Windows, too?
@@ -615,7 +615,7 @@ ELSE ( FETCH_ONLY )
             DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
             URL ${fakerootng_URL}
             URL_MD5 ${fakerootng_MD5}
-	    PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BASEDIR}/patches/fakerootng-0.18-fixBroken32Bit.patch
+	    #PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BASEDIR}/patches/fakerootng-0.18-fixBroken32Bit.patch
 	    CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX}
 	    BUILD_IN_SOURCE 1
 	    INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
