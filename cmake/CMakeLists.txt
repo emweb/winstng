@@ -650,7 +650,7 @@ ELSE ( FETCH_ONLY )
             DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
             URL ${firebirdsql_URL}
             URL_MD5 ${firebirdsql_MD5}
-	    CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX} --enable-superserver --enable-shared
+	    CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX} --without-editline --enable-superserver --enable-shared
 	    BUILD_IN_SOURCE 1
 	    INSTALL_COMMAND ${WINST_PREFIX}/bin/fakeroot-ng ${CMAKE_BUILD_TOOL} -C gen install -f Makefile.install buildRoot && mv ./gen/buildRoot/* ${WINST_PREFIX}/
             LOG_DOWNLOAD 1
