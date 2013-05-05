@@ -84,7 +84,7 @@
 @echo Setting up CMake...
 @IF EXIST %PREFIX%\bin\cmake.exe GOTO BOOTSTRAP
 @unzip %BASEDIR%\downloads\%CMAKE_ZIP%
-@xcopy /Y /S %CMAKE_DIRECTORY%\*.* %PREFIX%
+@xcopy /Y /S %CMAKE_DIRECTORY%\*.* %PREFIX%\
 @rd /q /s %CMAKE_DIRECTORY%
 
 :BOOTSTRAP
