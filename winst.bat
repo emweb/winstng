@@ -18,6 +18,8 @@
 )
 
 @SET BASEDIR=%CD%
+@SET BATDIR=%~dp0
+ECHO BATDIR = %BATDIR%
 @SET WGET_FILENAME=wget.exe
 @SET WGET_FTP_SITE=ftp.kfki.hu
 @SET WGET_FTP_DIRECTORY=/pub/w2
@@ -46,17 +48,17 @@
 :WGET
 @echo Downloading wget...
 
-@IF EXIST %BASEDIR%\downloads\%WGET_FILENAME% GOTO DOWNLOAD
-@echo open %WGET_FTP_SITE% >> %BASEDIR%\downloads\curl.ftp
-@echo anonymous >> %BASEDIR%\downloads\curl.ftp
-@echo pass ano@nymo.us >> %BASEDIR%\downloads\curl.ftp
-@echo binary >> %BASEDIR%\downloads\curl.ftp
-@echo get %WGET_FTP_PATH% %BASEDIR%\downloads/%WGET_FILENAME% >> %BASEDIR%\downloads\curl.ftp
-@echo close >> %BASEDIR%\downloads\curl.ftp
+@IF EXIST "%BASEDIR%\downloads\%WGET_FILENAME%" GOTO DOWNLOAD
+@echo open %WGET_FTP_SITE% >> "%BASEDIR%\downloads\curl.ftp"
+@echo anonymous >> "%BASEDIR%\downloads\curl.ftp"
+@echo pass ano@nymo.us >> "%BASEDIR%\downloads\curl.ftp"
+@echo binary >> "%BASEDIR%\downloads\curl.ftp"
+@echo get %WGET_FTP_PATH% %BASEDIR%\downloads/%WGET_FILENAME% >> "%BASEDIR%\downloads\curl.ftp"
+@echo close >> "%BASEDIR%\downloads\curl.ftp"
 
-@echo quit >> %BASEDIR%\downloads\curl.ftp
+@echo quit >> "%BASEDIR%\downloads\curl.ftp"
 
-@ftp -s:%BASEDIR%\downloads\curl.ftp
+@ftp -s:"%BASEDIR%\downloads\curl.ftp"
 
 :DOWNLOAD
 @cd downloads
@@ -73,29 +75,32 @@
 
 :INSTALLSTEP
 @echo Setting up prerequisites...
-@cd %PREFIX%
+@cd "%PREFIX%"
 
 :INSTALLUNZIP
 @echo Setting up unzip...
 @IF EXIST unzip.exe GOTO INSTALLCMAKE
-@%BASEDIR%\downloads\%UNZIP_SFX% -o
+@"%BASEDIR%\downloads\%UNZIP_SFX%" -o
 
 :INSTALLCMAKE
 @echo Setting up CMake...
-@IF EXIST %PREFIX%\bin\cmake.exe GOTO BOOTSTRAP
-@unzip %BASEDIR%\downloads\%CMAKE_ZIP%
-@xcopy /Y /S %CMAKE_DIRECTORY%\*.* %PREFIX%\
-@rd /q /s %CMAKE_DIRECTORY%
+@IF EXIST "%PREFIX%\bin\cmake.exe" GOTO BOOTSTRAP
+@unzip "%BASEDIR%\downloads\%CMAKE_ZIP%"
+@xcopy /Y /S "%CMAKE_DIRECTORY%\*.*" "%PREFIX%\"
+@rd /q /s "%CMAKE_DIRECTORY%"
 
 :BOOTSTRAP
 @echo Bootstrapping...
+
+@echo Replace with patched CMake now!
+PAUSE
 
 @echo on
 @IF NOT [%1]==[] (
     @IF /I "%1"=="fetch" ( 
         SHIFT
-        cd %BASEDIR%\build
-        %PREFIX%\bin\cmake -DFETCH_ONLY:BOOL=1 %* %BASEDIR%\cmake
+        cd "%BASEDIR%\build"
+        "%PREFIX%\bin\cmake.exe" -DFETCH_ONLY:BOOL=1 %* "%BATDIR%\cmake"
     ) ELSE (
         @IF /I "%1"=="git" (
             set WTGIT=-DWTGIT:BOOL=1
@@ -104,24 +109,24 @@
         )
         echo WTGIT = %WTGIT%
         
-        @IF EXIST %BASEDIR%\build\fetch-only (
-            @rd /q /s %BASEDIR%\build
-            @mkdir %BASEDIR%\build
-            @cd %BASEDIR%\build
-            %PREFIX%\bin\cmake -DWINST_BASEDIR:PATH=%BASEDIR% -DWINST_PREFIX:PATH=%PREFIX% %WTGIT% %* %BASEDIR%\cmake
+        @IF EXIST "%BASEDIR%\build\fetch-only" (
+            @rd /q /s "%BASEDIR%\build"
+            @mkdir "%BASEDIR%\build"
+            @cd "%BASEDIR%\build"
+            "%PREFIX%\bin\cmake.exe" -DWINST_BASEDIR:PATH="%BASEDIR%" -DWINST_PREFIX:PATH="%PREFIX%" %WTGIT% %* "%BATDIR%\cmake"
         ) ELSE (
             @IF EXIST %BASEDIR%\build\Nul (
-                @cd %BASEDIR%\build
-                %PREFIX%\bin\cmake -DWINST_BASEDIR:PATH=%BASEDIR% -DWINST_PREFIX:PATH=%PREFIX% %WTGIT% %* %BASEDIR%\cmake
+                @cd "%BASEDIR%\build"
+                "%PREFIX%\bin\cmake.exe" -DWINST_BASEDIR:PATH="%BASEDIR%" -DWINST_PREFIX:PATH="%PREFIX%" %WTGIT% %* "%BATDIR%\cmake"
             )
         )
     )
 ) ELSE (
-    @IF EXIST %BASEDIR%\build\fetch-only (
-        @rd /q /s %BASEDIR%\build
-        @mkdir %BASEDIR%\build
+    @IF EXIST "%BASEDIR%\build\fetch-only" (
+        @rd /q /s "%BASEDIR%\build"
+        @mkdir "%BASEDIR%\build"
     )
 
-    @cd %BASEDIR%\build
-    %PREFIX%\bin\cmake -DWINST_BASEDIR:PATH=%BASEDIR% -DWINST_PREFIX:PATH=%PREFIX% %* %BASEDIR%\cmake
+    @cd "%BASEDIR%\build"
+    "%PREFIX%\bin\cmake.exe" -DWINST_BASEDIR:PATH="%BASEDIR%" -DWINST_PREFIX:PATH="%PREFIX%" %* "%BATDIR%\cmake"
 )
