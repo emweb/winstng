@@ -13,6 +13,10 @@ include (ExternalProject)
 #set(WINST_PREFIX ${PROJECT_SOURCE_DIR}/prefix)
 #set(WINST_BASEDIR ${PROJECT_SOURCE_DIR}/..
 
+set(WINST_BATDIR ${WINST_BATDIR_} CACHE PATH "winst source directory" FORCE)
+set(WINST_BASEDIR ${WINST_BASEDIR_} CACHE PATH "winst global work directory" FORCE)
+set(WINST_PREFIX ${WINST_PREFIX_} CACHE PATH "winst prefix directory" FORCE)
+
 # Make sure we use bootstrapped dependencies
 set(CMAKE_PREFIX_PATH ${WINST_PREFIX} )
 
@@ -207,7 +211,7 @@ ELSE ( FETCH_ONLY )
             URL_MD5 ${patch_MD5}
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${WINST_PREFIX}/
-            INSTALL_COMMAND ""
+            INSTALL_COMMAND ${CMAKE_COMMAND} -E copy ${WINST_BATDIR}/patches/patch.exe.manifest ${WINST_PREFIX}/bin/
             LOG_DOWNLOAD 1
             LOG_UPDATE 1
             LOG_CONFIGURE 1
@@ -328,7 +332,7 @@ ELSE ( FETCH_ONLY )
 	        URL ${bzip2_URL}
 	        URL_MD5 ${bzip2_MD5}
 		LIST_SEPARATOR ^^
-	        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BASEDIR}/patches/bzip2.patch
+	        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/bzip2.patch
 	        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
 	        LOG_DOWNLOAD 1
 	        LOG_UPDATE 1
@@ -344,7 +348,7 @@ ELSE ( FETCH_ONLY )
         URL ${libpng_URL}
         URL_MD5 ${libpng_MD5}
 #	LIST_SEPARATOR ^^
-#	PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BASEDIR}/patches/libpng-export.patch
+#	PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libpng-export.patch
         CMAKE_ARGS 
 	# -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include 
 	-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
@@ -362,7 +366,7 @@ ELSE ( FETCH_ONLY )
         URL ${libjpeg_URL}
         URL_MD5 ${libjpeg_MD5}
 	LIST_SEPARATOR ^^
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BASEDIR}/patches/jpeg8.patch
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/jpeg8.patch
         CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -374,11 +378,11 @@ ELSE ( FETCH_ONLY )
         
     ExternalProject_Add( freetype
         DEPENDS zlib libpng patch
-        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+        DOWNLOAD_DIR ${WINST_BASEDR}/downloads 
         URL ${freetype_URL}
         URL_MD5 ${freetype_MD5}
 	LIST_SEPARATOR ^^
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BASEDIR}/patches/freetype-2.3.12.patch
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/freetype-2.3.12.patch
         CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX} 
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -451,12 +455,12 @@ ELSE ( FETCH_ONLY )
         URL ${openssl_URL}
         URL_MD5 ${openssl_MD5}
 	LIST_SEPARATOR ^^
-        UPDATE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_CONFIGURE_COMMAND:STRING=${OPENSSL_CONFIGURE_COMMAND} -P ${WINST_BASEDIR}/cmake/configure-openssl.cmake
-   #    PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BASEDIR}/patches/openssl-1.0.1e.patch
-        CONFIGURE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_GENASM_COMMAND=${OPENSSL_GENASM_COMMAND} -P ${WINST_BASEDIR}/cmake/genasm-openssl.cmake
-        BUILD_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_BUILD_COMMAND=${OPENSSL_BUILD_COMMAND} -P ${WINST_BASEDIR}/cmake/build-openssl.cmake
+        UPDATE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_CONFIGURE_COMMAND:STRING=${OPENSSL_CONFIGURE_COMMAND} -P ${WINST_BATDIR}/cmake/configure-openssl.cmake
+   #    PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/openssl-1.0.1e.patch
+        CONFIGURE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_GENASM_COMMAND=${OPENSSL_GENASM_COMMAND} -P ${WINST_BATDIR}/cmake/genasm-openssl.cmake
+        BUILD_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_BUILD_COMMAND=${OPENSSL_BUILD_COMMAND} -P ${WINST_BATDIR}/cmake/build-openssl.cmake
         BUILD_IN_SOURCE 1
-        INSTALL_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_INSTALL_COMMAND=${OPENSSL_INSTALL_COMMAND} -P ${WINST_BASEDIR}/cmake/install-openssl.cmake
+        INSTALL_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_INSTALL_COMMAND=${OPENSSL_INSTALL_COMMAND} -P ${WINST_BATDIR}/cmake/install-openssl.cmake
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -541,7 +545,7 @@ ELSE ( FETCH_ONLY )
             DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
             URL ${fcgi_URL}
             URL_MD5 ${fcgi_MD5}
-            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BASEDIR}/patches/fcgi-2.4.0-cstdiofix.patch
+            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/fcgi-2.4.0-cstdiofix.patch
             CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX}
             BUILD_COMMAND ${CMAKE_BUILD_TOOL}
             BUILD_IN_SOURCE 1
@@ -615,7 +619,7 @@ ELSE ( FETCH_ONLY )
             DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
             URL ${fakerootng_URL}
             URL_MD5 ${fakerootng_MD5}
-	    #PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BASEDIR}/patches/fakerootng-0.18-fixBroken32Bit.patch
+	    #PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/fakerootng-0.18-fixBroken32Bit.patch
 	    CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX}
 	    BUILD_IN_SOURCE 1
 	    INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
@@ -667,7 +671,7 @@ ELSE ( FETCH_ONLY )
         DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
         URL ${libharu_URL}
         URL_MD5 ${libharu_MD5}
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BASEDIR}/patches/libharu-2.3.0RC2.patch
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libharu-2.3.0RC2.patch
         CMAKE_ARGS 
 	    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
         LOG_DOWNLOAD 1
@@ -703,7 +707,7 @@ ELSE ( FETCH_ONLY )
 	    URL ${graphicsmagick_URL}
 	    URL_MD5 ${graphicsmagick_MD5}
 	    CONFIGURE_COMMAND ""
-	    BUILD_COMMAND "<DOWNLOAD_DIR>graphicsmagick.exe /VERYSILENT /NORESTART /DIR=\"${WINST_PREFIX}\\bin\" /NOICONS /SP-"
+	    EXTRACT_COMMAND "<DOWNLOAD_DIR>graphicsmagick.exe /VERYSILENT /NORESTART /DIR=\"${WINST_PREFIX}\\bin\" /NOICONS /SP-"
 	    INSTALL_COMMAND ""
 	    LOG_DOWNLOAD 1
 	    LOG_UPDATE 1
@@ -753,7 +757,7 @@ ELSE ( FETCH_ONLY )
             # git
             DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
             GIT_REPOSITORY http://www.webtoolkit.eu/git/wt.git
-            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BASEDIR}/patches/wt-3.3.0.patch
+            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/wt-3.3.0.patch
             CMAKE_ARGS ${wt_CMAKE_ARGS}            
             LOG_DOWNLOAD 1
             LOG_UPDATE 1
@@ -768,7 +772,7 @@ ELSE ( FETCH_ONLY )
             DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
             URL ${wt_URL}
             URL_MD5 ${wt_MD5}
-            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BASEDIR}/patches/wt-3.3.0.patch
+            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/wt-3.3.0.patch
             CMAKE_ARGS ${wt_CMAKE_ARGS}            
             LOG_DOWNLOAD 1
             LOG_UPDATE 1

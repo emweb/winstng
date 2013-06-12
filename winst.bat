@@ -113,11 +113,11 @@ PAUSE
             @rd /q /s "%BASEDIR%\build"
             @mkdir "%BASEDIR%\build"
             @cd "%BASEDIR%\build"
-            "%PREFIX%\bin\cmake.exe" -DWINST_BASEDIR:PATH="%BASEDIR%" -DWINST_PREFIX:PATH="%PREFIX%" %WTGIT% %* "%BATDIR%\cmake"
+            "%PREFIX%\bin\cmake.exe" -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" %WTGIT% %* "%BATDIR%\cmake"
         ) ELSE (
             @IF EXIST %BASEDIR%\build\Nul (
                 @cd "%BASEDIR%\build"
-                "%PREFIX%\bin\cmake.exe" -DWINST_BASEDIR:PATH="%BASEDIR%" -DWINST_PREFIX:PATH="%PREFIX%" %WTGIT% %* "%BATDIR%\cmake"
+                "%PREFIX%\bin\cmake.exe" -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" %WTGIT% %* "%BATDIR%\cmake"
             )
         )
     )
@@ -128,5 +128,5 @@ PAUSE
     )
 
     @cd "%BASEDIR%\build"
-    "%PREFIX%\bin\cmake.exe" -DWINST_BASEDIR:PATH="%BASEDIR%" -DWINST_PREFIX:PATH="%PREFIX%" %* "%BATDIR%\cmake"
+    "%PREFIX%\bin\cmake.exe" -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" %* "%BATDIR%\cmake"
 )
