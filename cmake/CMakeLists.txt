@@ -1,3 +1,4 @@
+
 project( winst )
 
 # TODO Missing dependencies:
@@ -706,9 +707,8 @@ ELSE ( FETCH_ONLY )
 	    DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
 	    URL ${graphicsmagick_URL}
 	    URL_MD5 ${graphicsmagick_MD5}
-	    CONFIGURE_COMMAND ""
-	    EXTRACT_COMMAND "<DOWNLOAD_DIR>graphicsmagick.exe /VERYSILENT /NORESTART /DIR=\"${WINST_PREFIX}\\bin\" /NOICONS /SP-"
-	    INSTALL_COMMAND ""
+	    EXTRACT_COMMAND ${CMAKE_COMMAND} -E copy ${WINST_BATDIR}/patches/graphicsmagick.exe.manifest ${WINST_PREFIX}/bin/
+	    CONFIGURE_COMMAND <DOWNLOAD_DIR>graphicsmagick.exe /VERYSILENT /NORESTART /DIR=\"${WINST_PREFIX}/bin\" /NOICONS /SP-
 	    LOG_DOWNLOAD 1
 	    LOG_UPDATE 1
 	    LOG_CONFIGURE 1
