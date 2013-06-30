@@ -91,17 +91,17 @@ if( WIN32 AND NOT UNIX )
             set( postgresql_MD5 a0388908fdce75f9c642454c7435e898 )
             set( _PACKAGES ${_PACKAGES} postgresql )
 
-	    set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/graphicsmagick-binaries/1.3.18/GraphicsMagick-1.3.18-Q8-win64-dll.exe )
-	    set( graphicsmagick_MD5 bd25adb9e8218aabcd68a034116396e6 )
-	    set( _PACKAGES ${_PACKAGES} graphicsmagick )
+            set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/graphicsmagick-binaries/1.3.18/GraphicsMagick-1.3.18-Q8-win64-dll.exe )
+            set( graphicsmagick_MD5 bd25adb9e8218aabcd68a034116396e6 )
+            set( _PACKAGES ${_PACKAGES} graphicsmagick )
 
             set( mysql_URL http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.6/mysql-5.6.11-winx64.zip )
             set( mysql_MD5 53f1eb50c241b54eb03b0560068663ba )
             set( _PACKAGES ${_PACKAGES} mysql )
 
-	    set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0_Win32.zip )
-	    set( firebirdsql_MD5 ae81c884896c9c93ca7a55a4f5d86369 )
-	    set( _PACKAGE ${_PACKAGES} firebirdsql )
+            set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0_Win32.zip )
+            set( firebirdsql_MD5 ae81c884896c9c93ca7a55a4f5d86369 )
+            set( _PACKAGE ${_PACKAGES} firebirdsql )
 
         else( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
         
@@ -118,21 +118,14 @@ if( WIN32 AND NOT UNIX )
         set( postgresql_URL http://get.enterprisedb.com/postgresql/postgresql-9.2.4-1-windows-binaries.zip )
         set( postgesql_MD5 516ce6950a74646c80665435f74ae757 )
         set( _PACKAGES ${_PACKAGES} postgresql )
-
-# GraphicsMagick-1.3.18-Q8-win32-dll.exe /VERYSILENT /NORESTART /DIR="c:\graphicsmagick" /NOICONS /SP-
-
-	set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/graphicsmagick-binaries/1.3.18/GraphicsMagick-1.3.18-Q8-win32-dll.exe )
-	set( graphicsmagick_MD5 9ea52d767dff3628c3918c5ee5774be1 )
-	set( _PACKAGES ${_PACKAGES} graphicsmagick )
         
         set( mysql_URL http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.6/mysql-5.6.11-win32.zip )
         set( mysql_MD5 55b368e4e139ed151cf4e16563ff451a )
         set( _PACKAGES ${_PACKAGES} mysql )
 
-
-	set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0_x64.zip )
-	set( firebirdsql_MD5 069743c3ed3e8f62179dde3d93bb2333 )
-	set( _PACKAGE ${_PACKAGES} firebirdsql )
+        set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0_x64.zip )
+        set( firebirdsql_MD5 069743c3ed3e8f62179dde3d93bb2333 )
+        set( _PACKAGE ${_PACKAGES} firebirdsql )
              
     endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
@@ -316,7 +309,7 @@ ELSE ( FETCH_ONLY )
         DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
         URL ${zlib_URL}
         URL_MD5 ${zlib_MD5}
-	LIST_SEPARATOR ^^
+        LIST_SEPARATOR ^^
         PATCH_COMMAND ${CMAKE_COMMAND} -E remove zconf.h
         CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
         LOG_DOWNLOAD 1
@@ -350,7 +343,7 @@ ELSE ( FETCH_ONLY )
         URL_MD5 ${libpng_MD5}
 #	LIST_SEPARATOR ^^
 #	PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libpng-export.patch
-        CMAKE_ARGS 
+#        CMAKE_ARGS 
 	# -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include 
 	-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
         LOG_DOWNLOAD 1
@@ -443,8 +436,8 @@ ELSE ( FETCH_ONLY )
           set( OPENSSL_CONFIGURE_COMMAND ./config^^shared^^--prefix=${WINST_PREFIX} )
         endif( APPLE AND CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
-	set( OPENSSL_BUILD_COMMAND ${CMAKE_BUILD_TOOL} )
-	set( OPENSSL_INSTALL_COMMAND ${CMAKE_BUILD_TOOL}^^install )
+        set( OPENSSL_BUILD_COMMAND ${CMAKE_BUILD_TOOL} )
+        set( OPENSSL_INSTALL_COMMAND ${CMAKE_BUILD_TOOL}^^install )
     endif( WIN32 AND NOT UNIX )
 
     set( _OLDPATH $ENV{PATH} )
@@ -620,10 +613,10 @@ ELSE ( FETCH_ONLY )
             DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
             URL ${fakerootng_URL}
             URL_MD5 ${fakerootng_MD5}
-	    #PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/fakerootng-0.18-fixBroken32Bit.patch
-	    CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX}
-	    BUILD_IN_SOURCE 1
-	    INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
+            #PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/fakerootng-0.18-fixBroken32Bit.patch
+            CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX}
+            BUILD_IN_SOURCE 1
+            INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
             LOG_DOWNLOAD 1
             LOG_UPDATE 1
             LOG_CONFIGURE 1
@@ -655,9 +648,9 @@ ELSE ( FETCH_ONLY )
             DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
             URL ${firebirdsql_URL}
             URL_MD5 ${firebirdsql_MD5}
-	    CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX} --without-editline --enable-superserver --enable-shared
-	    BUILD_IN_SOURCE 1
-	    INSTALL_COMMAND ${WINST_PREFIX}/bin/fakeroot-ng ${CMAKE_BUILD_TOOL} -C gen install -f Makefile.install buildRoot && mv ./gen/buildRoot/* ${WINST_PREFIX}/
+            CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX} --without-editline --enable-superserver --enable-shared
+            BUILD_IN_SOURCE 1
+            INSTALL_COMMAND ${WINST_PREFIX}/bin/fakeroot-ng ${CMAKE_BUILD_TOOL} -C gen install -f Makefile.install buildRoot && mv ./gen/buildRoot/* ${WINST_PREFIX}/
             LOG_DOWNLOAD 1
             LOG_UPDATE 1
             LOG_CONFIGURE 1
@@ -701,21 +694,6 @@ ELSE ( FETCH_ONLY )
             LOG_TEST 1
             LOG_INSTALL 1
             )
-    else( UNIX AND NOT WIN32 )
-      ExternalProject_Add( graphicsmagick
-	    DOWNLOAD_NAME graphicsmagick.exe
-	    DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
-	    URL ${graphicsmagick_URL}
-	    URL_MD5 ${graphicsmagick_MD5}
-	    EXTRACT_COMMAND ${CMAKE_COMMAND} -E copy ${WINST_BATDIR}/patches/graphicsmagick.exe.manifest ${WINST_PREFIX}/bin/
-	    CONFIGURE_COMMAND <DOWNLOAD_DIR>graphicsmagick.exe /VERYSILENT /NORESTART /DIR=\"${WINST_PREFIX}/bin\" /NOICONS /SP-
-	    LOG_DOWNLOAD 1
-	    LOG_UPDATE 1
-	    LOG_CONFIGURE 1
-	    LOG_BUILD 1
-	    LOG_TEST 1
-	    LOG_INSTALL 1
-	    )
     endif( UNIX AND NOT WIN32 )
 
     if( WIN32 AND NOT UNIX )
@@ -746,14 +724,14 @@ ELSE ( FETCH_ONLY )
         )
     
     if(UNIX)
-        set( WT_UNIXONLY_DEPENDENCIES fcgi )
+        set( WT_UNIXONLY_DEPENDENCIES fcgi graphicsmagick )
     endif(UNIX)
     
     set( wt_CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX} -DWT_CMAKE_FINDER_INSTALL_DIR:PATH=/share/cmake-2.8/Modules -DBoost_NO_SYSTEM_PATHS:BOOL=1 -DBOOST_ROOT:PATH=${WINST_PREFIX} -DCONFIGDIR:PATH=${WINST_PREFIX}/etc/wt -DFCGI_PREFIX:PATH=${WINST_PREFIX} -DGM_PREFIX=${WINST_PREFIX} -DHARU_PREFIX=${WINST_PREFIX} -DPOSTGRES_PREFIX=${WINST_PREFIX} -DZLIB_PREFIX=${WINST_PREFIX} -DRUNDIR=${WINST_PREFIX}/var/run/wt -DINSTALL_EXAMPLES:BOOL=1 -DSSL_PREFIX=${WINST_PREFIX} -DEXAMPLES_DESTINATION=lib/Wt/examples )
 
     if( WTGIT )
         ExternalProject_Add( wtgit
-            DEPENDS zlib libpng libharu openssl boost firebirdsql mysql ${WT_UNIXONLY_DEPENDENCIES}
+            DEPENDS zlib libpng libharu openssl boost firebirdsql mysql postgresql ${WT_UNIXONLY_DEPENDENCIES}
             # git
             DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
             GIT_REPOSITORY http://www.webtoolkit.eu/git/wt.git
@@ -768,7 +746,7 @@ ELSE ( FETCH_ONLY )
         )
     else( WTGIT )
         ExternalProject_Add( wt
-            DEPENDS zlib libpng libharu openssl boost firebirdsql mysql ${WT_UNIXONLY_DEPENDENCIES}
+            DEPENDS zlib libpng libharu openssl boost firebirdsql mysql postgresql ${WT_UNIXONLY_DEPENDENCIES}
             DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
             URL ${wt_URL}
             URL_MD5 ${wt_MD5}
