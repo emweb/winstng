@@ -28,9 +28,9 @@ then
   exit
 fi
 
-CMAKE_ZIP=cmake-2.8.10.2.tar.gz
+CMAKE_ZIP=cmake-2.8.11.1.tar.gz
 CMAKE_FULLURL=http://www.cmake.org/files/v2.8/$CMAKE_ZIP
-CMAKE_DIRECTORY=cmake-2.8.10.2
+CMAKE_DIRECTORY=cmake-2.8.11.1
 
 echo "Checking directories..."
 [ -d downloads ] || mkdir downloads

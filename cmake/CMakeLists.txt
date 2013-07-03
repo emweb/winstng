@@ -23,8 +23,8 @@ set(CMAKE_PREFIX_PATH ${WINST_PREFIX} )
 
 # Files to download
 
-set( zlib_URL http://prdownloads.sourceforge.net/libpng/zlib-1.2.7.tar.gz )
-set( zlib_MD5 60df6a37c56e7c1366cca812414f7b85 )
+set( zlib_URL http://prdownloads.sourceforge.net/libpng/zlib-1.2.8.tar.gz )
+set( zlib_MD5 44d667c142d7cda120332623eab69f40 )
 set( _PACKAGES ${_PACKAGES} zlib )
 
 set( bzip2_URL http://bzip.org/1.0.6/bzip2-1.0.6.tar.gz )
@@ -52,7 +52,7 @@ set( libharu_MD5 504afd61fc26b65279a2179a2b0aa948 )
 set( _PACKAGES ${_PACKAGES} libharu )
 
 set( boost_URL http://prdownloads.sourceforge.net/boost/boost_1_53_0.tar.bz2 )
-set( boost_MD5  )
+set( boost_MD5 a00d22605d5dbcfb4c9936a9b35bc4c2 )
 set( _PACKAGES ${_PACKAGES} boost )
 
 set( wt_URL http://prdownloads.sourceforge.net/witty/wt-3.3.0.tar.gz )
@@ -95,8 +95,8 @@ if( WIN32 AND NOT UNIX )
             set( graphicsmagick_MD5 bd25adb9e8218aabcd68a034116396e6 )
             set( _PACKAGES ${_PACKAGES} graphicsmagick )
 
-            set( mysql_URL http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.6/mysql-5.6.11-winx64.zip )
-            set( mysql_MD5 53f1eb50c241b54eb03b0560068663ba )
+            set( mysql_URL http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.6/mysql-5.6.12-winx64.zip )
+            set( mysql_MD5 6e8ba86bdabc9e4eb861395f453cbc54 )
             set( _PACKAGES ${_PACKAGES} mysql )
 
             set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0_Win32.zip )
@@ -119,8 +119,8 @@ if( WIN32 AND NOT UNIX )
         set( postgesql_MD5 516ce6950a74646c80665435f74ae757 )
         set( _PACKAGES ${_PACKAGES} postgresql )
         
-        set( mysql_URL http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.6/mysql-5.6.11-win32.zip )
-        set( mysql_MD5 55b368e4e139ed151cf4e16563ff451a )
+        set( mysql_URL http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.6/mysql-5.6.12-win32.zip )
+        set( mysql_MD5 c0f078ad92aedee7a1286d29128b12d8 )
         set( _PACKAGES ${_PACKAGES} mysql )
 
         set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0_x64.zip )
@@ -343,7 +343,7 @@ ELSE ( FETCH_ONLY )
         URL_MD5 ${libpng_MD5}
 #	LIST_SEPARATOR ^^
 #	PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libpng-export.patch
-#        CMAKE_ARGS 
+        CMAKE_ARGS 
 	# -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include 
 	-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
         LOG_DOWNLOAD 1

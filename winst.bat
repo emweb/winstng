@@ -28,9 +28,9 @@ ECHO BATDIR = %BATDIR%
 @SET UNZIP_FULLURL=ftp://ftp.info-zip.org/pub/infozip/win32/%UNZIP_SFX%
 
 @SET WGET_FTP_PATH=%WGET_FTP_DIRECTORY%/%WGET_FILENAME%
-@SET CMAKE_ZIP=cmake-2.8.10.2-win32-x86.zip
+@SET CMAKE_ZIP=cmake-2.8.11.1-win32-x86.zip
 @SET CMAKE_FULLURL=http://www.cmake.org/files/v2.8/%CMAKE_ZIP%
-@SET CMAKE_DIRECTORY=cmake-2.8.10.2-win32-x86
+@SET CMAKE_DIRECTORY=cmake-2.8.11.1-win32-x86
 
 @SET PREFIX=%BASEDIR%\prefix
 
@@ -92,9 +92,6 @@ ECHO BATDIR = %BATDIR%
 :BOOTSTRAP
 @echo Bootstrapping...
 
-@echo Replace with patched CMake now!
-PAUSE
-
 @echo on
 @IF NOT [%1]==[] (
     @IF /I "%1"=="fetch" ( 
@@ -107,7 +104,6 @@ PAUSE
         ) ELSE (
             set WTGIT=-DWTGIT:BOOL=0
         )
-        echo WTGIT = %WTGIT%
         
         @IF EXIST "%BASEDIR%\build\fetch-only" (
             @rd /q /s "%BASEDIR%\build"
