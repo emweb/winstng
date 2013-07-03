@@ -43,8 +43,13 @@ set( freetype_URL http://download.savannah.gnu.org/releases/freetype/freetype-2.
 set( freetype_MD5 b93435488942486c8d0ca22e8f768034 )
 set( _PACKAGES ${_PACKAGES} freetype )
 
-set( openssl_URL http://openssl.org/source/openssl-1.0.1e.tar.gz )
-set( openssl_MD5 66bf6f10f060d561929de96f9dfe5b8c )
+if(WIN32)
+    set( openssl_URL https://github.com/openssl/openssl/archive/OpenSSL_1_0_1e.zip )
+    set( openssl_MD5 5a8d690c6cd83f0c532a96f5bb55a0b8 )
+else(WIN32)
+    set( openssl_URL http://openssl.org/source/openssl-1.0.1e.tar.gz )
+    set( openssl_MD5 66bf6f10f060d561929de96f9dfe5b8c )
+endif(WIN32)
 set( _PACKAGES ${_PACKAGES} openssl )
 
 set( libharu_URL http://libharu.org/files/libhpdf-2.3.0RC2.tar.bz2 )
@@ -98,9 +103,9 @@ if( WIN32 AND NOT UNIX )
             set( mysql_URL http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.6/mysql-5.6.12-winx64.zip )
             set( mysql_MD5 6e8ba86bdabc9e4eb861395f453cbc54 )
             set( _PACKAGES ${_PACKAGES} mysql )
-
-            set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0_Win32.zip )
-            set( firebirdsql_MD5 ae81c884896c9c93ca7a55a4f5d86369 )
+            
+            set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0_x64.zip )
+            set( firebirdsql_MD5 069743c3ed3e8f62179dde3d93bb2333 )
             set( _PACKAGE ${_PACKAGES} firebirdsql )
 
         else( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
@@ -123,8 +128,8 @@ if( WIN32 AND NOT UNIX )
         set( mysql_MD5 c0f078ad92aedee7a1286d29128b12d8 )
         set( _PACKAGES ${_PACKAGES} mysql )
 
-        set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0_x64.zip )
-        set( firebirdsql_MD5 069743c3ed3e8f62179dde3d93bb2333 )
+        set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0_Win32.zip )
+        set( firebirdsql_MD5 ae81c884896c9c93ca7a55a4f5d86369 )
         set( _PACKAGE ${_PACKAGES} firebirdsql )
              
     endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
