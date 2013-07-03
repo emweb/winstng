@@ -170,8 +170,8 @@ else( WIN32 AND NOT UNIX )
 #    set( _PACKAGES ${_PACKAGES} ncurses )
 
     # TODO Build MySQL on Unix - On Windows, too?
-    set( mysql_URL http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.6/mysql-5.6.11.tar.gz )
-    set( mysql_MD5 9241be729964ab4594de11baa30aec48 )
+    set( mysql_URL http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.6/mysql-5.6.12.tar.gz )
+    set( mysql_MD5 5ff56a4fbb0b0c4e075c6f43ba9d007e )
     set( _PACKAGES ${_PACKAGES} mysql )
 
     set( fakerootng_URL http://prdownloads.sourceforge.net/fakerootng/fakeroot-ng-0.17.tar.gz )
