@@ -28,9 +28,9 @@ ECHO BATDIR = %BATDIR%
 @SET UNZIP_FULLURL=ftp://ftp.info-zip.org/pub/infozip/win32/%UNZIP_SFX%
 
 @SET WGET_FTP_PATH=%WGET_FTP_DIRECTORY%/%WGET_FILENAME%
-@SET CMAKE_ZIP=cmake-2.8.11.1-win32-x86.zip
+@SET CMAKE_ZIP=cmake-2.8.11.2-win32-x86.zip
 @SET CMAKE_FULLURL=http://www.cmake.org/files/v2.8/%CMAKE_ZIP%
-@SET CMAKE_DIRECTORY=cmake-2.8.11.1-win32-x86
+@SET CMAKE_DIRECTORY=cmake-2.8.11.2-win32-x86
 
 @SET PREFIX=%BASEDIR%\prefix
 

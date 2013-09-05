@@ -1,0 +1,61 @@
+diff -ur openssl-OpenSSL_1_0_1e.orig/ms/do_nasm.bat openssl-OpenSSL_1_0_1e/ms/do_nasm.bat
+--- openssl-OpenSSL_1_0_1e.orig/ms/do_nasm.bat	2013-08-28 18:33:43.609476400 +0200
++++ openssl-OpenSSL_1_0_1e/ms/do_nasm.bat	2013-08-28 18:35:16.164770200 +0200
+@@ -1,8 +1,12 @@
+ 
+ perl util\mkfiles.pl >MINFO
+ perl util\mk1mf.pl nasm VC-WIN32 >ms\nt.mak
++perl util\mk1mf.pl debug nasm VC-WIN32 >ms\ntd.mak
+ perl util\mk1mf.pl dll nasm VC-WIN32 >ms\ntdll.mak
++perl util\mk1mf.pl dll debug nasm VC-WIN32 >ms\ntdlld.mak
+ perl util\mk1mf.pl nasm BC-NT >ms\bcb.mak
+ 
+ perl util\mkdef.pl 32 libeay > ms\libeay32.def
++perl util\mkdef.pl D 32 libeay > ms\libeay32d.def
+ perl util\mkdef.pl 32 ssleay > ms\ssleay32.def
++perl util\mkdef.pl D 32 ssleay > ms\ssleay32d.def
+Only in openssl-OpenSSL_1_0_1e/ms: do_nasm.bat~
+diff -ur openssl-OpenSSL_1_0_1e.orig/util/mkdef.pl openssl-OpenSSL_1_0_1e/util/mkdef.pl
+--- openssl-OpenSSL_1_0_1e.orig/util/mkdef.pl	2013-08-28 18:33:44.823545800 +0200
++++ openssl-OpenSSL_1_0_1e/util/mkdef.pl	2013-08-28 18:37:05.183005700 +0200
+@@ -59,6 +59,7 @@
+ my $crypto_num= "util/libeay.num";
+ my $ssl_num=    "util/ssleay.num";
+ my $libname;
++my $SUFFIX = "";
+ 
+ my $do_update = 0;
+ my $do_rewrite = 1;
+@@ -146,6 +147,7 @@
+ foreach (@ARGV, split(/ /, $options))
+ 	{
+ 	$debug=1 if $_ eq "debug";
++        $SUFFIX="D" if $_ eq "D";
+ 	$W32=1 if $_ eq "32";
+ 	$W16=1 if $_ eq "16";
+ 	if($_ eq "NT") {
+@@ -1283,7 +1285,7 @@
+ 	my $description = "$what $version, $name - http://$http_vendor";
+ 
+ 	if ($W32)
+-		{ $libname.="32"; }
++		{ $libname.="32"; $libname.=$SUFFIX; }
+ 	elsif ($W16)
+ 		{ $libname.="16"; }
+ 	elsif ($OS2)
+Only in openssl-OpenSSL_1_0_1e/util: mkdef.pl~
+diff -ur openssl-OpenSSL_1_0_1e.orig/util/pl/VC-32.pl openssl-OpenSSL_1_0_1e/util/pl/VC-32.pl
+--- openssl-OpenSSL_1_0_1e.orig/util/pl/VC-32.pl	2013-08-28 18:33:44.871548500 +0200
++++ openssl-OpenSSL_1_0_1e/util/pl/VC-32.pl	2013-08-28 18:38:31.720955400 +0200
+@@ -15,6 +15,10 @@
+ 	{
+ 	$crypto="libeay32";
+ 	}
++if ($debug) {
++  $ssl.="d";
++  $crypto.="d";
++}
+ 
+ $o='\\';
+ $cp='$(PERL) util/copy.pl';
+Only in openssl-OpenSSL_1_0_1e/util/pl: VC-32.pl~

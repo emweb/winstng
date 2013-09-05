@@ -18,6 +18,9 @@ set(WINST_BATDIR ${WINST_BATDIR_} CACHE PATH "winst source directory" FORCE)
 set(WINST_BASEDIR ${WINST_BASEDIR_} CACHE PATH "winst global work directory" FORCE)
 set(WINST_PREFIX ${WINST_PREFIX_} CACHE PATH "winst prefix directory" FORCE)
 
+#our version of FindXXX.cmake
+set(WINST_MODULE_PATH ${WINST_BATDIR}/cmake/Modules)
+
 # Make sure we use bootstrapped dependencies
 set(CMAKE_PREFIX_PATH ${WINST_PREFIX} )
 
@@ -52,8 +55,10 @@ else(WIN32)
 endif(WIN32)
 set( _PACKAGES ${_PACKAGES} openssl )
 
-set( libharu_URL http://libharu.org/files/libhpdf-2.3.0RC2.tar.bz2 )
-set( libharu_MD5 504afd61fc26b65279a2179a2b0aa948 )
+#set( libharu_URL http://libharu.org/files/libhpdf-2.3.0RC2.tar.bz2 )
+#set( libharu_MD5 504afd61fc26b65279a2179a2b0aa948 )
+set( libharu_URL http://github.com/libharu/libharu/archive/libharu-master.zip )
+set( libharu_MD5 d4d8cd98f00b204e9800998ecf8427e )
 set( _PACKAGES ${_PACKAGES} libharu )
 
 set( boost_URL http://prdownloads.sourceforge.net/boost/boost_1_53_0.tar.bz2 )
@@ -121,7 +126,7 @@ if( WIN32 AND NOT UNIX )
         set( _PACKAGES ${_PACKAGES} perl )
 
         set( postgresql_URL http://get.enterprisedb.com/postgresql/postgresql-9.2.4-1-windows-binaries.zip )
-        set( postgesql_MD5 516ce6950a74646c80665435f74ae757 )
+        set( postgresql_MD5 516ce6950a74646c80665435f74ae757 )
         set( _PACKAGES ${_PACKAGES} postgresql )
         
         set( mysql_URL http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.6/mysql-5.6.12-win32.zip )
@@ -310,19 +315,56 @@ ELSE ( FETCH_ONLY )
         set( PERL_EXECUTABLE ${WINST_PREFIX}/bin/perl )
     endif( WIN32 AND NOT UNIX )
 
-    ExternalProject_Add( zlib
+    ExternalProject_Add( zlib-fetch
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/zlib-src
         DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
         URL ${zlib_URL}
         URL_MD5 ${zlib_MD5}
         LIST_SEPARATOR ^^
         PATCH_COMMAND ${CMAKE_COMMAND} -E remove zconf.h
-        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
         LOG_BUILD 1
         LOG_TEST 1
         LOG_INSTALL 1
+        )
+
+    ExternalProject_Add( zlib-debug
+        DEPENDS zlib-fetch
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/zlib-src
+        LIST_SEPARATOR ^^
+        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        )
+
+    ExternalProject_Add( zlib-release
+        DEPENDS zlib-fetch
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/zlib-src
+        LIST_SEPARATOR ^^
+        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        )
+
+    ExternalProject_Add( zlib
+        DEPENDS zlib-release zlib-debug
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/zlib-src
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
         )
 
 	    ExternalProject_Add( bzip2
@@ -341,22 +383,59 @@ ELSE ( FETCH_ONLY )
 	        LOG_INSTALL 1
 	        )
 
-    ExternalProject_Add( libpng
-        DEPENDS zlib
+    ExternalProject_Add( libpng-fetch
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/libpng-src
         DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
         URL ${libpng_URL}
         URL_MD5 ${libpng_MD5}
-#	LIST_SEPARATOR ^^
-#	PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libpng-export.patch
-        CMAKE_ARGS 
-	# -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include 
-	-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
         LOG_BUILD 1
         LOG_TEST 1
         LOG_INSTALL 1
+        )
+
+    ExternalProject_Add( libpng-debug
+        DEPENDS zlib libpng-fetch
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/libpng-src
+#	LIST_SEPARATOR ^^
+#	PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libpng-export.patch
+        CMAKE_ARGS 
+	# -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include 
+	-DCMAKE_BUILD_TYPE=Debug -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        )
+    ExternalProject_Add( libpng-release
+        DEPENDS zlib libpng-fetch
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/libpng-src
+#	LIST_SEPARATOR ^^
+#	PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libpng-export.patch
+        CMAKE_ARGS 
+	# -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include 
+	-DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        )
+
+    ExternalProject_Add( libpng
+        DEPENDS libpng-release libpng-debug
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/libpng-src
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
         )
 
     ExternalProject_Add( libjpeg
@@ -398,16 +477,19 @@ ELSE ( FETCH_ONLY )
             set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_win64a.bat" )
             if( MSVC ) # Visual C++
                 if( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
-                    set( OPENSSL_CONFIGURE_COMMAND "perl Configure VC-WIN64A --prefix=${WINST_PREFIX}" )
+                    set( OPENSSL_DEBUG_CONFIGURE_COMMAND "${WINST_PREFIX}/bin/perl Configure debug-VC-WIN64A --prefix=${WINST_PREFIX}" )
+                    set( OPENSSL_RELEASE_CONFIGURE_COMMAND "${WINST_PREFIX}/bin/perl Configure VC-WIN64A --prefix=${WINST_PREFIX}" )
                     set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak" )
                     set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak install" )
                 elseif( CMAKE_SYSTEM_PROCESSOR STREQUAL IA64 )
-                    set( OPENSSL_CONFIGURE_COMMAND "perl Configure VC-WIN64I --prefix=${WINST_PREFIX}" )
+                    set( OPENSSL_DEBUG_CONFIGURE_COMMAND "${WINST_PREFIX}/bin/perl Configure debug-VC-WIN64I --prefix=${WINST_PREFIX}" )
+                    set( OPENSSL_RELEASE_CONFIGURE_COMMAND "${WINST_PREFIX}/bin/perl Configure VC-WIN64I --prefix=${WINST_PREFIX}" )
                     set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak" )
                     set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak install" )
                 endif( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
             else(MSVC) # Watcom? Borland 64-bit (not sure it exists) ? - This configuration won't work, probably
-                set( OPENSSL_CONFIGURE_COMMAND "./config shared --prefix=${WINST_PREFIX}" )
+                set( OPENSSL_DEBUG_CONFIGURE_COMMAND "./config shared --prefix=${WINST_PREFIX}" )
+                set( OPENSSL_RELEASE_CONFIGURE_COMMAND "./config shared --prefix=${WINST_PREFIX}" )
                 set( OPENSSL_BUILD_COMMAND ${CMAKE_BUILD_TOOL} )
                 set( OPENSSL_INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install )
             endif( MSVC )
@@ -416,17 +498,20 @@ ELSE ( FETCH_ONLY )
         
             if( MSVC )
                 set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_nasm.bat" )
-                set( OPENSSL_CONFIGURE_COMMAND "perl Configure VC-WIN32 --prefix=${WINST_PREFIX}" )
+                set( OPENSSL_DEBUG_CONFIGURE_COMMAND "perl Configure debug-VC-WIN32 --prefix=${WINST_PREFIX}" )
+                set( OPENSSL_RELEASE_CONFIGURE_COMMAND "perl Configure VC-WIN32 --prefix=${WINST_PREFIX}" )
                 set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak" )
                 set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak install" )
             elseif( BORLAND )
                 set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_nasm.bat" )
-                set( OPENSSL_CONFIGURE_COMMAND "perl Configure BC-32 no-asm --prefix=${WINST_PREFIX}" )
+                set( OPENSSL_DEBUG_CONFIGURE_COMMAND "perl Configure debug-BC-32 no-asm --prefix=${WINST_PREFIX}" )
+                set( OPENSSL_RELEASE_CONFIGURE_COMMAND "perl Configure BC-32 no-asm --prefix=${WINST_PREFIX}" )
                 set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL} -f ms\\\\\\\\bcb.mak" )
                 set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} -f ms\\\\\\\\bcb.mak install" )
             else(MSVC)
                 set( OPENSSL_GENASM_COMMAND )
-                set( OPENSSL_CONFIGURE_COMMAND ./config shared --prefix=${WINST_PREFIX} )
+                set( OPENSSL_DEBUG_CONFIGURE_COMMAND ./config shared --prefix=${WINST_PREFIX} )
+                set( OPENSSL_RELEASE_CONFIGURE_COMMAND ./config shared --prefix=${WINST_PREFIX} )
                 set( OPENSSL_BUILD_COMMAND ${CMAKE_BUILD_TOOL} )
                 set( OPENSSL_INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install )
             endif( MSVC )
@@ -436,9 +521,11 @@ ELSE ( FETCH_ONLY )
         set( OPENSSL_GENASM_COMMAND )
 
         if( APPLE AND CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Mac OS X 64-bit
-          set( OPENSSL_CONFIGURE_COMMAND ./Configure^^shared^^darwin64-x86_64-cc^^--prefix=${WINST_PREFIX} )
+          set( OPENSSL_DEBUG_CONFIGURE_COMMAND ./Configure^^shared^^darwin64-x86_64-cc^^--prefix=${WINST_PREFIX} )
+          set( OPENSSL_RELEASE_CONFIGURE_COMMAND ./Configure^^shared^^darwin64-x86_64-cc^^--prefix=${WINST_PREFIX} )
         else( APPLE AND CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Mac OS X 32-bit and all other Unix platforms
-          set( OPENSSL_CONFIGURE_COMMAND ./config^^shared^^--prefix=${WINST_PREFIX} )
+          set( OPENSSL_DEBUG_CONFIGURE_COMMAND ./config^^shared^^--prefix=${WINST_PREFIX} )
+          set( OPENSSL_RELEASE_CONFIGURE_COMMAND ./config^^shared^^--prefix=${WINST_PREFIX} )
         endif( APPLE AND CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
         set( OPENSSL_BUILD_COMMAND ${CMAKE_BUILD_TOOL} )
@@ -448,14 +535,14 @@ ELSE ( FETCH_ONLY )
     set( _OLDPATH $ENV{PATH} )
     set( _NEWPATH ${WINST_PREFIX}\\bin ${_OLDPATH} )
     set( ENV{PATH} "${_NEWPATH}" )
-    ExternalProject_Add( openssl
+    ExternalProject_Add( openssl-release
         DEPENDS zlib perl patch nasm
         DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
         URL ${openssl_URL}
         URL_MD5 ${openssl_MD5}
 	LIST_SEPARATOR ^^
-        UPDATE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_CONFIGURE_COMMAND:STRING=${OPENSSL_CONFIGURE_COMMAND} -P ${WINST_BATDIR}/cmake/configure-openssl.cmake
-   #    PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/openssl-1.0.1e.patch
+        UPDATE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_CONFIGURE_COMMAND:STRING=${OPENSSL_RELEASE_CONFIGURE_COMMAND} -P ${WINST_BATDIR}/cmake/configure-openssl.cmake
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/openssl-library-names.patch
         CONFIGURE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_GENASM_COMMAND=${OPENSSL_GENASM_COMMAND} -P ${WINST_BATDIR}/cmake/genasm-openssl.cmake
         BUILD_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_BUILD_COMMAND=${OPENSSL_BUILD_COMMAND} -P ${WINST_BATDIR}/cmake/build-openssl.cmake
         BUILD_IN_SOURCE 1
@@ -466,6 +553,36 @@ ELSE ( FETCH_ONLY )
         LOG_BUILD 1
         LOG_TEST 1
         LOG_INSTALL 1
+        )
+
+    ExternalProject_Add( openssl-debug
+        DEPENDS zlib perl patch nasm
+        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+        URL ${openssl_URL}
+        URL_MD5 ${openssl_MD5}
+	LIST_SEPARATOR ^^
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/openssl-library-names.patch
+        UPDATE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_CONFIGURE_COMMAND:STRING=${OPENSSL_DEBUG_CONFIGURE_COMMAND} -P ${WINST_BATDIR}/cmake/configure-openssl.cmake
+        CONFIGURE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_GENASM_COMMAND=${OPENSSL_GENASM_COMMAND} -P ${WINST_BATDIR}/cmake/genasm-openssl.cmake
+        BUILD_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_BUILD_COMMAND=${OPENSSL_BUILD_COMMAND} -P ${WINST_BATDIR}/cmake/build-openssl.cmake
+        BUILD_IN_SOURCE 1
+        INSTALL_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_INSTALL_COMMAND=${OPENSSL_INSTALL_COMMAND} -P ${WINST_BATDIR}/cmake/install-openssl.cmake
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        )
+
+    ExternalProject_Add( openssl
+        DEPENDS openssl-release openssl-debug
+        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+        URL ${openssl_URL}
+        URL_MD5 ${openssl_MD5}
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
         )
 
 #    if( WIN32 AND NOT UNIX )
@@ -665,20 +782,49 @@ ELSE ( FETCH_ONLY )
             )
     endif( WIN32 )
 
-    ExternalProject_Add( libharu
-        DEPENDS zlib libpng patch
+    ExternalProject_Add( libharu-fetch
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/libharu-src
         DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
-        URL ${libharu_URL}
-        URL_MD5 ${libharu_MD5}
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libharu-2.3.0RC2.patch
-        CMAKE_ARGS 
-	    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+#URL ${libharu_URL}
+#        URL_MD5 ${libharu_MD5}
+#        URL ${libharu_URL}
+#        URL_MD5 ${libharu_MD5}
+#        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libharu-2.3.0RC2.patch
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
+    )
+
+    ExternalProject_Add( libharu-debug
+        DEPENDS libharu-fetch zlib libpng patch
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/libharu-src
+        CMAKE_ARGS 
+	    -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
         LOG_CONFIGURE 1
         LOG_BUILD 1
         LOG_TEST 1
         LOG_INSTALL 1
+        )
+
+    ExternalProject_Add( libharu-release
+        DEPENDS zlib libpng patch libharu-fetch
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/libharu-src
+        CMAKE_ARGS 
+	    -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        )
+
+    ExternalProject_Add( libharu
+        DEPENDS libharu-release libharu-debug
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/libharu-src
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
         )
 
     # TODO GM seems impossible to build silently with Visual C++ :-/
@@ -710,7 +856,7 @@ ELSE ( FETCH_ONLY )
       set( boost_BJAM "./bjam" )
       set( boost_LINKAGE link=shared )
     endif( WIN32 AND NOT UNIX )
-    set( boost_COMMAND ${boost_BJAM} --prefix=${WINST_PREFIX} --build-type=minimal --variant=release --without-python ${boost_LINKAGE} threading=multi include=${WINST_PREFIX}/include linkflags=-L${WINST_PREFIX}/lib )
+    set( boost_COMMAND ${boost_BJAM} --build-type=minimal --variant=release --without-python ${boost_LINKAGE} threading=multi include=${WINST_PREFIX}/include linkflags=-L${WINST_PREFIX}/lib )
     ExternalProject_Add( boost
 	DEPENDS zlib bzip2
         DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
@@ -719,7 +865,7 @@ ELSE ( FETCH_ONLY )
         CONFIGURE_COMMAND ${boost_BOOTSTRAP_COMMAND}
         BUILD_COMMAND ${boost_COMMAND}
         BUILD_IN_SOURCE 1
-        INSTALL_COMMAND ${boost_COMMAND} install
+        INSTALL_COMMAND ${boost_COMMAND} --prefix=${WINST_PREFIX} install
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -732,38 +878,104 @@ ELSE ( FETCH_ONLY )
         set( WT_UNIXONLY_DEPENDENCIES fcgi graphicsmagick )
     endif(UNIX)
     
-    set( wt_CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX} -DWT_CMAKE_FINDER_INSTALL_DIR:PATH=/share/cmake-2.8/Modules -DBoost_NO_SYSTEM_PATHS:BOOL=1 -DBOOST_ROOT:PATH=${WINST_PREFIX} -DCONFIGDIR:PATH=${WINST_PREFIX}/etc/wt -DFCGI_PREFIX:PATH=${WINST_PREFIX} -DGM_PREFIX=${WINST_PREFIX} -DHARU_PREFIX=${WINST_PREFIX} -DPOSTGRES_PREFIX=${WINST_PREFIX} -DZLIB_PREFIX=${WINST_PREFIX} -DRUNDIR=${WINST_PREFIX}/var/run/wt -DINSTALL_EXAMPLES:BOOL=1 -DSSL_PREFIX=${WINST_PREFIX} -DEXAMPLES_DESTINATION=lib/Wt/examples )
+    set( wt_CMAKE_ARGS -DSHARED_LIBS:BOOL=1 -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX} -DWT_CMAKE_FINDER_INSTALL_DIR:PATH=/share/cmake-2.8/Modules -DBoost_NO_SYSTEM_PATHS:BOOL=1 -DBOOST_ROOT:PATH=${WINST_PREFIX} -DCONFIGDIR:PATH=${WINST_PREFIX}/etc/wt -DFCGI_PREFIX:PATH=${WINST_PREFIX} -DGM_PREFIX=${WINST_PREFIX} -DHARU_PREFIX=${WINST_PREFIX} -DPOSTGRES_PREFIX=${WINST_PREFIX} -DZLIB_PREFIX=${WINST_PREFIX} -DRUNDIR=${WINST_PREFIX}/var/run/wt -DSSL_PREFIX=${WINST_PREFIX} -DEXAMPLES_DESTINATION=lib/Wt/examples )
+if( WIN32 )
+    set( wt_CMAKE_ARGS ${wt_CMAKE_ARGS} -DENABLE_MYSQL:BOOL=0 )
+endif( WIN32 )
 
     if( WTGIT )
-        ExternalProject_Add( wtgit
-            DEPENDS zlib libpng libharu openssl boost firebirdsql mysql postgresql ${WT_UNIXONLY_DEPENDENCIES}
+        ExternalProject_Add( wt-fetch
             # git
+            SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
             DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
             GIT_REPOSITORY http://www.webtoolkit.eu/git/wt.git
-            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/wt-3.3.0.patch
-            CMAKE_ARGS ${wt_CMAKE_ARGS}            
             LOG_DOWNLOAD 1
             LOG_UPDATE 1
             LOG_CONFIGURE 1
             LOG_BUILD 1
             LOG_TEST 1
             LOG_INSTALL 1
+            CONFIGURE_COMMAND ""
+            BUILD_COMMAND ""
+            INSTALL_COMMAND ""
         )
     else( WTGIT )
-        ExternalProject_Add( wt
-            DEPENDS zlib libpng libharu openssl boost firebirdsql mysql postgresql ${WT_UNIXONLY_DEPENDENCIES}
+        ExternalProject_Add( wt-fetch
+            SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
             DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
             URL ${wt_URL}
             URL_MD5 ${wt_MD5}
-            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/wt-3.3.0.patch
-            CMAKE_ARGS ${wt_CMAKE_ARGS}            
             LOG_DOWNLOAD 1
             LOG_UPDATE 1
             LOG_CONFIGURE 1
             LOG_BUILD 1
             LOG_TEST 1
             LOG_INSTALL 1
+            CONFIGURE_COMMAND ""
+            BUILD_COMMAND ""
+            INSTALL_COMMAND ""
         )
     endif( WTGIT )
+
+    ExternalProject_Add( wt-debug
+        DEPENDS wt-fetch
+            zlib libpng libharu
+            openssl boost
+            firebirdsql mysql postgresql
+            ${WT_UNIXONLY_DEPENDENCIES}
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
+        CMAKE_ARGS -DCMAKE_BUILD_TYPE=Debug ${wt_CMAKE_ARGS}            
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+    )
+    ExternalProject_Add( wt-release
+        DEPENDS wt-fetch
+            zlib libpng libharu
+            openssl boost
+            firebirdsql mysql postgresql
+            ${WT_UNIXONLY_DEPENDENCIES}
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
+        CMAKE_ARGS
+            -DCMAKE_BUILD_TYPE=MinSizeRel
+            -DINSTALL_EXAMPLES:BOOL=1
+            ${wt_CMAKE_ARGS}            
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+    )
+    ExternalProject_Add( wt
+        DEPENDS wt-release wt-debug
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
+    )
+
     
+#installation for windows
+   INSTALL(DIRECTORY "${WINST_PREFIX}/include/Wt" DESTINATION "include")
+   INSTALL(DIRECTORY "${WINST_PREFIX}/include/boost-1_53/boost" DESTINATION "include")
+   FILE(GLOB boost_install_libs "${WINST_PREFIX}/lib/libboost*")
+   INSTALL(FILES ${boost_install_libs} DESTINATION "lib")
+   INSTALL(FILES "${WINST_PREFIX}/bin/zlibd.dll" "${WINST_PREFIX}/bin/zlib1.dll" DESTINATION "bin")
+   INSTALL(FILES "${WINST_PREFIX}/bin/ssleay32.dll" "${WINST_PREFIX}/bin/libeay32.dll" DESTINATION "bin")
+   INSTALL(FILES "${WINST_PREFIX}/bin/ssleay32d.dll" "${WINST_PREFIX}/bin/libeay32d.dll" DESTINATION "bin")
+   INSTALL(FILES "${WINST_PREFIX}/bin/libpq.dll" "${WINST_PREFIX}/bin/libintl.dll" DESTINATION "bin")
+   FILE(GLOB wt_install_libs "${WINST_PREFIX}/lib/wt*lib")
+   INSTALL(FILES ${wt_install_libs} DESTINATION "lib")
+   FILE(GLOB wt_install_dlls "${WINST_PREFIX}/bin/wt*dll")
+   INSTALL(FILES ${wt_install_dlls} DESTINATION "bin")
+   FILE(GLOB_RECURSE wt_install_examples "${WINST_PREFIX}/lib/Wt/*.exe")
+   INSTALL(FILES ${wt_install_examples} DESTINATION "bin")
+   FILE(GLOB wt_install_examples_bat "${WINST_PREFIX}/bin/*.bat")
+   INSTALL(FILES ${wt_install_examples_bat} DESTINATION "bin")
+   INSTALL(DIRECTORY "${WINST_PREFIX}/lib/Wt" DESTINATION "lib")
+   INSTALL(DIRECTORY "${WINST_PREFIX}/share/Wt" DESTINATION "lib/share")
 ENDIF( FETCH_ONLY )

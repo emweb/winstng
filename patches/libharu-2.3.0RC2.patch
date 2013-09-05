@@ -86,6 +86,15 @@ diff -rupdN libharu-2.3.0RC2.orig/src/hpdf_image_ccitt.c libharu-2.3.0RC2/src/hp
                            HPDF_UINT          width,
 --- libharu-2.3.0RC2.orig/CMakeLists.txt	Fri Jan  7 15:27:41 2011
 +++ libharu-2.3.0RC2/CMakeLists.txt	Sun Mar  4 14:59:13 2012
+@@ -35,7 +35,7 @@
+ cmake_minimum_required(VERSION 2.4.8 FATAL_ERROR)
+
+ # Location where the haru cmake build system first looks for cmake modules
+-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
++set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/modules)
+
+
+ # set library name, msvc does not append 'lib' automatically
 @@ -169,7 +169,6 @@ install(FILES ${haru_HDRS} DESTINATION i
  
  # install various files
