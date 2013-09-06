@@ -57,8 +57,7 @@ set( _PACKAGES ${_PACKAGES} openssl )
 
 #set( libharu_URL http://libharu.org/files/libhpdf-2.3.0RC2.tar.bz2 )
 #set( libharu_MD5 504afd61fc26b65279a2179a2b0aa948 )
-set( libharu_URL http://github.com/libharu/libharu/archive/libharu-master.zip )
-set( libharu_MD5 d4d8cd98f00b204e9800998ecf8427e )
+set( libharu_URL https://github.com/libharu/libharu.git )
 set( _PACKAGES ${_PACKAGES} libharu )
 
 set( boost_URL http://prdownloads.sourceforge.net/boost/boost_1_53_0.tar.bz2 )
@@ -336,6 +335,7 @@ ELSE ( FETCH_ONLY )
     ExternalProject_Add( zlib-debug
         DEPENDS zlib-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/zlib-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         LIST_SEPARATOR ^^
         CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
         LOG_DOWNLOAD 1
@@ -349,6 +349,7 @@ ELSE ( FETCH_ONLY )
     ExternalProject_Add( zlib-release
         DEPENDS zlib-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/zlib-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         LIST_SEPARATOR ^^
         CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
         LOG_DOWNLOAD 1
@@ -362,26 +363,27 @@ ELSE ( FETCH_ONLY )
     ExternalProject_Add( zlib
         DEPENDS zlib-release zlib-debug
         SOURCE_DIR ${CMAKE_BINARY_DIR}/zlib-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
         )
 
-	    ExternalProject_Add( bzip2
-            DEPENDS patch
-	        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
-	        URL ${bzip2_URL}
-	        URL_MD5 ${bzip2_MD5}
-		LIST_SEPARATOR ^^
-	        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/bzip2.patch
-	        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
-	        LOG_DOWNLOAD 1
-	        LOG_UPDATE 1
-	        LOG_CONFIGURE 1
-	        LOG_BUILD 1
-	        LOG_TEST 1
-	        LOG_INSTALL 1
-	        )
+    ExternalProject_Add( bzip2
+        DEPENDS patch
+        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+        URL ${bzip2_URL}
+        URL_MD5 ${bzip2_MD5}
+    LIST_SEPARATOR ^^
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/bzip2.patch
+        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        )
 
     ExternalProject_Add( libpng-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libpng-src
@@ -402,6 +404,7 @@ ELSE ( FETCH_ONLY )
     ExternalProject_Add( libpng-debug
         DEPENDS zlib libpng-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libpng-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
 #	LIST_SEPARATOR ^^
 #	PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libpng-export.patch
         CMAKE_ARGS 
@@ -417,6 +420,7 @@ ELSE ( FETCH_ONLY )
     ExternalProject_Add( libpng-release
         DEPENDS zlib libpng-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libpng-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
 #	LIST_SEPARATOR ^^
 #	PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libpng-export.patch
         CMAKE_ARGS 
@@ -433,6 +437,7 @@ ELSE ( FETCH_ONLY )
     ExternalProject_Add( libpng
         DEPENDS libpng-release libpng-debug
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libpng-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
@@ -785,11 +790,7 @@ ELSE ( FETCH_ONLY )
     ExternalProject_Add( libharu-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libharu-src
         DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
-#URL ${libharu_URL}
-#        URL_MD5 ${libharu_MD5}
-#        URL ${libharu_URL}
-#        URL_MD5 ${libharu_MD5}
-#        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libharu-2.3.0RC2.patch
+        GIT_REPOSITORY ${libharu_URL}
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
@@ -800,6 +801,7 @@ ELSE ( FETCH_ONLY )
     ExternalProject_Add( libharu-debug
         DEPENDS libharu-fetch zlib libpng patch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libharu-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CMAKE_ARGS 
 	    -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
         LOG_CONFIGURE 1
@@ -811,6 +813,7 @@ ELSE ( FETCH_ONLY )
     ExternalProject_Add( libharu-release
         DEPENDS zlib libpng patch libharu-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libharu-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CMAKE_ARGS 
 	    -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
         LOG_CONFIGURE 1
@@ -822,6 +825,7 @@ ELSE ( FETCH_ONLY )
     ExternalProject_Add( libharu
         DEPENDS libharu-release libharu-debug
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libharu-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
@@ -924,6 +928,7 @@ endif( WIN32 )
             firebirdsql mysql postgresql
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CMAKE_ARGS -DCMAKE_BUILD_TYPE=Debug ${wt_CMAKE_ARGS}            
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -939,6 +944,7 @@ endif( WIN32 )
             firebirdsql mysql postgresql
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CMAKE_ARGS
             -DCMAKE_BUILD_TYPE=MinSizeRel
             -DINSTALL_EXAMPLES:BOOL=1
@@ -953,6 +959,7 @@ endif( WIN32 )
     ExternalProject_Add( wt
         DEPENDS wt-release wt-debug
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
