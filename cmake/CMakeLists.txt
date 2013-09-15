@@ -626,20 +626,20 @@ ELSE ( FETCH_ONLY )
 #    endif( WIN32 AND NOT UNIX )
     
     if( WIN32 AND NOT UNIX )
-      ExternalProject_Add( postgresql
-	    DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
-	    URL ${postgresql_URL}
-	    URL_MD5 ${postgresql_MD5}
-	    CONFIGURE_COMMAND ""
-	    BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${WINST_PREFIX}/
-	    INSTALL_COMMAND ""
-	    LOG_DOWNLOAD 1
-	    LOG_UPDATE 1
-	    LOG_CONFIGURE 1
-	    LOG_BUILD 1
-	    LOG_TEST 1
-	    LOG_INSTALL 1
-	    )
+#      ExternalProject_Add( postgresql
+#	    DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+#	    URL ${postgresql_URL}
+#	    URL_MD5 ${postgresql_MD5}
+#	    CONFIGURE_COMMAND ""
+#	    BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${WINST_PREFIX}
+#	    INSTALL_COMMAND ""
+#	    LOG_DOWNLOAD 1
+#	    LOG_UPDATE 1
+#	    LOG_CONFIGURE 1
+#	    LOG_BUILD 1
+#	    LOG_TEST 1
+#	    LOG_INSTALL 1
+#	    )
     else( WIN32 AND NOT UNIX )
         ExternalProject_Add( postgresql
 	    DEPENDS perl openssl zlib
@@ -925,7 +925,8 @@ endif( WIN32 )
         DEPENDS wt-fetch
             zlib libpng libharu
             openssl boost
-            firebirdsql mysql postgresql
+            firebirdsql mysql
+#            postgresql
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
@@ -941,7 +942,8 @@ endif( WIN32 )
         DEPENDS wt-fetch
             zlib libpng libharu
             openssl boost
-            firebirdsql mysql postgresql
+            firebirdsql mysql
+#            postgresql
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
