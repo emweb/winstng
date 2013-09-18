@@ -60,6 +60,10 @@ set( _PACKAGES ${_PACKAGES} openssl )
 set( libharu_URL https://github.com/libharu/libharu.git )
 set( _PACKAGES ${_PACKAGES} libharu )
 
+set( mariadb_URL http://downloads.mariadb.org/f/mariadb-native-client/Source/mariadb-native-client.tar.gz )
+set( mariadb_MD5 3a6fb7b4fdda4fb247ed3474995ad4ff )
+set( _PACKAGES ${_PACKAGES} mariadb )
+
 set( boost_URL http://prdownloads.sourceforge.net/boost/boost_1_53_0.tar.bz2 )
 set( boost_MD5 a00d22605d5dbcfb4c9936a9b35bc4c2 )
 set( _PACKAGES ${_PACKAGES} boost )
@@ -104,10 +108,6 @@ if( WIN32 AND NOT UNIX )
             set( graphicsmagick_MD5 bd25adb9e8218aabcd68a034116396e6 )
             set( _PACKAGES ${_PACKAGES} graphicsmagick )
 
-            set( mysql_URL http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.6/mysql-5.6.12-winx64.zip )
-            set( mysql_MD5 6e8ba86bdabc9e4eb861395f453cbc54 )
-            set( _PACKAGES ${_PACKAGES} mysql )
-            
             set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0_x64.zip )
             set( firebirdsql_MD5 069743c3ed3e8f62179dde3d93bb2333 )
             set( _PACKAGE ${_PACKAGES} firebirdsql )
@@ -128,10 +128,6 @@ if( WIN32 AND NOT UNIX )
         set( postgresql_MD5 516ce6950a74646c80665435f74ae757 )
         set( _PACKAGES ${_PACKAGES} postgresql )
         
-        set( mysql_URL http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.6/mysql-5.6.12-win32.zip )
-        set( mysql_MD5 c0f078ad92aedee7a1286d29128b12d8 )
-        set( _PACKAGES ${_PACKAGES} mysql )
-
         set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0_Win32.zip )
         set( firebirdsql_MD5 ae81c884896c9c93ca7a55a4f5d86369 )
         set( _PACKAGE ${_PACKAGES} firebirdsql )
@@ -177,11 +173,6 @@ else( WIN32 AND NOT UNIX )
 #    set( ncurses_URL http://prdownloads.sourceforge.net/pdcurses/PDCurses-3.4.tar.gz )
 #    set( ncurses_MD5 4e04e4412d1b1392a7f9a489b95b331a )
 #    set( _PACKAGES ${_PACKAGES} ncurses )
-
-    # TODO Build MySQL on Unix - On Windows, too?
-    set( mysql_URL http://ftp.gwdg.de/pub/misc/mysql/Downloads/MySQL-5.6/mysql-5.6.12.tar.gz )
-    set( mysql_MD5 5ff56a4fbb0b0c4e075c6f43ba9d007e )
-    set( _PACKAGES ${_PACKAGES} mysql )
 
     set( fakerootng_URL http://prdownloads.sourceforge.net/fakerootng/fakeroot-ng-0.17.tar.gz )
     set( fakerootng_MD5 972b022a10cdeb0f61052982002f42b4 )
@@ -590,6 +581,72 @@ ELSE ( FETCH_ONLY )
         INSTALL_COMMAND ""
         )
 
+    ExternalProject_Add( mariadb-fetch
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
+        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+        URL ${mariadb_URL}
+        URL_MD5 ${mariadb_MD5}
+        LIST_SEPARATOR ^^
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        )
+
+    ExternalProject_Add( mariadb-debug
+        DEPENDS mariadb-fetch zlib openssl
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+        LIST_SEPARATOR ^^
+        CMAKE_ARGS
+          -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include
+          -DCMAKE_BUILD_TYPE=Debug
+	  -DCMAKE_MODULE_PATH:STRING=${WINST_MODULE_PATH}
+          -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
+          -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        )
+
+    ExternalProject_Add( mariadb-release
+        DEPENDS mariadb-fetch zlib openssl
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+        LIST_SEPARATOR ^^
+        CMAKE_ARGS
+          -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include
+          -DCMAKE_BUILD_TYPE=MinSizeRel
+          -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
+          -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+	  -DCMAKE_MODULE_PATH:STRING=${WINST_MODULE_PATH}
+	  -DSSL_PREFIX:STRING=${WINST_PREFIX}
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        )
+
+    ExternalProject_Add( mariadb
+        DEPENDS mariadb-release mariadb-debug
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
+        )
+
+
 #    if( WIN32 AND NOT UNIX )
             # ExternalProject_Add( 7zip
             # DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
@@ -702,39 +759,6 @@ ELSE ( FETCH_ONLY )
         )
     endif(UNIX)
     
-    if( WIN32 )
-	# Download and extract MySQL binaries. Or build it?
-        ExternalProject_Add( mysql
-            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
-            URL ${mysql_URL}
-            URL_MD5 ${mysql_MD5}
-            CONFIGURE_COMMAND ""
-            BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${WINST_PREFIX}/
-            INSTALL_COMMAND ""
-            LOG_DOWNLOAD 1
-            LOG_UPDATE 1
-            LOG_CONFIGURE 1
-            LOG_BUILD 1
-            LOG_TEST 1
-            LOG_INSTALL 1
-	    )
-    else( WIN32 )
-        ExternalProject_Add( mysql
-	    DEPENDS zlib openssl ncurses
-            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
-            URL ${mysql_URL}
-            URL_MD5 ${mysql_MD5}
-	    LIST_SEPARATOR ^^
-            CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCURSES_INCLUDE_PATH:PATH=${WINST_PREFIX}/include -DCURSES_CURSES_H_PATH:PATH=${WINST_PREFIX}/include -DCURSES_NCURSES_INCLUDE_PATH:PATH=${WINST_PREFIX}/include/ncurses -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
-            LOG_DOWNLOAD 1
-            LOG_UPDATE 1
-            LOG_CONFIGURE 1
-            LOG_BUILD 1
-            LOG_TEST 1
-            LOG_INSTALL 1
-            )
-    endif( WIN32 )
-
     if( UNIX )
         ExternalProject_Add( fakerootng
             DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
@@ -754,7 +778,7 @@ ELSE ( FETCH_ONLY )
     endif( UNIX )
 
     if( WIN32 )
-	# Download and extract MySQL binaries. Or build it?
+	# Download and extract firebird binaries. Or build it?
         ExternalProject_Add( firebirdsql
             DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
             URL ${firebirdsql_URL}
@@ -882,10 +906,24 @@ ELSE ( FETCH_ONLY )
         set( WT_UNIXONLY_DEPENDENCIES fcgi graphicsmagick )
     endif(UNIX)
     
-    set( wt_CMAKE_ARGS -DSHARED_LIBS:BOOL=1 -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX} -DWT_CMAKE_FINDER_INSTALL_DIR:PATH=/share/cmake-2.8/Modules -DBoost_NO_SYSTEM_PATHS:BOOL=1 -DBOOST_ROOT:PATH=${WINST_PREFIX} -DCONFIGDIR:PATH=${WINST_PREFIX}/etc/wt -DFCGI_PREFIX:PATH=${WINST_PREFIX} -DGM_PREFIX=${WINST_PREFIX} -DHARU_PREFIX=${WINST_PREFIX} -DPOSTGRES_PREFIX=${WINST_PREFIX} -DZLIB_PREFIX=${WINST_PREFIX} -DRUNDIR=${WINST_PREFIX}/var/run/wt -DSSL_PREFIX=${WINST_PREFIX} -DEXAMPLES_DESTINATION=lib/Wt/examples )
-if( WIN32 )
-    set( wt_CMAKE_ARGS ${wt_CMAKE_ARGS} -DENABLE_MYSQL:BOOL=0 )
-endif( WIN32 )
+    set( wt_CMAKE_ARGS
+        -DSHARED_LIBS:BOOL=1
+        -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
+        -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+        -DWT_CMAKE_FINDER_INSTALL_DIR:PATH=/share/cmake-2.8/Modules
+        -DBoost_NO_SYSTEM_PATHS:BOOL=1
+        -DBOOST_ROOT:PATH=${WINST_PREFIX}
+        -DCONFIGDIR:PATH=${WINST_PREFIX}/etc/wt
+        -DFCGI_PREFIX:PATH=${WINST_PREFIX}
+        -DGM_PREFIX=${WINST_PREFIX}
+        -DHARU_PREFIX=${WINST_PREFIX}
+        -DPOSTGRES_PREFIX=${WINST_PREFIX}
+        -DZLIB_PREFIX=${WINST_PREFIX}
+        -DRUNDIR=${WINST_PREFIX}/var/run/wt
+        -DSSL_PREFIX=${WINST_PREFIX}
+        -DMYSQL_PREFIX=${WINST_PREFIX}
+        -DEXAMPLES_DESTINATION=lib/Wt/examples
+        )
 
     if( WTGIT )
         ExternalProject_Add( wt-fetch
@@ -925,7 +963,7 @@ endif( WIN32 )
         DEPENDS wt-fetch
             zlib libpng libharu
             openssl boost
-            firebirdsql mysql
+            firebirdsql mariadb
 #            postgresql
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
@@ -942,7 +980,7 @@ endif( WIN32 )
         DEPENDS wt-fetch
             zlib libpng libharu
             openssl boost
-            firebirdsql mysql
+            firebirdsql mariadb
 #            postgresql
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
