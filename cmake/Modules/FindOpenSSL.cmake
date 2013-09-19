@@ -1,7 +1,7 @@
 # We define:
-# - SSL_INCLUDE_DIRS
-# - SSL_LIBRARIES
-# - SSL_FOUND
+# - OPENSSL_INCLUDE_DIRS
+# - OPENSSL_LIBRARIES
+# - OPENSSL_FOUND
 # Taking into account:
 # - SSL_PREFIX
 #
@@ -43,28 +43,6 @@ IF(WIN32)
       ${SSL_PREFIX}/lib
   )
 
-# We require both release and debug versions of the SSL libs. People who
-# really know what they are doing, may edit this file to relax this requirement.
-  IF(SSL_INCLUDE_DIRS
-      AND SSL_LIB_RELEASE
-      AND SSL_LIB_DEBUG
-      AND SSL_TOO_LIB_RELEASE
-      AND SSL_TOO_LIB_DEBUG)
-      SET(SSL_FOUND true)
-      SET(SSL_LIBRARIES
-          optimized ${SSL_LIB_RELEASE} debug ${SSL_LIB_DEBUG}
-          optimized ${SSL_TOO_LIB_RELEASE} debug ${SSL_TOO_LIB_DEBUG})
-  ELSE(SSL_INCLUDE_DIRS
-      AND SSL_LIB_RELEASE
-      AND SSL_LIB_DEBUG
-      AND SSL_TOO_LIB_RELEASE
-      AND SSL_TOO_LIB_DEBUG)
-      SET(SSL_FOUND false)
-  ENDIF(SSL_INCLUDE_DIRS
-      AND SSL_LIB_RELEASE
-      AND SSL_LIB_DEBUG
-      AND SSL_TOO_LIB_RELEASE
-      AND SSL_TOO_LIB_DEBUG)
 ELSE (WIN32)
   FIND_LIBRARY(SSL_LIB
     NAMES
@@ -76,26 +54,45 @@ ELSE (WIN32)
   )
 ENDIF (WIN32)
 
-IF(SSL_LIB
-    AND SSL_INCLUDE_DIRS)
-  IF(WIN32)
-    IF(SSL_TOO_LIB)
-      SET(SSL_FOUND true)
-      SET(SSL_LIBRARIES ${SSL_LIB} ${SSL_TOO_LIB})
-    ELSE(SSL_TOO_LIB)
-      SET(SSL_FOUND false)
-    ENDIF(SSL_TOO_LIB)
-  ELSE(WIN32)
-    SET(SSL_FOUND true)
-    SET(SSL_LIBRARIES ${SSL_LIB} -lcrypto)
-  ENDIF(WIN32)
-ENDIF(SSL_LIB
-    AND SSL_INCLUDE_DIRS)
+SET(OPENSSL_INCLUDE_DIR ${SSL_INCLUDE_DIRS})
 
-IF(SSL_FOUND)
-  MESSAGE(STATUS "OpenSSL found: ${SSL_LIB} ${SSL_TOO_LIB}")
-ELSE(SSL_FOUND)
+IF(WIN32)
+  # We require both release and debug versions of the SSL libs. People who
+  # really know what they are doing, may edit this file to relax this requirement.
+  IF(SSL_INCLUDE_DIRS
+      AND SSL_LIB_RELEASE
+      AND SSL_LIB_DEBUG
+      AND SSL_TOO_LIB_RELEASE
+      AND SSL_TOO_LIB_DEBUG)
+      SET(OPENSSL_FOUND true)
+      SET(OPENSSL_LIBRARIES
+          optimized ${SSL_LIB_RELEASE} debug ${SSL_LIB_DEBUG}
+          optimized ${SSL_TOO_LIB_RELEASE} debug ${SSL_TOO_LIB_DEBUG})
+  ELSE(SSL_INCLUDE_DIRS
+      AND SSL_LIB_RELEASE
+      AND SSL_LIB_DEBUG
+      AND SSL_TOO_LIB_RELEASE
+      AND SSL_TOO_LIB_DEBUG)
+      SET(OPENSSL_FOUND false)
+  ENDIF(SSL_INCLUDE_DIRS
+      AND SSL_LIB_RELEASE
+      AND SSL_LIB_DEBUG
+      AND SSL_TOO_LIB_RELEASE
+      AND SSL_TOO_LIB_DEBUG)
+ELSE(WIN32)
+  IF(SSL_LIB
+    AND SSL_INCLUDE_DIRS)
+    SET(OPENSSL_FOUND true)
+    SET(OPENSSL_LIBRARIES ${SSL_LIB} -lcrypto)
+    SET(OPENSSL_INCLUDE_DIR ${SSL_INCLUDE_DIRS})
+  ENDIF(SSL_LIB
+    AND SSL_INCLUDE_DIRS)
+ENDIF(WIN32)
+
+IF(OPENSSL_FOUND)
+  MESSAGE(STATUS "OpenSSL found: ${OPENSSL_LIBRARIES}")
+ELSE(OPENSSL_FOUND)
   MESSAGE(STATUS "OpenSSL not found")
-ENDIF(SSL_FOUND)
+ENDIF(OPENSSL_FOUND)
 
 
