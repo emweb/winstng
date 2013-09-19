@@ -30,7 +30,7 @@ ECHO BATDIR = %BATDIR%
 @SET WGET_FTP_PATH=%WGET_FTP_DIRECTORY%/%WGET_FILENAME%
 @SET CMAKE_ZIP=cmake-2.8.11.2-win32-x86.zip
 @SET CMAKE_FULLURL=http://www.cmake.org/files/v2.8/%CMAKE_ZIP%
-@SET CMAKE_DIRECTORY=cmake-2.8.11.2-win32-x86
+@SET CMAKE_DIRECTORY=%BASEDIR%/downloads/cmake-2.8.11.2-win32-x86
 
 @SET PREFIX=%BASEDIR%\prefix
 
@@ -86,8 +86,8 @@ ECHO BATDIR = %BATDIR%
 @echo Setting up CMake...
 @IF EXIST "%PREFIX%\bin\cmake.exe" GOTO BOOTSTRAP
 @unzip "%BASEDIR%\downloads\%CMAKE_ZIP%"
-@xcopy /Y /S "%CMAKE_DIRECTORY%\*.*" "%PREFIX%\"
-@rd /q /s "%CMAKE_DIRECTORY%"
+@rem xcopy /Y /S "%CMAKE_DIRECTORY%\*.*" "%PREFIX%\"
+@rem rd /q /s "%CMAKE_DIRECTORY%"
 
 :BOOTSTRAP
 @echo Bootstrapping...
@@ -97,7 +97,7 @@ ECHO BATDIR = %BATDIR%
     @IF /I "%1"=="fetch" ( 
         SHIFT
         cd "%BASEDIR%\build"
-        "%PREFIX%\bin\cmake.exe" -DFETCH_ONLY:BOOL=1 %* "%BATDIR%\cmake"
+        "%CMAKE_DIRECTORY%\bin\cmake.exe" -DFETCH_ONLY:BOOL=1 %* "%BATDIR%\cmake"
     ) ELSE (
         @IF /I "%1"=="git" (
             set WTGIT=-DWTGIT:BOOL=1
@@ -109,11 +109,11 @@ ECHO BATDIR = %BATDIR%
             @rd /q /s "%BASEDIR%\build"
             @mkdir "%BASEDIR%\build"
             @cd "%BASEDIR%\build"
-            "%PREFIX%\bin\cmake.exe" -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" %WTGIT% %* "%BATDIR%\cmake"
+            "%CMAKE_DIRECTORY%\bin\cmake.exe" -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" %WTGIT% %* "%BATDIR%\cmake"
         ) ELSE (
             @IF EXIST %BASEDIR%\build\Nul (
                 @cd "%BASEDIR%\build"
-                "%PREFIX%\bin\cmake.exe" -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" %WTGIT% %* "%BATDIR%\cmake"
+                "%CMAKE_DIRECTORY%\bin\cmake.exe" -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" %WTGIT% %* "%BATDIR%\cmake"
             )
         )
     )
@@ -124,5 +124,5 @@ ECHO BATDIR = %BATDIR%
     )
 
     @cd "%BASEDIR%\build"
-    "%PREFIX%\bin\cmake.exe" -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" %* "%BATDIR%\cmake"
+    "%CMAKE_DIRECTORY%\bin\cmake.exe" -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" %* "%BATDIR%\cmake"
 )
