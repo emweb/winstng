@@ -924,9 +924,17 @@ ELSE ( FETCH_ONLY )
         -DRUNDIR=${WINST_PREFIX}/var/run/wt
         -DSSL_PREFIX=${WINST_PREFIX}
         -DMYSQL_PREFIX=${WINST_PREFIX}
+        -DMYSQL_LIBRARY=libmariadb
         -DEXAMPLES_DESTINATION=lib/Wt/examples
         )
 
+    IF(WIN32)
+    set( wt_CMAKE_ARGS
+        ${wt_CMAKE_ARGS}
+        -DSSL_LIB_NAMES=ssleay32
+        -DSSL_LIB_TOO_NAMES=libeay32
+       )
+    ENDIF(WIN32)
     if( WTGIT )
         ExternalProject_Add( wt-fetch
             # git
