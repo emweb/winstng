@@ -582,6 +582,7 @@ ELSE ( FETCH_ONLY )
         )
 
     ExternalProject_Add( mariadb-fetch
+        DEPENDS patch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
         DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
         URL ${mariadb_URL}
@@ -933,6 +934,7 @@ ELSE ( FETCH_ONLY )
         ${wt_CMAKE_ARGS}
         -DSSL_LIB_NAMES=ssleay32
         -DSSL_LIB_TOO_NAMES=libeay32
+        -DENABLE_QT4:BOOL=0
        )
     ENDIF(WIN32)
     if( WTGIT )
