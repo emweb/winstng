@@ -60,7 +60,8 @@ set( _PACKAGES ${_PACKAGES} openssl )
 set( libharu_URL https://github.com/libharu/libharu.git )
 set( _PACKAGES ${_PACKAGES} libharu )
 
-set( mariadb_URL http://downloads.mariadb.org/f/mariadb-native-client/Source/mariadb-native-client.tar.gz )
+set( mariadb_URL "http://downloads.mariadb.org/f/mariadb-native-client/Source/mariadb-native-client.tar.gz/from/http:/mariadb.cu.be/" )
+set( mariadb_NAME "mariadb-native-client.tar.gz" )
 set( mariadb_MD5 3a6fb7b4fdda4fb247ed3474995ad4ff )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
@@ -68,8 +69,8 @@ set( boost_URL http://prdownloads.sourceforge.net/boost/boost_1_53_0.tar.bz2 )
 set( boost_MD5 a00d22605d5dbcfb4c9936a9b35bc4c2 )
 set( _PACKAGES ${_PACKAGES} boost )
 
-set( wt_URL http://prdownloads.sourceforge.net/witty/wt-3.3.0.tar.gz )
-set( wt_MD5 b2331942ad01c4fda376abf30c6a503a )
+set( wt_URL http://prdownloads.sourceforge.net/witty/wt-3.3.1-rc2.tar.gz )
+set( wt_MD5 b5d81cb01ecb3d881703472627144c35 )
 set( _PACKAGES ${_PACKAGES} wt )
 
 if( WIN32 AND NOT UNIX )
@@ -586,6 +587,7 @@ ELSE ( FETCH_ONLY )
         SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
         DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
         URL ${mariadb_URL}
+        DOWNLOAD_NAME ${mariadb_NAME}
         URL_MD5 ${mariadb_MD5}
         LIST_SEPARATOR ^^
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/mariadb-native-client.patch
