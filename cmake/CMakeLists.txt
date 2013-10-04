@@ -82,6 +82,10 @@ if( WIN32 AND NOT UNIX )
     set( nasm_URL http://www.nasm.us/pub/nasm/releasebuilds/2.10.07/win32/nasm-2.10.07-win32.zip )
     set( nasm_MD5 1dafe433d8c83854188934617eec3032 )
     set( _PACKAGES ${_PACKAGES} nasm )
+	
+	set( nsis_URL http://prdownloads.sourceforge.net/nsis/nsis-2.46.zip )
+	set( nsis_MD5 d7e43beabc017a7d892a3d6663e988d4 )
+	set( _PACKAGES ${_PACKAGES} nsis )
 
 #    if( FETCH_ONLY OR WTGIT )
         # set( 7zip_URL http://prdownloads.sourceforge.net/sevenzip/7za920.zip )
@@ -305,6 +309,23 @@ ELSE ( FETCH_ONLY )
             )
         set( PERL_EXECUTABLE ${WINST_PREFIX}/bin/perl )
     endif( WIN32 AND NOT UNIX )
+	
+	if(WIN32)
+        ExternalProject_Add( nsis
+			DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+			URL ${nsis_URL}
+			URL_MD5 ${nsis_MD5}
+			CONFIGURE_COMMAND ""
+			BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${WINST_PREFIX}/
+			INSTALL_COMMAND ""
+			LOG_DOWNLOAD 1
+			LOG_UPDATE 1
+			LOG_CONFIGURE 1
+			LOG_BUILD 1
+			LOG_TEST 1
+			LOG_INSTALL 1
+			)
+	endif(WIN32)
 
     ExternalProject_Add( zlib-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/zlib-src
@@ -884,12 +905,30 @@ ELSE ( FETCH_ONLY )
       set( boost_BOOTSTRAP_COMMAND "bootstrap.bat" )
       set( boost_BJAM "bjam" )
       set( boost_LINKAGE link=static )
+	  if(MSVC10)
+		set( boost_TOOLSET toolset=msvc-10.0 )
+	  elseif(MSVC11)
+		set( boost_TOOLSET toolset=msvc-11.0 )
+	  elseif(MSVC12)
+		set( boost_TOOLSET toolset=msvc-12.0 )
+	  endif()
+
+	  if( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Win 64-bit
+        if( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
+        	  set( boost_ADDRESS_MODEL address-model=64)
+        else( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
+            message( ERROR "${CMAKE_SYSTEM_PROCESSOR} architecture is not supported by the Wt bootstrapper, please build manually." )
+        endif( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
+	  else( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Win 32-bit    
+		set( boost_ADDRESS_MODEL address-model=32)
+	  endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+	  
     else( WIN32 AND NOT UNIX )
       set( boost_BOOTSTRAP_COMMAND "./bootstrap.sh" )
       set( boost_BJAM "./bjam" )
       set( boost_LINKAGE link=shared )
     endif( WIN32 AND NOT UNIX )
-    set( boost_COMMAND ${boost_BJAM} --build-type=minimal --variant=release --without-python ${boost_LINKAGE} threading=multi include=${WINST_PREFIX}/include linkflags=-L${WINST_PREFIX}/lib )
+    set( boost_COMMAND ${boost_BJAM} --build-type=minimal ${boost_TOOLSET} ${boost_ADDRESS_MODEL} --variant=release --without-python ${boost_LINKAGE} threading=multi include=${WINST_PREFIX}/include linkflags=-L${WINST_PREFIX}/lib )
     ExternalProject_Add( boost
 	DEPENDS zlib bzip2
         DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
