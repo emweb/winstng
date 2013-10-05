@@ -494,12 +494,14 @@ ELSE ( FETCH_ONLY )
         
             set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_win64a.bat" )
             if( MSVC ) # Visual C++
-                if( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
+                if( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 
+					set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_win64a.bat" )
                     set( OPENSSL_DEBUG_CONFIGURE_COMMAND "${WINST_PREFIX}/bin/perl Configure debug-VC-WIN64A --prefix=${WINST_PREFIX}" )
                     set( OPENSSL_RELEASE_CONFIGURE_COMMAND "${WINST_PREFIX}/bin/perl Configure VC-WIN64A --prefix=${WINST_PREFIX}" )
                     set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak" )
                     set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak install" )
                 elseif( CMAKE_SYSTEM_PROCESSOR STREQUAL IA64 )
+					set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_win64i.bat" )
                     set( OPENSSL_DEBUG_CONFIGURE_COMMAND "${WINST_PREFIX}/bin/perl Configure debug-VC-WIN64I --prefix=${WINST_PREFIX}" )
                     set( OPENSSL_RELEASE_CONFIGURE_COMMAND "${WINST_PREFIX}/bin/perl Configure VC-WIN64I --prefix=${WINST_PREFIX}" )
                     set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak" )
@@ -558,7 +560,7 @@ ELSE ( FETCH_ONLY )
         DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
         URL ${openssl_URL}
         URL_MD5 ${openssl_MD5}
-	LIST_SEPARATOR ^^
+		LIST_SEPARATOR ^^
         UPDATE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_CONFIGURE_COMMAND:STRING=${OPENSSL_RELEASE_CONFIGURE_COMMAND} -P ${WINST_BATDIR}/cmake/configure-openssl.cmake
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/openssl-library-names.patch
         CONFIGURE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_GENASM_COMMAND=${OPENSSL_GENASM_COMMAND} -P ${WINST_BATDIR}/cmake/genasm-openssl.cmake
@@ -578,7 +580,7 @@ ELSE ( FETCH_ONLY )
         DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
         URL ${openssl_URL}
         URL_MD5 ${openssl_MD5}
-	LIST_SEPARATOR ^^
+		LIST_SEPARATOR ^^
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/openssl-library-names.patch
         UPDATE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_CONFIGURE_COMMAND:STRING=${OPENSSL_DEBUG_CONFIGURE_COMMAND} -P ${WINST_BATDIR}/cmake/configure-openssl.cmake
         CONFIGURE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_GENASM_COMMAND=${OPENSSL_GENASM_COMMAND} -P ${WINST_BATDIR}/cmake/genasm-openssl.cmake

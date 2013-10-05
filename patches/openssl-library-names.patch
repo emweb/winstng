@@ -1,6 +1,6 @@
-diff -ur openssl-OpenSSL_1_0_1e.orig/ms/do_nasm.bat openssl-OpenSSL_1_0_1e/ms/do_nasm.bat
---- openssl-OpenSSL_1_0_1e.orig/ms/do_nasm.bat	2013-08-28 18:33:43.609476400 +0200
-+++ openssl-OpenSSL_1_0_1e/ms/do_nasm.bat	2013-08-28 18:35:16.164770200 +0200
+diff -rupd openssl-OpenSSL_1_0_1e.orig/ms/do_nasm.bat openssl-OpenSSL_1_0_1e/ms/do_nasm.bat
+--- openssl-OpenSSL_1_0_1e.orig/ms/do_nasm.bat	Mon Feb 11 16:21:21 2013
++++ openssl-OpenSSL_1_0_1e/ms/do_nasm.bat	Sat Oct  5 14:03:14 2013
 @@ -1,8 +1,12 @@
  
  perl util\mkfiles.pl >MINFO
@@ -14,11 +14,40 @@ diff -ur openssl-OpenSSL_1_0_1e.orig/ms/do_nasm.bat openssl-OpenSSL_1_0_1e/ms/do
 +perl util\mkdef.pl D 32 libeay > ms\libeay32d.def
  perl util\mkdef.pl 32 ssleay > ms\ssleay32.def
 +perl util\mkdef.pl D 32 ssleay > ms\ssleay32d.def
-Only in openssl-OpenSSL_1_0_1e/ms: do_nasm.bat~
-diff -ur openssl-OpenSSL_1_0_1e.orig/util/mkdef.pl openssl-OpenSSL_1_0_1e/util/mkdef.pl
---- openssl-OpenSSL_1_0_1e.orig/util/mkdef.pl	2013-08-28 18:33:44.823545800 +0200
-+++ openssl-OpenSSL_1_0_1e/util/mkdef.pl	2013-08-28 18:37:05.183005700 +0200
-@@ -59,6 +59,7 @@
+diff -rupd openssl-OpenSSL_1_0_1e.orig/ms/do_win64a.bat openssl-OpenSSL_1_0_1e/ms/do_win64a.bat
+--- openssl-OpenSSL_1_0_1e.orig/ms/do_win64a.bat	Mon Feb 11 16:21:21 2013
++++ openssl-OpenSSL_1_0_1e/ms/do_win64a.bat	Sat Oct  5 14:06:40 2013
+@@ -13,7 +13,11 @@ ml64 -c -Foms\uptable.obj ms\uptable.asm
+ 
+ :proceed
+ perl util\mk1mf.pl VC-WIN64A >ms\nt.mak
++perl util\mk1mf.pl debug VC-WIN64A >ms\ntd.mak
+ perl util\mk1mf.pl dll VC-WIN64A >ms\ntdll.mak
++perl util\mk1mf.pl dll debug VC-WIN64A >ms\ntdlld.mak
+ 
+ perl util\mkdef.pl 32 libeay > ms\libeay32.def
++perl util\mkdef.pl D 32 libeay > ms\libeay32d.def
+ perl util\mkdef.pl 32 ssleay > ms\ssleay32.def
++perl util\mkdef.pl D 32 ssleay > ms\ssleay32d.def
+diff -rupd openssl-OpenSSL_1_0_1e.orig/ms/do_win64i.bat openssl-OpenSSL_1_0_1e/ms/do_win64i.bat
+--- openssl-OpenSSL_1_0_1e.orig/ms/do_win64i.bat	Mon Feb 11 16:21:21 2013
++++ openssl-OpenSSL_1_0_1e/ms/do_win64i.bat	Sat Oct  5 14:06:45 2013
+@@ -3,7 +3,11 @@ perl util\mkfiles.pl >MINFO
+ perl ms\uplink-ia64.pl > ms\uptable.asm
+ ias -o ms\uptable.obj ms\uptable.asm
+ perl util\mk1mf.pl VC-WIN64I >ms\nt.mak
++perl util\mk1mf.pl debug VC-WIN64I >ms\ntd.mak
+ perl util\mk1mf.pl dll VC-WIN64I >ms\ntdll.mak
++perl util\mk1mf.pl dll debug VC-WIN64I >ms\ntdlld.mak
+ 
+ perl util\mkdef.pl 32 libeay > ms\libeay32.def
++perl util\mkdef.pl D 32 libeay > ms\libeay32d.def
+ perl util\mkdef.pl 32 ssleay > ms\ssleay32.def
++perl util\mkdef.pl D 32 ssleay > ms\ssleay32d.def
+diff -rupd openssl-OpenSSL_1_0_1e.orig/util/mkdef.pl openssl-OpenSSL_1_0_1e/util/mkdef.pl
+--- openssl-OpenSSL_1_0_1e.orig/util/mkdef.pl	Mon Feb 11 16:21:21 2013
++++ openssl-OpenSSL_1_0_1e/util/mkdef.pl	Sat Oct  5 14:03:14 2013
+@@ -59,6 +59,7 @@ my $debug=0;
  my $crypto_num= "util/libeay.num";
  my $ssl_num=    "util/ssleay.num";
  my $libname;
@@ -26,7 +55,7 @@ diff -ur openssl-OpenSSL_1_0_1e.orig/util/mkdef.pl openssl-OpenSSL_1_0_1e/util/m
  
  my $do_update = 0;
  my $do_rewrite = 1;
-@@ -146,6 +147,7 @@
+@@ -146,6 +147,7 @@ my $zlib;
  foreach (@ARGV, split(/ /, $options))
  	{
  	$debug=1 if $_ eq "debug";
@@ -34,7 +63,7 @@ diff -ur openssl-OpenSSL_1_0_1e.orig/util/mkdef.pl openssl-OpenSSL_1_0_1e/util/m
  	$W32=1 if $_ eq "32";
  	$W16=1 if $_ eq "16";
  	if($_ eq "NT") {
-@@ -1283,7 +1285,7 @@
+@@ -1283,7 +1285,7 @@ sub print_def_file
  	my $description = "$what $version, $name - http://$http_vendor";
  
  	if ($W32)
@@ -43,11 +72,10 @@ diff -ur openssl-OpenSSL_1_0_1e.orig/util/mkdef.pl openssl-OpenSSL_1_0_1e/util/m
  	elsif ($W16)
  		{ $libname.="16"; }
  	elsif ($OS2)
-Only in openssl-OpenSSL_1_0_1e/util: mkdef.pl~
-diff -ur openssl-OpenSSL_1_0_1e.orig/util/pl/VC-32.pl openssl-OpenSSL_1_0_1e/util/pl/VC-32.pl
---- openssl-OpenSSL_1_0_1e.orig/util/pl/VC-32.pl	2013-08-28 18:33:44.871548500 +0200
-+++ openssl-OpenSSL_1_0_1e/util/pl/VC-32.pl	2013-08-28 18:38:31.720955400 +0200
-@@ -15,6 +15,10 @@
+diff -rupd openssl-OpenSSL_1_0_1e.orig/util/pl/VC-32.pl openssl-OpenSSL_1_0_1e/util/pl/VC-32.pl
+--- openssl-OpenSSL_1_0_1e.orig/util/pl/VC-32.pl	Mon Feb 11 16:21:21 2013
++++ openssl-OpenSSL_1_0_1e/util/pl/VC-32.pl	Sat Oct  5 14:03:14 2013
+@@ -15,6 +15,10 @@ else
  	{
  	$crypto="libeay32";
  	}
@@ -58,4 +86,3 @@ diff -ur openssl-OpenSSL_1_0_1e.orig/util/pl/VC-32.pl openssl-OpenSSL_1_0_1e/uti
  
  $o='\\';
  $cp='$(PERL) util/copy.pl';
-Only in openssl-OpenSSL_1_0_1e/util/pl: VC-32.pl~
