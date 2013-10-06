@@ -69,6 +69,10 @@ set( boost_URL http://prdownloads.sourceforge.net/boost/boost_1_53_0.tar.bz2 )
 set( boost_MD5 a00d22605d5dbcfb4c9936a9b35bc4c2 )
 set( _PACKAGES ${_PACKAGES} boost )
 
+set( tinymce_URL http://download.moxiecode.com/tinymce/tinymce_4.0.7.zip )
+set( tinymce_MD5 ddb1b094bc060f939e5b1d14b7e66b99 )
+set( _PACKAGES ${_PACKAGES} tinymce )
+
 set( wt_URL http://prdownloads.sourceforge.net/witty/wt-3.3.1-rc2.tar.gz )
 set( wt_MD5 b5d81cb01ecb3d881703472627144c35 )
 set( _PACKAGES ${_PACKAGES} wt )
@@ -494,7 +498,7 @@ ELSE ( FETCH_ONLY )
         
             set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_win64a.bat" )
             if( MSVC ) # Visual C++
-                if( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 
+                if( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
 					set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_win64a.bat" )
                     set( OPENSSL_DEBUG_CONFIGURE_COMMAND "${WINST_PREFIX}/bin/perl Configure debug-VC-WIN64A --prefix=${WINST_PREFIX}" )
                     set( OPENSSL_RELEASE_CONFIGURE_COMMAND "${WINST_PREFIX}/bin/perl Configure VC-WIN64A --prefix=${WINST_PREFIX}" )
@@ -1089,6 +1093,22 @@ ELSE ( FETCH_ONLY )
    INSTALL(DIRECTORY "${WINST_PREFIX}/share/Wt" DESTINATION "lib/share")
 
 
+   # Compose a meaningful compiler string
+   if(MSVC)
+	set(_WT_COMPILER "msvc")
+	if(MSVC10)
+		set(_WT_COMPILER "${_WT_COMPILER}2010")
+	elseif(MSVC11)
+		set(_WT_COMPILER "${_WT_COMPILER}2012")
+	elseif(MSVC12)
+		set(_WT_COMPILER "${_WT_COMPILER}2013")
+	else()
+		set(_WT_COMPILER "${_WT_COMPILER}${MSVC_VERSION}")
+	endif()
+   elseif(CMAKE_COMPILER_IS_GNUCC)
+		set(_WT_COMPILER "gcc") # TODO Use the specific mingw version, i. e. the output of uname
+   endif()
+   
    SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Wt binary build")
    SET(CPACK_PACKAGE_VENDOR "emweb bvba")
    SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/ReadMe.txt")
@@ -1096,7 +1116,10 @@ ELSE ( FETCH_ONLY )
    SET(CPACK_PACKAGE_VERSION_MAJOR "3")
    SET(CPACK_PACKAGE_VERSION_MINOR "3")
    SET(CPACK_PACKAGE_VERSION_PATCH "1")
-   SET(CPACK_PACKAGE_INSTALL_DIRECTORY "Wt 3.3.1")
-#   SET(CPACK_GENERATOR "")
+   SET(CPACK_PACKAGE_INSTALL_DIRECTORY "Wt ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
+   SET(CPACK_GENERATOR "ZIP;NSIS")
+   
+   # For some reason, CPACK_PACKAGE_NAME, CPACK_PACKAGE_VERSION and CPACK_SYSTEM_NAME are empty if CPACK_PACKAGE_FILE_NAME is defined :-?
+   #SET(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${_WT_COMPILER}-${CPACK_SYSTEM_NAME}")
    INCLUDE(CPack)
 ENDIF( FETCH_ONLY )
