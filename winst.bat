@@ -126,3 +126,5 @@ ECHO BATDIR = %BATDIR%
     @cd "%BASEDIR%\build"
     "%CMAKE_DIRECTORY%\bin\cmake.exe" -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" %* "%BATDIR%\cmake"
 )
+
+@set PATH=..\prefix;..\prefix\bin;%PATH%
