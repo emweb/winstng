@@ -24,6 +24,19 @@ set(WINST_MODULE_PATH ${WINST_BATDIR}/cmake/Modules)
 # Make sure we use bootstrapped dependencies
 set(CMAKE_PREFIX_PATH ${WINST_PREFIX} )
 
+# Are we building for 32-bit or 64-bit?
+# TODO Support ARM, MIPS and others
+if( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # 64-bit
+	if( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
+		set(_WT_ARCH x64)
+	else( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
+		set(_WT_ARCH ia64)
+		message( ERROR "${CMAKE_SYSTEM_PROCESSOR} architecture is not supported by the Wt bootstrapper, please build manually." )
+	endif( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
+else( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # 32-bit
+	set(_WT_ARCH x86)		 
+endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+
 # Files to download
 
 set( zlib_URL http://prdownloads.sourceforge.net/libpng/zlib-1.2.8.tar.gz )
@@ -102,32 +115,24 @@ if( WIN32 AND NOT UNIX )
 #        set( _PACKAGES ${_PACKAGES} git )
 #    endif( FETCH_ONLY OR WTGIT )
 
-    if( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Win 64-bit
-        if( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
-        
-            set( perl_URL http://strawberryperl.com/download/5.16.3.1/strawberry-perl-5.16.3.1-64bit-portable.zip )
-            set( perl_MD5 2f00e848a678c425b9affb593c664537 )
-            set( _PACKAGES ${_PACKAGES} perl )
+    if( _WT_ARCH STREQUAL "x64" ) # Win 64-bit
+		set( perl_URL http://strawberryperl.com/download/5.16.3.1/strawberry-perl-5.16.3.1-64bit-portable.zip )
+		set( perl_MD5 2f00e848a678c425b9affb593c664537 )
+		set( _PACKAGES ${_PACKAGES} perl )
 
-            set( postgresql_URL http://get.enterprisedb.com/postgresql/postgresql-9.2.4-1-windows-x64-binaries.zip )
-            set( postgresql_MD5 a0388908fdce75f9c642454c7435e898 )
-            set( _PACKAGES ${_PACKAGES} postgresql )
+		set( postgresql_URL http://get.enterprisedb.com/postgresql/postgresql-9.2.4-1-windows-x64-binaries.zip )
+		set( postgresql_MD5 a0388908fdce75f9c642454c7435e898 )
+		set( _PACKAGES ${_PACKAGES} postgresql )
 
-            set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/graphicsmagick-binaries/1.3.18/GraphicsMagick-1.3.18-Q8-win64-dll.exe )
-            set( graphicsmagick_MD5 bd25adb9e8218aabcd68a034116396e6 )
-            set( _PACKAGES ${_PACKAGES} graphicsmagick )
+		set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/graphicsmagick-binaries/1.3.18/GraphicsMagick-1.3.18-Q8-win64-dll.exe )
+		set( graphicsmagick_MD5 bd25adb9e8218aabcd68a034116396e6 )
+		set( _PACKAGES ${_PACKAGES} graphicsmagick )
 
-            set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0_x64.zip )
-            set( firebirdsql_MD5 069743c3ed3e8f62179dde3d93bb2333 )
-            set( _PACKAGE ${_PACKAGES} firebirdsql )
+		set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0_x64.zip )
+		set( firebirdsql_MD5 069743c3ed3e8f62179dde3d93bb2333 )
+		set( _PACKAGE ${_PACKAGES} firebirdsql )
 
-        else( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
-        
-            message( ERROR "${CMAKE_SYSTEM_PROCESSOR} architecture is not supported by the Wt bootstrapper, please build manually." )
-            
-        endif( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
-        
-    else( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Win 32-bit
+    elseif( _WT_ARCH STREQUAL "x86" ) # Win 32-bit
     
         set( perl_URL http://strawberryperl.com/download/5.16.3.1/strawberry-perl-5.16.3.1-32bit-portable.zip )
         set (perl_MD5 8f3ef667e9a2b7fc402610da29bb8074 )
@@ -140,8 +145,12 @@ if( WIN32 AND NOT UNIX )
         set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0_Win32.zip )
         set( firebirdsql_MD5 ae81c884896c9c93ca7a55a4f5d86369 )
         set( _PACKAGE ${_PACKAGES} firebirdsql )
-             
-    endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+			
+	elseif( _WT_ARCH STREQUAL "ia64" ) # Win Itanium
+            message( ERROR "${_WT_ARCH} architecture is not supported by the Wt bootstrapper, please build manually." )
+	else() #ARM	
+            message( ERROR "${CMAKE_SYSTEM_PROCESSOR} architecture is not supported by the Wt bootstrapper, please build manually." )
+    endif()
 
 else( WIN32 AND NOT UNIX )
 
@@ -494,7 +503,7 @@ ELSE ( FETCH_ONLY )
 
     # OpenSSL requires some extra effort
     if( WIN32 AND NOT UNIX ) # Windows compilers but Cygwin
-        if( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Windows 64-bit
+        if( _WT_ARCH STREQUAL "x64" ) # Windows 64-bit
         
             set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_win64a.bat" )
             if( MSVC ) # Visual C++
@@ -518,7 +527,7 @@ ELSE ( FETCH_ONLY )
                 set( OPENSSL_INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install )
             endif( MSVC )
 
-        else( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Windows 32-bit
+        else( _WT_ARCH STREQUAL "x86" ) # Windows 32-bit
         
             if( MSVC )
                 set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_nasm.bat" )
@@ -540,7 +549,7 @@ ELSE ( FETCH_ONLY )
                 set( OPENSSL_INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install )
             endif( MSVC )
             
-        endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+        endif()
     else( WIN32 AND NOT UNIX ) # Unix, Cygwin and MSYS
         set( OPENSSL_GENASM_COMMAND )
 
@@ -919,15 +928,13 @@ ELSE ( FETCH_ONLY )
 		set( boost_TOOLSET toolset=msvc-12.0 )
 	  endif()
 
-	  if( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Win 64-bit
-        if( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
-        	  set( boost_ADDRESS_MODEL address-model=64)
-        else( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
-            message( ERROR "${CMAKE_SYSTEM_PROCESSOR} architecture is not supported by the Wt bootstrapper, please build manually." )
-        endif( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
-	  else( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Win 32-bit    
+	  if( _WT_ARCH STREQUAL "x64" ) # Win 64-bit
+		set( boost_ADDRESS_MODEL address-model=64)
+	  elseif( _WT_ARCH STREQUAL "x86" ) # Win 32-bit
 		set( boost_ADDRESS_MODEL address-model=32)
-	  endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+      elseif( _WT_ARCH STREQUAL "ia64" )
+		message( ERROR "${CMAKE_SYSTEM_PROCESSOR} architecture is not supported by the Wt bootstrapper, please build manually." )
+	  endif( )
 	  
     else( WIN32 AND NOT UNIX )
       set( boost_BOOTSTRAP_COMMAND "./bootstrap.sh" )
@@ -1118,8 +1125,6 @@ ELSE ( FETCH_ONLY )
    SET(CPACK_PACKAGE_VERSION_PATCH "1")
    SET(CPACK_PACKAGE_INSTALL_DIRECTORY "Wt ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
    SET(CPACK_GENERATOR "ZIP;NSIS")
-   
-   # For some reason, CPACK_PACKAGE_NAME, CPACK_PACKAGE_VERSION and CPACK_SYSTEM_NAME are empty if CPACK_PACKAGE_FILE_NAME is defined :-?
-   #SET(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${_WT_COMPILER}-${CPACK_SYSTEM_NAME}")
+   SET(CPACK_PACKAGE_FILE_NAME "Wt-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}-${_WT_COMPILER}-${CMAKE_SYSTEM_NAME}-${_WT_ARCH}-SDK")
    INCLUDE(CPack)
 ENDIF( FETCH_ONLY )
