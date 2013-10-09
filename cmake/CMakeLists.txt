@@ -18,6 +18,8 @@ set(WINST_BATDIR ${WINST_BATDIR_} CACHE PATH "winst source directory" FORCE)
 set(WINST_BASEDIR ${WINST_BASEDIR_} CACHE PATH "winst global work directory" FORCE)
 set(WINST_PREFIX ${WINST_PREFIX_} CACHE PATH "winst prefix directory" FORCE)
 
+set(CMAKE_INSTALL_PREFIX "${WINST_BASEDIR}/build/installation" CACHE PATH "Installation prefix, required for CPack due to absolute paths" FORCE)
+
 #our version of FindXXX.cmake
 set(WINST_MODULE_PATH ${WINST_BATDIR}/cmake/Modules)
 
