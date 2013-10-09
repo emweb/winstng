@@ -19,13 +19,12 @@
 
 @SET BASEDIR=%CD%
 @SET BATDIR=%~dp0
-ECHO BATDIR = %BATDIR%
 @SET WGET_FILENAME=wget.exe
 @SET WGET_FTP_SITE=ftp.kfki.hu
 @SET WGET_FTP_DIRECTORY=/pub/w2
 
 @SET UNZIP_SFX=unz600xn.exe
-@SET UNZIP_FULLURL=ftp://ftp.info-zip.org/pub/infozip/win32/%UNZIP_SFX%
+@SET UNZIP_FULLURL=http://www.mirrorservice.org/sites/ftp.info-zip.org/pub/infozip/win32/%UNZIP_SFX%
 
 @SET WGET_FTP_PATH=%WGET_FTP_DIRECTORY%/%WGET_FILENAME%
 @SET CMAKE_ZIP=cmake-2.8.11.2-win32-x86.zip
