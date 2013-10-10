@@ -53,8 +53,8 @@ set( libpng_URL http://sourceforge.net/projects/libpng/files/libpng14/older-rele
 set( libpng_MD5 df3521f61a1b8b69489d297c0ca8c1f8 )
 set( _PACKAGES ${_PACKAGES} libpng )
 
-set( libjpeg_URL http://www.ijg.org/files/jpegsrc.v8b.tar.gz )
-set( libjpeg_MD5 e022acbc5b36cd2cb70785f5b575661e )
+set( libjpeg_URL http://www.ijg.org/files/jpegsrc.v8d.tar.gz )
+set( libjpeg_MD5 52654eb3b2e60c35731ea8fc87f1bd29 )
 set( _PACKAGES ${_PACKAGES} libjpeg )
 
 set( freetype_URL http://download.savannah.gnu.org/releases/freetype/freetype-2.4.11.tar.bz2 )
@@ -342,6 +342,7 @@ ELSE ( FETCH_ONLY )
 			)
 	endif(WIN32)
 
+	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/zlib)
     ExternalProject_Add( zlib-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/zlib-src
         DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
@@ -351,7 +352,8 @@ ELSE ( FETCH_ONLY )
         PATCH_COMMAND ${CMAKE_COMMAND} -E remove zconf.h
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
-        INSTALL_COMMAND ""
+		INSTALL_COMMAND ""
+        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/zlib.h ${WINST_PREFIX}/licenses/zlib/
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -397,14 +399,16 @@ ELSE ( FETCH_ONLY )
         INSTALL_COMMAND ""
         )
 
+	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/bzip2)
     ExternalProject_Add( bzip2
         DEPENDS patch
         DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
         URL ${bzip2_URL}
         URL_MD5 ${bzip2_MD5}
-    LIST_SEPARATOR ^^
+		LIST_SEPARATOR ^^
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/bzip2.patch
         CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE ${WINST_PREFIX}/licenses/bzip2/
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -413,6 +417,7 @@ ELSE ( FETCH_ONLY )
         LOG_INSTALL 1
         )
 
+	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/libpng)
     ExternalProject_Add( libpng-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libpng-src
         DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
@@ -421,6 +426,7 @@ ELSE ( FETCH_ONLY )
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
+		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE ${WINST_PREFIX}/licenses/libpng
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -437,7 +443,7 @@ ELSE ( FETCH_ONLY )
 #	PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libpng-export.patch
         CMAKE_ARGS 
 	# -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include 
-	-DCMAKE_BUILD_TYPE=Debug -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+		-DCMAKE_BUILD_TYPE=Debug -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -453,7 +459,7 @@ ELSE ( FETCH_ONLY )
 #	PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libpng-export.patch
         CMAKE_ARGS 
 	# -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include 
-	-DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+		-DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -471,14 +477,16 @@ ELSE ( FETCH_ONLY )
         INSTALL_COMMAND ""
         )
 
+	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/libjpeg)
     ExternalProject_Add( libjpeg
         DEPENDS patch
         DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
         URL ${libjpeg_URL}
         URL_MD5 ${libjpeg_MD5}
-	LIST_SEPARATOR ^^
+		LIST_SEPARATOR ^^
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/jpeg8.patch
         CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/README ${WINST_PREFIX}/licenses/libjpeg/
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -487,14 +495,16 @@ ELSE ( FETCH_ONLY )
         LOG_INSTALL 1
         )
         
+	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/freetype)
     ExternalProject_Add( freetype
         DEPENDS zlib libpng patch
         DOWNLOAD_DIR ${WINST_BASEDR}/downloads 
         URL ${freetype_URL}
         URL_MD5 ${freetype_MD5}
-	LIST_SEPARATOR ^^
+		LIST_SEPARATOR ^^
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/freetype-2.3.12.patch
         CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX} 
+		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/docs/LICENSE.TXT ${WINST_PREFIX}/licenses/freetype/
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -610,6 +620,7 @@ ELSE ( FETCH_ONLY )
         LOG_INSTALL 1
         )
 
+	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/openssl)
     ExternalProject_Add( openssl
         DEPENDS openssl-release openssl-debug
         DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
@@ -618,8 +629,10 @@ ELSE ( FETCH_ONLY )
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
+		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE ${WINST_PREFIX}/licenses/openssl/
         )
 
+	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/mariadb)
     ExternalProject_Add( mariadb-fetch
         DEPENDS patch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
@@ -632,6 +645,7 @@ ELSE ( FETCH_ONLY )
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
+		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/COPYING.LIB ${WINST_PREFIX}/licenses/mariadb/
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -820,6 +834,7 @@ ELSE ( FETCH_ONLY )
             )      
     endif( UNIX )
 
+	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/firebirdsql)
     if( WIN32 )
 	# Download and extract firebird binaries. Or build it?
         ExternalProject_Add( firebirdsql
@@ -828,7 +843,8 @@ ELSE ( FETCH_ONLY )
             URL_MD5 ${firebirdsql_MD5}
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${WINST_PREFIX}/
-            INSTALL_COMMAND ""
+            INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/IPLicense.txt ${WINST_PREFIX}/licenses/firebirdsql/
+			TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/IDPLicense.txt ${WINST_PREFIX}/licenses/firebirdsql/
             LOG_DOWNLOAD 1
             LOG_UPDATE 1
             LOG_CONFIGURE 1
@@ -854,6 +870,7 @@ ELSE ( FETCH_ONLY )
             )
     endif( WIN32 )
 
+	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/libharu)
     ExternalProject_Add( libharu-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libharu-src
         DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
@@ -861,6 +878,7 @@ ELSE ( FETCH_ONLY )
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
+		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/README ${WINST_PREFIX}/licenses/libharu/
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
     )
@@ -918,6 +936,7 @@ ELSE ( FETCH_ONLY )
             )
     endif( UNIX AND NOT WIN32 )
 
+	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/boost)
     if( WIN32 AND NOT UNIX )
       set( boost_BOOTSTRAP_COMMAND "bootstrap.bat" )
       set( boost_BJAM "bjam" )
@@ -953,6 +972,7 @@ ELSE ( FETCH_ONLY )
         BUILD_COMMAND ${boost_COMMAND}
         BUILD_IN_SOURCE 1
         INSTALL_COMMAND ${boost_COMMAND} --prefix=${WINST_PREFIX} install
+		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE_1_0.txt ${WINST_PREFIX}/licenses/boost/
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -985,6 +1005,7 @@ ELSE ( FETCH_ONLY )
         -DEXAMPLES_DESTINATION=lib/Wt/examples
         )
 
+	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/wt)
     IF(WIN32)
     set( wt_CMAKE_ARGS
         ${wt_CMAKE_ARGS}
@@ -1008,6 +1029,7 @@ ELSE ( FETCH_ONLY )
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ""
             INSTALL_COMMAND ""
+			TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE ${WINST_PREFIX}/licenses/wt/
         )
     else( WTGIT )
         ExternalProject_Add( wt-fetch
@@ -1024,6 +1046,7 @@ ELSE ( FETCH_ONLY )
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ""
             INSTALL_COMMAND ""
+			TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE ${WINST_PREFIX}/licenses/wt/
         )
     endif( WTGIT )
 
@@ -1075,6 +1098,7 @@ ELSE ( FETCH_ONLY )
 
     
 #installation for windows
+   INSTALL(DIRECTORY "${WINST_PREFIX}/licenses" DESTINATION ".")
    INSTALL(DIRECTORY "${WINST_PREFIX}/include/Wt" DESTINATION "include")
    INSTALL(DIRECTORY "${WINST_PREFIX}/include/boost-1_53/boost" DESTINATION "include")
    FILE(GLOB boost_install_libs "${WINST_PREFIX}/lib/libboost*")
@@ -1118,6 +1142,7 @@ ELSE ( FETCH_ONLY )
 		set(_WT_COMPILER "gcc") # TODO Use the specific mingw version, i. e. the output of uname
    endif()
    
+   set(CMAKE_INSTALL_PREFIX "${WINST_BASEDIR}/build/installation" CACHE PATH "Installation prefix, required for CPack due to absolute paths" FORCE)
    SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Wt binary build")
    SET(CPACK_PACKAGE_VENDOR "emweb bvba")
    SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/ReadMe.txt")
