@@ -161,7 +161,7 @@ else( WIN32 AND NOT UNIX )
     set( _PACKAGES ${_PACKAGES} patch )
 
     set( nasm_URL http://www.nasm.us/pub/nasm/releasebuilds/2.10.07/nasm-2.10.07.tar.bz2 )
-    set( nasm_MD5 af1cd6669f5e98148cd5ec42dee90f19 )
+    set( nasm_MD5 d41d8cd98f00b204e9800998ecf8427e )
     set( _PACKAGES ${_PACKAGES} nasm )
 
     if( FETCH_ONLY OR WTGIT )
@@ -489,7 +489,7 @@ ELSE ( FETCH_ONLY )
         
     ExternalProject_Add( freetype
         DEPENDS zlib libpng patch
-        DOWNLOAD_DIR ${WINST_BASEDR}/downloads 
+        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
         URL ${freetype_URL}
         URL_MD5 ${freetype_MD5}
 	LIST_SEPARATOR ^^
@@ -837,21 +837,21 @@ ELSE ( FETCH_ONLY )
             LOG_INSTALL 1
 	    )
     else( WIN32 )
-        ExternalProject_Add( firebirdsql
-	    DEPENDS fakerootng
-            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
-            URL ${firebirdsql_URL}
-            URL_MD5 ${firebirdsql_MD5}
-            CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX} --without-editline --enable-superserver --enable-shared
-            BUILD_IN_SOURCE 1
-            INSTALL_COMMAND ${WINST_PREFIX}/bin/fakeroot-ng ${CMAKE_BUILD_TOOL} -C gen install -f Makefile.install buildRoot && mv ./gen/buildRoot/* ${WINST_PREFIX}/
-            LOG_DOWNLOAD 1
-            LOG_UPDATE 1
-            LOG_CONFIGURE 1
-            LOG_BUILD 1
-            LOG_TEST 1
-            LOG_INSTALL 1
-            )
+        #ExternalProject_Add( firebirdsql
+	#    DEPENDS fakerootng
+        #    DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
+        #    URL ${firebirdsql_URL}
+        #    URL_MD5 ${firebirdsql_MD5}
+        #    CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX} --without-editline --enable-superserver --enable-shared
+        #    BUILD_IN_SOURCE 1
+        #    INSTALL_COMMAND ${WINST_PREFIX}/bin/fakeroot-ng ${CMAKE_BUILD_TOOL} -C gen install -f Makefile.install buildRoot && mv ./gen/buildRoot/* ${WINST_PREFIX}/
+        #    LOG_DOWNLOAD 1
+        #    LOG_UPDATE 1
+        #    LOG_CONFIGURE 1
+        #    LOG_BUILD 1
+        #    LOG_TEST 1
+        #    LOG_INSTALL 1
+        #    )
     endif( WIN32 )
 
     ExternalProject_Add( libharu-fetch
@@ -961,6 +961,10 @@ ELSE ( FETCH_ONLY )
         LOG_INSTALL 1
         )
     
+    if(WIN32)
+	set( WT_WINDOWSONLY_DEPENDENCIES firebirdsql )
+    endif(WIN32)
+
     if(UNIX)
         set( WT_UNIXONLY_DEPENDENCIES fcgi graphicsmagick )
     endif(UNIX)
