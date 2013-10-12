@@ -1,7 +1,7 @@
-diff -ru /cygdrive/c/tmp/mariadb-native-client/CMakeLists.txt mariadb-src/CMakeLists.txt
---- /cygdrive/c/tmp/mariadb-native-client/CMakeLists.txt	2012-11-29 04:29:20.000000000 +0100
-+++ mariadb-src/CMakeLists.txt	2013-09-19 15:13:21.735502500 +0200
-@@ -14,6 +14,8 @@
+diff -rupd mariadb-native-client.orig/CMakeLists.txt mariadb-native-client/CMakeLists.txt
+--- mariadb-native-client.orig/CMakeLists.txt	2012-11-29 04:29:20.000000000 +0100
++++ mariadb-native-client/CMakeLists.txt	2013-10-12 17:12:09.143269681 +0200
+@@ -14,6 +14,8 @@ IF(COMMAND CMAKE_POLICY)
    CMAKE_POLICY(SET CMP0003 NEW)
  ENDIF(COMMAND CMAKE_POLICY)
  
@@ -10,7 +10,7 @@ diff -ru /cygdrive/c/tmp/mariadb-native-client/CMakeLists.txt mariadb-src/CMakeL
  IF(WIN32)
    # Speedup system tests
    INCLUDE(${CMAKE_SOURCE_DIR}/WindowsCache.cmake)
-@@ -111,12 +113,6 @@
+@@ -111,12 +113,6 @@ IF(BUILD_DOCS)
  ENDIF()
  
  
@@ -23,11 +23,10 @@ diff -ru /cygdrive/c/tmp/mariadb-native-client/CMakeLists.txt mariadb-src/CMakeL
  SET(CPACK_PACKAGE_VENDOR "Monty Program AB")
  SET(CPACK_PACKAGE_DESCRIPTION "MariaDB client library. A library for connecting to MariaDB and MySQL servers")
  SET(CPACK_PACKAGE_NAME "mariadb_client")
-Only in mariadb-src: CMakeLists.txt~
-diff -ru /cygdrive/c/tmp/mariadb-native-client/libmysql/CMakeLists.txt mariadb-src/libmysql/CMakeLists.txt
---- /cygdrive/c/tmp/mariadb-native-client/libmysql/CMakeLists.txt	2012-11-29 04:29:20.000000000 +0100
-+++ mariadb-src/libmysql/CMakeLists.txt	2013-09-19 15:12:30.310561100 +0200
-@@ -132,6 +132,9 @@
+diff -rupd mariadb-native-client.orig/libmysql/CMakeLists.txt mariadb-native-client/libmysql/CMakeLists.txt
+--- mariadb-native-client.orig/libmysql/CMakeLists.txt	2012-11-29 04:29:20.000000000 +0100
++++ mariadb-native-client/libmysql/CMakeLists.txt	2013-10-12 17:12:09.143269681 +0200
+@@ -132,6 +132,9 @@ TARGET_LINK_LIBRARIES(mariadbclient ${CM
  IF(OPENSSL_FOUND)
    TARGET_LINK_LIBRARIES(mariadbclient ${OPENSSL_LIBRARIES})
  ENDIF()
@@ -37,7 +36,7 @@ diff -ru /cygdrive/c/tmp/mariadb-native-client/libmysql/CMakeLists.txt mariadb-s
  
  ADD_LIBRARY(libmariadb SHARED ${LIBMYSQL_SOURCES})
  TARGET_LINK_LIBRARIES(libmariadb ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
-@@ -156,9 +159,12 @@
+@@ -156,9 +159,12 @@ ENDIF()
  
  SET_TARGET_PROPERTIES(libmariadb PROPERTIES PREFIX "")
  
@@ -53,7 +52,7 @@ diff -ru /cygdrive/c/tmp/mariadb-native-client/libmysql/CMakeLists.txt mariadb-s
  
  #
  # Installation
-@@ -166,7 +172,7 @@
+@@ -166,7 +172,7 @@ SET_TARGET_PROPERTIES(libmariadb PROPERT
  
  INSTALL(TARGETS
            libmariadb mariadbclient
@@ -62,4 +61,15 @@ diff -ru /cygdrive/c/tmp/mariadb-native-client/libmysql/CMakeLists.txt mariadb-s
            LIBRARY DESTINATION "lib"
            ARCHIVE DESTINATION "lib")
  
-Only in mariadb-src/libmysql: CMakeLists.txt~
+diff -rupd mariadb-native-client.orig/libmysql/my_stmt.c mariadb-native-client/libmysql/my_stmt.c
+--- mariadb-native-client.orig/libmysql/my_stmt.c	2012-11-29 04:29:20.000000000 +0100
++++ mariadb-native-client/libmysql/my_stmt.c	2013-10-12 17:12:55.599271537 +0200
+@@ -637,7 +637,7 @@ unsigned char* mysql_stmt_execute_genera
+ 
+ mem_error:
+   SET_CLIENT_STMT_ERROR(stmt, CR_OUT_OF_MEMORY, SQLSTATE_UNKNOWN, 0);
+-  my_free((gptr)start, MYF(ALLOW_ZERO_PTR));
++  my_free((gptr)start, MYF(MY_ALLOW_ZERO_PTR));
+   *request_len= 0;
+   DBUG_RETURN(NULL);
+ }
