@@ -30,6 +30,10 @@
 @SET CMAKE_ZIP=cmake-2.8.11.2-win32-x86.zip
 @SET CMAKE_FULLURL=http://www.cmake.org/files/v2.8/%CMAKE_ZIP%
 @SET CMAKE_DIRECTORY=%BASEDIR%/downloads/cmake-2.8.11.2-win32-x86
+@SET CMAKE_EXE=%CMAKE_DIRECTORY%/bin/cmake.exe
+@SET CPACK_EXE=%CMAKE_DIRECTORY%/bin/cpack.exe
+
+::@SET CMAKE_OPTIONS=--build
 
 @SET PREFIX=%BASEDIR%\prefix
 
@@ -83,7 +87,7 @@
 
 :INSTALLCMAKE
 @echo Setting up CMake...
-@IF EXIST "%PREFIX%\bin\cmake.exe" GOTO BOOTSTRAP
+@IF EXIST "%CMAKE_EXE%" GOTO BOOTSTRAP
 @unzip "%BASEDIR%\downloads\%CMAKE_ZIP%"
 @rem xcopy /Y /S "%CMAKE_DIRECTORY%\*.*" "%PREFIX%\"
 @rem rd /q /s "%CMAKE_DIRECTORY%"
@@ -96,7 +100,7 @@
     @IF /I "%1"=="fetch" ( 
         SHIFT
         cd "%BASEDIR%\build"
-        "%CMAKE_DIRECTORY%\bin\cmake.exe" -DFETCH_ONLY:BOOL=1 %* "%BATDIR%\cmake"
+        "%CMAKE_EXE%" -DFETCH_ONLY:BOOL=1 %* "%BATDIR%\cmake"
     ) ELSE (
         @IF /I "%1"=="git" (
             set WTGIT=-DWTGIT:BOOL=1
@@ -108,11 +112,11 @@
             @rd /q /s "%BASEDIR%\build"
             @mkdir "%BASEDIR%\build"
             @cd "%BASEDIR%\build"
-            "%CMAKE_DIRECTORY%\bin\cmake.exe" -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" %WTGIT% %* "%BATDIR%\cmake"
+            "%CMAKE_EXE%" -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" %WTGIT% %* "%BATDIR%\cmake"
         ) ELSE (
             @IF EXIST %BASEDIR%\build\Nul (
                 @cd "%BASEDIR%\build"
-                "%CMAKE_DIRECTORY%\bin\cmake.exe" -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" %WTGIT% %* "%BATDIR%\cmake"
+                "%CMAKE_EXE%" %CMAKE_OPTIONS% -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" %WTGIT% %* "%BATDIR%\cmake"
             )
         )
     )
@@ -123,7 +127,13 @@
     )
 
     @cd "%BASEDIR%\build"
-    "%CMAKE_DIRECTORY%\bin\cmake.exe" -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" %* "%BATDIR%\cmake"
+    "%CMAKE_EXE%" %CMAKE_OPTIONS% -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" %* "%BATDIR%\cmake"
 )
 
 @set PATH=..\prefix;..\prefix\bin;%PATH%
+
+:: Required to workaround Assembla issue #20 (missing files in packages)
+:: %CMAKE_EXE% %BATDIR%\cmake
+
+:: Create packages
+:: %CPACK_EXE% %BATDIR%\cmake

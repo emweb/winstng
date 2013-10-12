@@ -84,8 +84,8 @@ set( boost_URL http://prdownloads.sourceforge.net/boost/boost_1_53_0.tar.bz2 )
 set( boost_MD5 a00d22605d5dbcfb4c9936a9b35bc4c2 )
 set( _PACKAGES ${_PACKAGES} boost )
 
-set( tinymce_URL http://download.moxiecode.com/tinymce/tinymce_4.0.7.zip )
-set( tinymce_MD5 ddb1b094bc060f939e5b1d14b7e66b99 )
+set( tinymce_URL http://download.moxiecode.com/tinymce/tinymce_4.0.8.zip )
+set( tinymce_MD5 62eab0051a20c617142cbcf64a1f4bef )
 set( _PACKAGES ${_PACKAGES} tinymce )
 
 set( wt_URL http://prdownloads.sourceforge.net/witty/wt-3.3.1-rc2.tar.gz )
@@ -1010,6 +1010,7 @@ ELSE ( FETCH_ONLY )
         )
 
 	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/wt)
+	file(MAKE_DIRECTORY ${WINST_PREFIX}/docs-to-install)
     IF(WIN32)
     set( wt_CMAKE_ARGS
         ${wt_CMAKE_ARGS}
@@ -1098,26 +1099,45 @@ ELSE ( FETCH_ONLY )
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
+		TEST_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/doc ${WINST_PREFIX}/docs-to-install
     )
 
-    
+	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/tinymce)
+	ExternalProject_Add( tinymce
+	DEPENDS wt
+	DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+	URL ${tinymce_URL}
+	URL_MD5 ${tinymce_MD5}
+	CONFIGURE_COMMAND ""
+	BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/js ${WINST_PREFIX}/share/Wt/resources/
+	INSTALL_COMMAND ${CMAKE_COMMAND} -E remove ${WINST_PREFIX}/share/Wt/resources/tinymce/license.txt
+	TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/js/tinymce/license.txt ${WINST_PREFIX}/licenses/tinymce/
+	LOG_DOWNLOAD 1
+	LOG_UPDATE 1
+	LOG_CONFIGURE 1
+	LOG_BUILD 1
+	LOG_TEST 1
+	LOG_INSTALL 1
+	)
+			
 #installation for windows
-   INSTALL(DIRECTORY "${WINST_PREFIX}/licenses" DESTINATION ".")
-   INSTALL(DIRECTORY "${WINST_PREFIX}/include/Wt" DESTINATION "include")
-   INSTALL(DIRECTORY "${WINST_PREFIX}/include/boost-1_53/boost" DESTINATION "include")
+   INSTALL(DIRECTORY "${WINST_PREFIX}/licenses" DESTINATION "." COMPONENT binaries)
+   INSTALL(DIRECTORY "${WINST_PREFIX}/include/Wt" DESTINATION "include" COMPONENT binaries)
+   INSTALL(DIRECTORY "${WINST_PREFIX}/include/boost-1_53/boost" DESTINATION "include" COMPONENT binaries)
+   INSTALL(DIRECTORY "${WINST_PREFIX}/docs-to-install/" DESTINATION "doc" COMPONENT documentation)
    FILE(GLOB boost_install_libs "${WINST_PREFIX}/lib/libboost*")
-   INSTALL(FILES ${boost_install_libs} DESTINATION "lib")
-   INSTALL(FILES "${WINST_PREFIX}/bin/zlibd.dll" "${WINST_PREFIX}/bin/zlib.dll" DESTINATION "bin")
-   INSTALL(FILES "${WINST_PREFIX}/bin/ssleay32.dll" "${WINST_PREFIX}/bin/libeay32.dll" DESTINATION "bin")
-   INSTALL(FILES "${WINST_PREFIX}/bin/ssleay32d.dll" "${WINST_PREFIX}/bin/libeay32d.dll" DESTINATION "bin")
-   INSTALL(FILES "${WINST_PREFIX}/bin/libpng14.dll" "${WINST_PREFIX}/bin/libpng14d.dll" DESTINATION "bin")
-#   INSTALL(FILES "${WINST_PREFIX}/bin/libpq.dll" "${WINST_PREFIX}/bin/libintl.dll" DESTINATION "bin")
+   INSTALL(FILES ${boost_install_libs} DESTINATION "lib" COMPONENT binaries)
+   INSTALL(FILES "${WINST_PREFIX}/bin/zlibd.dll" "${WINST_PREFIX}/bin/zlib.dll" DESTINATION "bin" COMPONENT binaries)
+   INSTALL(FILES "${WINST_PREFIX}/bin/ssleay32.dll" "${WINST_PREFIX}/bin/libeay32.dll" DESTINATION "bin" COMPONENT binaries)
+   INSTALL(FILES "${WINST_PREFIX}/bin/ssleay32d.dll" "${WINST_PREFIX}/bin/libeay32d.dll" DESTINATION "bin" COMPONENT binaries)
+   INSTALL(FILES "${WINST_PREFIX}/bin/libpng14.dll" "${WINST_PREFIX}/bin/libpng14d.dll" DESTINATION "bin" COMPONENT binaries)
+#   INSTALL(FILES "${WINST_PREFIX}/bin/libpq.dll" "${WINST_PREFIX}/bin/libintl.dll" DESTINATION "bin" COMPONENT binaries)
    FILE(GLOB wt_install_libs "${WINST_PREFIX}/lib/wt*lib")
-   INSTALL(FILES ${wt_install_libs} DESTINATION "lib")
+   INSTALL(FILES ${wt_install_libs} DESTINATION "lib" COMPONENT binaries)
    FILE(GLOB wt_install_dlls "${WINST_PREFIX}/bin/wt*dll")
-   INSTALL(FILES ${wt_install_dlls} DESTINATION "bin")
+   INSTALL(FILES ${wt_install_dlls} DESTINATION "bin" COMPONENT binaries)
    FILE(GLOB_RECURSE wt_install_examples "${WINST_PREFIX}/lib/Wt/*.exe")
-   INSTALL(FILES ${wt_install_examples} DESTINATION "bin")
+   INSTALL(FILES ${wt_install_examples} DESTINATION "bin" COMPONENT examples)
    FILE(GLOB wt_all_bat "${WINST_PREFIX}/bin/*.bat")
    FOREACH(b ${wt_all_bat})
      FILE(READ ${b} bat_contents)
@@ -1125,9 +1145,9 @@ ELSE ( FETCH_ONLY )
        LIST(APPEND wt_install_examples_bat "${b}")
      ENDIF(bat_contents MATCHES "This-is-a-wt-example")
    ENDFOREACH(b ${wt_all_bat})
-   INSTALL(FILES ${wt_install_examples_bat} DESTINATION "bin")
-   INSTALL(DIRECTORY "${WINST_PREFIX}/lib/Wt" DESTINATION "lib")
-   INSTALL(DIRECTORY "${WINST_PREFIX}/share/Wt" DESTINATION "lib/share")
+   INSTALL(FILES ${wt_install_examples_bat} DESTINATION "bin" COMPONENT examples)
+   INSTALL(DIRECTORY "${WINST_PREFIX}/lib/Wt" DESTINATION "lib" COMPONENT binaries)
+   INSTALL(DIRECTORY "${WINST_PREFIX}/share/Wt" DESTINATION "lib/share" COMPONENT binaries)
 
 
    # Compose a meaningful compiler string
@@ -1145,7 +1165,14 @@ ELSE ( FETCH_ONLY )
    elseif(CMAKE_COMPILER_IS_GNUCC)
 		set(_WT_COMPILER "gcc") # TODO Use the specific mingw version, i. e. the output of uname
    endif()
+
+   #
+   # Packages/installers
+   #
    
+   # Put everything in a single ZIP file
+   set(CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE 1)
+
    set(CMAKE_INSTALL_PREFIX "${WINST_BASEDIR}/build/installation" CACHE PATH "Installation prefix, required for CPack due to absolute paths" FORCE)
    SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Wt binary build")
    SET(CPACK_PACKAGE_VENDOR "emweb bvba")
@@ -1155,7 +1182,29 @@ ELSE ( FETCH_ONLY )
    SET(CPACK_PACKAGE_VERSION_MINOR "3")
    SET(CPACK_PACKAGE_VERSION_PATCH "1")
    SET(CPACK_PACKAGE_INSTALL_DIRECTORY "Wt ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
-   SET(CPACK_GENERATOR "ZIP;NSIS")
+   
+   if(WIN32)
+	SET(CPACK_GENERATOR "ZIP;NSIS")
+   elseif(CMAKE_HOST_APPLE)
+    SET(CPACK_GENERATOR "Bundle")
+   else(WIN32)
+    SET(CPACK_GENERATOR "TBZ2")
+   endif(WIN32)
+   
+   set(CPACK_COMPONENTS_ALL binaries documentation examples)
+   
+   set(CPACK_COMPONENT_BINARIES_DISPLAY_NAME "Binaries")
+   set(CPACK_COMPONENT_BINARIES_DESCRIPTION "Wt binaries and third party dependencies. Includes DLLs and import libraries.")
+   set(CPACK_COMPONENT_EXAMPLES_DISPLAY_NAME "Examples")
+   set(CPACK_COMPONENT_EXAMPLES_DESCRIPTION "Examples, ready to run. Source code is not included.")
+   set(CPACK_COMPONENT_DOCUMENTATION_DISPLAY_NAME "Documentation")
+   set(CPACK_COMPONENT_DOCUMENTATION_DESCRIPTION "Wt documentation in HTML format")
+   
+   set(CPACK_COMPONENT_BINARIES_REQUIRED TRUE)
+   
+   set(CPACK_COMPONENT_EXAMPLES_DEPENDS binaries)
+   
    SET(CPACK_PACKAGE_FILE_NAME "Wt-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}-${_WT_COMPILER}-${CMAKE_SYSTEM_NAME}-${_WT_ARCH}-SDK")
+   
    INCLUDE(CPack)
 ENDIF( FETCH_ONLY )
