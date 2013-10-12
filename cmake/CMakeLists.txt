@@ -161,7 +161,7 @@ else( WIN32 AND NOT UNIX )
     set( _PACKAGES ${_PACKAGES} patch )
 
     set( nasm_URL http://www.nasm.us/pub/nasm/releasebuilds/2.10.07/nasm-2.10.07.tar.bz2 )
-    set( nasm_MD5 d41d8cd98f00b204e9800998ecf8427e )
+    set( nasm_MD5 af1cd6669f5e98148cd5ec42dee90f19 )
     set( _PACKAGES ${_PACKAGES} nasm )
 
     if( FETCH_ONLY OR WTGIT )
@@ -1058,7 +1058,7 @@ ELSE ( FETCH_ONLY )
         DEPENDS wt-fetch
             zlib libpng libharu
             openssl boost
-            firebirdsql mariadb
+            ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
 #            postgresql
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
@@ -1075,7 +1075,7 @@ ELSE ( FETCH_ONLY )
         DEPENDS wt-fetch
             zlib libpng libharu
             openssl boost
-            firebirdsql mariadb
+            ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
 #            postgresql
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
