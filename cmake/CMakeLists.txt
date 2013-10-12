@@ -75,7 +75,7 @@ set( _PACKAGES ${_PACKAGES} openssl )
 set( libharu_URL https://github.com/libharu/libharu.git )
 set( _PACKAGES ${_PACKAGES} libharu )
 
-set( mariadb_URL "http://downloads.mariadb.org/f/mariadb-native-client/Source/mariadb-native-client.tar.gz/from/http:/mariadb.cu.be/" )
+set( mariadb_URL http://mariadb.cu.be/client-native-1.0.0/Source/mariadb-native-client.tar.gz )
 set( mariadb_NAME "mariadb-native-client.tar.gz" )
 set( mariadb_MD5 3a6fb7b4fdda4fb247ed3474995ad4ff )
 set( _PACKAGES ${_PACKAGES} mariadb )
@@ -161,7 +161,7 @@ else( WIN32 AND NOT UNIX )
     set( _PACKAGES ${_PACKAGES} patch )
 
     set( nasm_URL http://www.nasm.us/pub/nasm/releasebuilds/2.10.07/nasm-2.10.07.tar.bz2 )
-    set( nasm_MD5 d41d8cd98f00b204e9800998ecf8427e )
+    set( nasm_MD5 af1cd6669f5e98148cd5ec42dee90f19 )
     set( _PACKAGES ${_PACKAGES} nasm )
 
     if( FETCH_ONLY OR WTGIT )
@@ -1059,7 +1059,7 @@ ELSE ( FETCH_ONLY )
         DEPENDS wt-fetch
             zlib libpng libharu
             openssl boost
-            firebirdsql mariadb
+            ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
 #            postgresql
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
@@ -1076,7 +1076,7 @@ ELSE ( FETCH_ONLY )
         DEPENDS wt-fetch
             zlib libpng libharu
             openssl boost
-            firebirdsql mariadb
+            ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
 #            postgresql
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
