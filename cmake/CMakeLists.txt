@@ -75,7 +75,7 @@ set( _PACKAGES ${_PACKAGES} openssl )
 set( libharu_URL https://github.com/libharu/libharu.git )
 set( _PACKAGES ${_PACKAGES} libharu )
 
-set( mariadb_URL "http://downloads.mariadb.org/f/mariadb-native-client/Source/mariadb-native-client.tar.gz/from/http:/mariadb.cu.be/" )
+set( mariadb_URL http://mariadb.cu.be/client-native-1.0.0/Source/mariadb-native-client.tar.gz )
 set( mariadb_NAME "mariadb-native-client.tar.gz" )
 set( mariadb_MD5 3a6fb7b4fdda4fb247ed3474995ad4ff )
 set( _PACKAGES ${_PACKAGES} mariadb )
