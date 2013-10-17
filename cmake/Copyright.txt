@@ -23,6 +23,7 @@ This is the list of included software and its license:
    HarfBuzz		MIT
    glib			LGPLv2
    FCGI			FastCGI license
+   TinyMCE		LGPLv2.1
 
 The full text of the licenses is available in the "licenses" directory 
 in the installed SDK.

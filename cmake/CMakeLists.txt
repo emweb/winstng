@@ -1008,7 +1008,7 @@ ELSE ( FETCH_ONLY )
         -DMYSQL_LIBRARY=libmariadb
         -DEXAMPLES_DESTINATION=lib/Wt/examples
         )
-
+		
 	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/wt)
 	file(MAKE_DIRECTORY ${WINST_PREFIX}/docs-to-install)
     IF(WIN32)
@@ -1048,7 +1048,6 @@ ELSE ( FETCH_ONLY )
             LOG_BUILD 1
             LOG_TEST 1
             LOG_INSTALL 1
-            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/wt-3.3.1rc2.patch
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ""
             INSTALL_COMMAND ""
@@ -1056,8 +1055,29 @@ ELSE ( FETCH_ONLY )
         )
     endif( WTGIT )
 
+	ExternalProject_Get_Property( wt-fetch source_dir )
+	
+	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/tinymce)
+	file(MAKE_DIRECTORY ${source_dir}/resources/tiny_mce)
+	ExternalProject_Add( tinymce
+	DEPENDS wt-fetch
+	DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+	URL ${tinymce_URL}
+	URL_MD5 ${tinymce_MD5}
+	CONFIGURE_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/js/ ${source_dir}/resources/tiny_mce
+	BUILD_COMMAND ${CMAKE_COMMAND} -E rename ${source_dir}/resources/tiny_mce/tinymce.min.js ${source_dir}/resources/tiny_mce/tiny_mce.js
+	INSTALL_COMMAND ${CMAKE_COMMAND} -E remove ${source_dir}/resources/tiny_mce/license.txt
+	TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/js/tinymce/license.txt ${WINST_PREFIX}/licenses/tinymce/
+	LOG_DOWNLOAD 1
+	LOG_UPDATE 1
+	LOG_CONFIGURE 1
+	LOG_BUILD 1
+	LOG_TEST 1
+	LOG_INSTALL 1
+	)
+
     ExternalProject_Add( wt-debug
-        DEPENDS wt-fetch
+        DEPENDS tinymce wt-fetch
             zlib libpng libharu
             openssl boost
             ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
@@ -1074,7 +1094,7 @@ ELSE ( FETCH_ONLY )
         LOG_INSTALL 1
     )
     ExternalProject_Add( wt-release
-        DEPENDS wt-fetch
+        DEPENDS tinymce wt-fetch
             zlib libpng libharu
             openssl boost
             ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
@@ -1102,25 +1122,7 @@ ELSE ( FETCH_ONLY )
         INSTALL_COMMAND ""
 		TEST_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/doc ${WINST_PREFIX}/docs-to-install
     )
-
-	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/tinymce)
-	ExternalProject_Add( tinymce
-	DEPENDS wt
-	DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
-	URL ${tinymce_URL}
-	URL_MD5 ${tinymce_MD5}
-	CONFIGURE_COMMAND ""
-	BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/js ${WINST_PREFIX}/share/Wt/resources/
-	INSTALL_COMMAND ${CMAKE_COMMAND} -E remove ${WINST_PREFIX}/share/Wt/resources/tinymce/license.txt
-	TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/js/tinymce/license.txt ${WINST_PREFIX}/licenses/tinymce/
-	LOG_DOWNLOAD 1
-	LOG_UPDATE 1
-	LOG_CONFIGURE 1
-	LOG_BUILD 1
-	LOG_TEST 1
-	LOG_INSTALL 1
-	)
-			
+	
 #installation for windows
    INSTALL(DIRECTORY "${WINST_PREFIX}/licenses" DESTINATION "." COMPONENT binaries)
    INSTALL(DIRECTORY "${WINST_PREFIX}/include/Wt" DESTINATION "include" COMPONENT binaries)
