@@ -57,8 +57,8 @@ set( libjpeg_URL http://www.ijg.org/files/jpegsrc.v8d.tar.gz )
 set( libjpeg_MD5 52654eb3b2e60c35731ea8fc87f1bd29 )
 set( _PACKAGES ${_PACKAGES} libjpeg )
 
-set( freetype_URL http://download.savannah.gnu.org/releases/freetype/freetype-2.4.11.tar.bz2 )
-set( freetype_MD5 b93435488942486c8d0ca22e8f768034 )
+set( freetype_URL http://download.savannah.gnu.org/releases/freetype/freetype-2.5.0.1.tar.bz2 )
+set( freetype_MD5 c72e9010b1d986d556fc0b2b5fcbf31a )
 set( _PACKAGES ${_PACKAGES} freetype )
 
 if(WIN32)
@@ -88,8 +88,8 @@ set( tinymce_URL http://download.moxiecode.com/tinymce/tinymce_4.0.8.zip )
 set( tinymce_MD5 62eab0051a20c617142cbcf64a1f4bef )
 set( _PACKAGES ${_PACKAGES} tinymce )
 
-set( wt_URL http://prdownloads.sourceforge.net/witty/wt-3.3.1-rc2.tar.gz )
-set( wt_MD5 b5d81cb01ecb3d881703472627144c35 )
+set( wt_URL http://prdownloads.sourceforge.net/witty/wt-3.3.1.tar.gz )
+set( wt_MD5 3e93152c0ba3feb4ee687e7370b27552 )
 set( _PACKAGES ${_PACKAGES} wt )
 
 if( WIN32 AND NOT UNIX )
@@ -122,8 +122,8 @@ if( WIN32 AND NOT UNIX )
 		set( perl_MD5 2f00e848a678c425b9affb593c664537 )
 		set( _PACKAGES ${_PACKAGES} perl )
 
-		set( postgresql_URL http://get.enterprisedb.com/postgresql/postgresql-9.2.4-1-windows-x64-binaries.zip )
-		set( postgresql_MD5 a0388908fdce75f9c642454c7435e898 )
+		set( postgresql_URL http://get.enterprisedb.com/postgresql/postgresql-9.3.1-1-windows-x64-binaries.zip )
+		set( postgresql_MD5 d3425593ebda827b40b11798306bc6e3 )
 		set( _PACKAGES ${_PACKAGES} postgresql )
 
 		set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/graphicsmagick-binaries/1.3.18/GraphicsMagick-1.3.18-Q8-win64-dll.exe )
@@ -140,8 +140,8 @@ if( WIN32 AND NOT UNIX )
         set (perl_MD5 8f3ef667e9a2b7fc402610da29bb8074 )
         set( _PACKAGES ${_PACKAGES} perl )
 
-        set( postgresql_URL http://get.enterprisedb.com/postgresql/postgresql-9.2.4-1-windows-binaries.zip )
-        set( postgresql_MD5 516ce6950a74646c80665435f74ae757 )
+        set( postgresql_URL http://get.enterprisedb.com/postgresql/postgresql-9.3.1-1-windows-binaries.zip )
+        set( postgresql_MD5 3893bb12570ac3c450745a768fe11fe4 )
         set( _PACKAGES ${_PACKAGES} postgresql )
         
         set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0_Win32.zip )
@@ -174,8 +174,8 @@ else( WIN32 AND NOT UNIX )
     set( perl_MD5 eb5c40f2575df6c155bc99e3fe0a9d82 )
     set( _PACKAGES ${_PACKAGES} perl )
 
-    set( postgresql_URL http://ftp3.de.postgresql.org/pub/Mirrors/ftp.postgresql.org/source/v9.2.4/postgresql-9.2.4.tar.bz2 )
-    set( postgresql_MD5 6ee5bb53b97da7c6ad9cb0825d3300dd )
+    set( postgresql_URL http://ftp3.de.postgresql.org/pub/Mirrors/ftp.postgresql.org/source/v9.3.1/postgresql-9.3.1.tar.bz2 )
+    set( postgresql_MD5 c003d871f712d4d3895956b028a96e74 )
     set( _PACKAGES ${_PACKAGES} postgresql )
 
     set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/GraphicsMagick-1.3.18.tar.bz2 )
@@ -502,7 +502,7 @@ ELSE ( FETCH_ONLY )
         URL ${freetype_URL}
         URL_MD5 ${freetype_MD5}
 		LIST_SEPARATOR ^^
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/freetype-2.3.12.patch
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/freetype-2.5.0.1.diff
         CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX} 
 		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/docs/LICENSE.TXT ${WINST_PREFIX}/licenses/freetype/
         LOG_DOWNLOAD 1
@@ -740,20 +740,20 @@ ELSE ( FETCH_ONLY )
 #    endif( WIN32 AND NOT UNIX )
     
     if( WIN32 AND NOT UNIX )
-#      ExternalProject_Add( postgresql
-#	    DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
-#	    URL ${postgresql_URL}
-#	    URL_MD5 ${postgresql_MD5}
-#	    CONFIGURE_COMMAND ""
-#	    BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${WINST_PREFIX}
-#	    INSTALL_COMMAND ""
-#	    LOG_DOWNLOAD 1
-#	    LOG_UPDATE 1
-#	    LOG_CONFIGURE 1
-#	    LOG_BUILD 1
-#	    LOG_TEST 1
-#	    LOG_INSTALL 1
-#	    )
+      ExternalProject_Add( postgresql
+	    DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+	    URL ${postgresql_URL}
+	    URL_MD5 ${postgresql_MD5}
+	    CONFIGURE_COMMAND ""
+	    BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${WINST_PREFIX}
+	    INSTALL_COMMAND ""
+	    LOG_DOWNLOAD 1
+	    LOG_UPDATE 1
+	    LOG_CONFIGURE 1
+	    LOG_BUILD 1
+	    LOG_TEST 1
+	    LOG_INSTALL 1
+	    )
     else( WIN32 AND NOT UNIX )
         ExternalProject_Add( postgresql
 	    DEPENDS perl openssl zlib
@@ -1060,7 +1060,7 @@ ELSE ( FETCH_ONLY )
             zlib libpng libharu
             openssl boost
             ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
-#            postgresql
+            postgresql
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
@@ -1077,7 +1077,7 @@ ELSE ( FETCH_ONLY )
             zlib libpng libharu
             openssl boost
             ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
-#            postgresql
+            postgresql
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
