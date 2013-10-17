@@ -1048,10 +1048,11 @@ ELSE ( FETCH_ONLY )
             LOG_BUILD 1
             LOG_TEST 1
             LOG_INSTALL 1
+            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/wt-3.3.1rc2.patch
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ""
             INSTALL_COMMAND ""
-			TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE ${WINST_PREFIX}/licenses/wt/
+            TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE ${WINST_PREFIX}/licenses/wt/
         )
     endif( WTGIT )
 
