@@ -84,8 +84,8 @@ set( boost_URL http://prdownloads.sourceforge.net/boost/boost_1_53_0.tar.bz2 )
 set( boost_MD5 a00d22605d5dbcfb4c9936a9b35bc4c2 )
 set( _PACKAGES ${_PACKAGES} boost )
 
-set( tinymce_URL http://download.moxiecode.com/tinymce/tinymce_4.0.8.zip )
-set( tinymce_MD5 62eab0051a20c617142cbcf64a1f4bef )
+set( tinymce_URL http://download.moxiecode.com/tinymce/tinymce_3.5.9.zip )
+set( tinymce_MD5 f84ee9b528d2cf73c722957a072b1ef1 )
 set( _PACKAGES ${_PACKAGES} tinymce )
 
 set( wt_URL http://prdownloads.sourceforge.net/witty/wt-3.3.1.tar.gz )
@@ -1058,16 +1058,15 @@ ELSE ( FETCH_ONLY )
 	ExternalProject_Get_Property( wt-fetch source_dir )
 	
 	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/tinymce)
-	file(MAKE_DIRECTORY ${source_dir}/resources/tiny_mce)
 	ExternalProject_Add( tinymce
 	DEPENDS wt-fetch
 	DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
 	URL ${tinymce_URL}
 	URL_MD5 ${tinymce_MD5}
-	CONFIGURE_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/js/ ${source_dir}/resources/tiny_mce
-	BUILD_COMMAND ${CMAKE_COMMAND} -E rename ${source_dir}/resources/tiny_mce/tinymce.min.js ${source_dir}/resources/tiny_mce/tiny_mce.js
+	CONFIGURE_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/jscripts/ ${source_dir}/resources/
+	BUILD_COMMAND ${CMAKE_COMMAND} -E remove ${source_dir}/resources/tiny_mce/tiny_mce_src.js
 	INSTALL_COMMAND ${CMAKE_COMMAND} -E remove ${source_dir}/resources/tiny_mce/license.txt
-	TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/js/tinymce/license.txt ${WINST_PREFIX}/licenses/tinymce/
+	TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/jscripts/tiny_mce/license.txt ${WINST_PREFIX}/licenses/tinymce/
 	LOG_DOWNLOAD 1
 	LOG_UPDATE 1
 	LOG_CONFIGURE 1
