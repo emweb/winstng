@@ -1,0 +1,24 @@
+diff -rupd wt-3.3.1.orig/src/Wt/WTableView.C wt-3.3.1/src/Wt/WTableView.C
+--- wt-3.3.1.orig/src/Wt/WTableView.C	Thu Oct  3 13:20:48 2013
++++ wt-3.3.1/src/Wt/WTableView.C	Mon Oct 21 00:03:47 2013
+@@ -28,7 +28,7 @@
+ #include <cmath>
+ #include <math.h>
+ 
+-#ifdef _MSC_VER
++#if defined(_MSC_VER) && (_MSC_VER < 1800)
+ namespace {
+   double round(double x)
+   {
+diff -rupd wt-3.3.1.orig/src/Wt/WTreeView.C wt-3.3.1/src/Wt/WTreeView.C
+--- wt-3.3.1.orig/src/Wt/WTreeView.C	Mon Sep 30 17:08:26 2013
++++ wt-3.3.1/src/Wt/WTreeView.C	Mon Oct 21 00:03:54 2013
+@@ -29,7 +29,7 @@
+ #include "js/WTreeView.min.js"
+ #endif
+ 
+-#ifdef _MSC_VER
++#if defined(_MSC_VER) && (_MSC_VER < 1800)
+ namespace {
+   double round(double x)
+   {

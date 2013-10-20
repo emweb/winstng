@@ -1,0 +1,170 @@
+diff -rupd boost_1_53_0.orig/tools/build/v2/engine/build.bat boost_1_53_0/tools/build/v2/engine/build.bat
+--- boost_1_53_0.orig/tools/build/v2/engine/build.bat	Thu Apr 26 05:35:56 2012
++++ boost_1_53_0/tools/build/v2/engine/build.bat	Sun Oct 20 00:48:07 2013
+@@ -28,7 +28,7 @@ ECHO ### You can specify the toolset as 
+ ECHO ###     .\build.bat msvc
+ ECHO ###
+ ECHO ### Toolsets supported by this script are: borland, como, gcc, gcc-nocygwin,
+-ECHO ###     intel-win32, metrowerks, mingw, msvc, vc7, vc8, vc9, vc10, vc11
++ECHO ###     intel-win32, metrowerks, mingw, msvc, vc7, vc8, vc9, vc10, vc11, vc12
+ ECHO ###
+ call :Set_Error
+ endlocal
+@@ -101,6 +101,16 @@ call :Test_Empty %ProgramFiles%
+ if not errorlevel 1 set ProgramFiles=C:\Program Files
+ 
+ call :Clear_Error
++if NOT "_%VS120COMNTOOLS%_" == "__" (
++    set "BOOST_JAM_TOOLSET=vc12"
++    set "BOOST_JAM_TOOLSET_ROOT=%VS120COMNTOOLS%..\..\VC\"
++    goto :eof)
++call :Clear_Error
++if EXIST "%ProgramFiles%\Microsoft Visual Studio 12.0\VC\VCVARSALL.BAT" (
++    set "BOOST_JAM_TOOLSET=vc12"
++    set "BOOST_JAM_TOOLSET_ROOT=%ProgramFiles%\Microsoft Visual Studio 12.0\VC\"
++    goto :eof)
++call :Clear_Error
+ if NOT "_%VS110COMNTOOLS%_" == "__" (
+     set "BOOST_JAM_TOOLSET=vc11"
+     set "BOOST_JAM_TOOLSET_ROOT=%VS110COMNTOOLS%..\..\VC\"
+@@ -396,6 +406,21 @@ set "BOOST_JAM_OPT_MKJAMBASE=/Febootstra
+ set "BOOST_JAM_OPT_YYACC=/Febootstrap\yyacc0"
+ set "_known_=1"
+ :Skip_VC11
++if NOT "_%BOOST_JAM_TOOLSET%_" == "_vc12_" goto Skip_VC12
++if NOT "_%VS120COMNTOOLS%_" == "__" (
++    set "BOOST_JAM_TOOLSET_ROOT=%VS120COMNTOOLS%..\..\VC\"
++    )
++if "_%VCINSTALLDIR%_" == "__" call :Call_If_Exists "%BOOST_JAM_TOOLSET_ROOT%VCVARSALL.BAT" %BOOST_JAM_ARGS%
++if NOT "_%BOOST_JAM_TOOLSET_ROOT%_" == "__" (
++    if "_%VCINSTALLDIR%_" == "__" (
++        set "PATH=%BOOST_JAM_TOOLSET_ROOT%bin;%PATH%"
++        ) )
++set "BOOST_JAM_CC=cl /nologo /RTC1 /Zi /MTd /Fobootstrap/ /Fdbootstrap/ -DNT -DYYDEBUG -wd4996 kernel32.lib advapi32.lib user32.lib"
++set "BOOST_JAM_OPT_JAM=/Febootstrap\jam0"
++set "BOOST_JAM_OPT_MKJAMBASE=/Febootstrap\mkjambase0"
++set "BOOST_JAM_OPT_YYACC=/Febootstrap\yyacc0"
++set "_known_=1"
++:Skip_VC12
+ if NOT "_%BOOST_JAM_TOOLSET%_" == "_borland_" goto Skip_BORLAND
+ if "_%BOOST_JAM_TOOLSET_ROOT%_" == "__" (
+     call :Test_Path bcc32.exe )
+diff -rupd boost_1_53_0.orig/tools/build/v2/engine/build.jam boost_1_53_0/tools/build/v2/engine/build.jam
+--- boost_1_53_0.orig/tools/build/v2/engine/build.jam	Thu Apr 26 05:35:56 2012
++++ boost_1_53_0/tools/build/v2/engine/build.jam	Sun Oct 20 00:49:12 2013
+@@ -376,6 +376,12 @@ toolset vc11 cl : /Fe /Fe /Fd /Fo : -D
+     [ opt --debug : /MTd /DEBUG /Z7 /Od /Ob0 /wd4996 ]
+     -I$(--python-include) -I$(--extra-include)
+     : kernel32.lib advapi32.lib user32.lib $(--python-lib[1]) ;
++toolset vc12 cl : /Fe /Fe /Fd /Fo : -D
++    : /nologo
++    [ opt --release : /GL /MT /O2 /Ob2 /Gy /GF /GA /wd4996 ]
++    [ opt --debug : /MTd /DEBUG /Z7 /Od /Ob0 /wd4996 ]
++    -I$(--python-include) -I$(--extra-include)
++    : kernel32.lib advapi32.lib user32.lib $(--python-lib[1]) ;
+     
+ # First set the build commands and options according to the
+ # preset toolset.
+diff -rupd boost_1_53_0.orig/tools/build/v2/tools/msvc.jam boost_1_53_0/tools/build/v2/tools/msvc.jam
+--- boost_1_53_0.orig/tools/build/v2/tools/msvc.jam	Thu Apr 26 05:35:56 2012
++++ boost_1_53_0/tools/build/v2/tools/msvc.jam	Sun Oct 20 11:45:37 2013
+@@ -736,7 +736,11 @@ local rule configure-really ( version ? 
+             # version from the path.
+             # FIXME: We currently detect both Microsoft Visual Studio 9.0 and
+             # 9.0express as 9.0 here.
+-            if [ MATCH "(Microsoft Visual Studio 11)" : $(command) ]
++            if [ MATCH "(Microsoft Visual Studio 12)" : $(command) ]
++            {
++                version = 12.0 ;
++            }
++            else if [ MATCH "(Microsoft Visual Studio 11)" : $(command) ]
+             {
+                 version = 11.0 ;
+             }
+@@ -1355,7 +1359,7 @@ if [ MATCH (--debug-configuration) : [ m
+ 
+ 
+ # Known toolset versions, in order of preference.
+-.known-versions = 11.0 10.0 10.0express 9.0 9.0express 8.0 8.0express 7.1 7.1toolkit 7.0 6.0 ;
++.known-versions = 12.0 11.0 10.0 10.0express 9.0 9.0express 8.0 8.0express 7.1 7.1toolkit 7.0 6.0 ;
+ 
+ # Version aliases.
+ .version-alias-6 = 6.0 ;
+@@ -1365,6 +1369,7 @@ if [ MATCH (--debug-configuration) : [ m
+ .version-alias-9 = 9.0 ;
+ .version-alias-10 = 10.0 ;
+ .version-alias-11 = 11.0 ;
++.version-alias-12 = 12.0 ;
+ 
+ # Names of registry keys containing the Visual C++ installation path (relative
+ # to "HKEY_LOCAL_MACHINE\SOFTWARE\\Microsoft").
+@@ -1378,6 +1383,7 @@ if [ MATCH (--debug-configuration) : [ m
+ .version-10.0-reg = "VisualStudio\\10.0\\Setup\\VC" ;
+ .version-10.0express-reg = "VCExpress\\10.0\\Setup\\VC" ;
+ .version-11.0-reg = "VisualStudio\\11.0\\Setup\\VC" ;
++.version-12.0-reg = "VisualStudio\\12.0\\Setup\\VC" ;
+ 
+ # Visual C++ Toolkit 2003 does not store its installation path in the registry.
+ # The environment variable 'VCToolkitInstallDir' and the default installation
+diff -rupd boost_1_53_0.orig/tools/build/v2/tools/msvc.py boost_1_53_0/tools/build/v2/tools/msvc.py
+--- boost_1_53_0.orig/tools/build/v2/tools/msvc.py	Thu Apr 26 05:35:56 2012
++++ boost_1_53_0/tools/build/v2/tools/msvc.py	Sun Oct 20 00:53:52 2013
+@@ -646,9 +646,11 @@ def configure_really(version=None, optio
+             # version from the path.
+             # FIXME: We currently detect both Microsoft Visual Studio 9.0 and
+             # 9.0express as 9.0 here.
+-            if re.search("Microsoft Visual Studio 11", command):
++            if re.search("Microsoft Visual Studio 12", command):
++                version = '12.0'
++            elif re.search("Microsoft Visual Studio 11", command):
+                 version = '11.0'
+-            if re.search("Microsoft Visual Studio 10", command):
++            elif re.search("Microsoft Visual Studio 10", command):
+                 version = '10.0'
+             elif re.search("Microsoft Visual Studio 9", command):
+                 version = '9.0'
+@@ -1156,7 +1158,7 @@ __cpu_type_itanium2 = ['itanium2', 'mcki
+ 
+ 
+ # Known toolset versions, in order of preference.
+-_known_versions = ['11.0', '10.0', '10.0express', '9.0', '9.0express', '8.0', '8.0express', '7.1', '7.1toolkit', '7.0', '6.0']
++_known_versions = ['12.0', '11.0', '10.0', '10.0express', '9.0', '9.0express', '8.0', '8.0express', '7.1', '7.1toolkit', '7.0', '6.0']
+ 
+ # Version aliases.
+ __version_alias_6 = '6.0'
+@@ -1166,6 +1168,7 @@ __version_alias_8 = '8.0'
+ __version_alias_9 = '9.0'
+ __version_alias_10 = '10.0'
+ __version_alias_11 = '11.0'
++__version_alias_12 = '12.0'
+ 
+ # Names of registry keys containing the Visual C++ installation path (relative
+ # to "HKEY_LOCAL_MACHINE\SOFTWARE\\Microsoft").
+@@ -1179,6 +1182,7 @@ __version_9_0express_reg = "VCExpress\\9
+ __version_10_0_reg = "VisualStudio\\10.0\\Setup\\VC"
+ __version_10_0express_reg = "VCExpress\\10.0\\Setup\\VC"
+ __version_11_0_reg = "VisualStudio\\11.0\\Setup\\VC"
++__version_12_0_reg = "VisualStudio\\12.0\\Setup\\VC"
+ 
+ # Visual C++ Toolkit 2003 does not store its installation path in the registry.
+ # The environment variable 'VCToolkitInstallDir' and the default installation
+--- boost_1_53_0.orig/boost/archive/iterators/transform_width.hpp	Mon Dec 24 19:23:50 2012
++++ boost_1_53_0/boost/archive/iterators/transform_width.hpp	Sun Oct 20 21:50:20 2013
+@@ -4,6 +4,7 @@
+ // MS compatible compilers support #pragma once
+ #if defined(_MSC_VER) && (_MSC_VER >= 1020)
+ # pragma once
++#include <algorithm>
+ #endif
+ 
+ /////////1/////////2/////////3/////////4/////////5/////////6/////////7/////////8
+--- boost_1_53_0.orig/boost/asio/detail/impl/win_iocp_io_service.ipp	Mon Dec 31 00:17:14 2012
++++ boost_1_53_0/boost/asio/detail/impl/win_iocp_io_service.ipp	Sun Oct 20 23:23:58 2013
+@@ -13,6 +13,7 @@
+ 
+ #if defined(_MSC_VER) && (_MSC_VER >= 1200)
+ # pragma once
++#include <algorithm>
+ #endif // defined(_MSC_VER) && (_MSC_VER >= 1200)
+ 
+ #include <boost/asio/detail/config.hpp>

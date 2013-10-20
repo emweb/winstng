@@ -968,6 +968,7 @@ ELSE ( FETCH_ONLY )
         DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
         URL ${boost_URL}
         URL_MD5 ${boost_MD5}
+		PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/boost-1.53-vc12.patch
         CONFIGURE_COMMAND ${boost_BOOTSTRAP_COMMAND}
         BUILD_COMMAND ${boost_COMMAND}
         BUILD_IN_SOURCE 1
@@ -1048,6 +1049,7 @@ ELSE ( FETCH_ONLY )
             LOG_BUILD 1
             LOG_TEST 1
             LOG_INSTALL 1
+			PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/wt-3.3.1-msvc2013.patch
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ""
             INSTALL_COMMAND ""
