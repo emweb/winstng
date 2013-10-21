@@ -740,20 +740,20 @@ ELSE ( FETCH_ONLY )
 #    endif( WIN32 AND NOT UNIX )
     
     if( WIN32 AND NOT UNIX )
-      ExternalProject_Add( postgresql
-	    DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
-	    URL ${postgresql_URL}
-	    URL_MD5 ${postgresql_MD5}
-	    CONFIGURE_COMMAND ""
-	    BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${WINST_PREFIX}
-	    INSTALL_COMMAND ""
-	    LOG_DOWNLOAD 1
-	    LOG_UPDATE 1
-	    LOG_CONFIGURE 1
-	    LOG_BUILD 1
-	    LOG_TEST 1
-	    LOG_INSTALL 1
-	    )
+#      ExternalProject_Add( postgresql
+#	    DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+#	    URL ${postgresql_URL}
+#	    URL_MD5 ${postgresql_MD5}
+#	    CONFIGURE_COMMAND ""
+#	    BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${WINST_PREFIX}
+#	    INSTALL_COMMAND ""
+#	    LOG_DOWNLOAD 1
+#	    LOG_UPDATE 1
+#	    LOG_CONFIGURE 1
+#	    LOG_BUILD 1
+#	    LOG_TEST 1
+#	    LOG_INSTALL 1
+#	    )
     else( WIN32 AND NOT UNIX )
         ExternalProject_Add( postgresql
 	    DEPENDS perl openssl zlib
@@ -987,7 +987,7 @@ ELSE ( FETCH_ONLY )
     endif(WIN32)
 
     if(UNIX)
-        set( WT_UNIXONLY_DEPENDENCIES fcgi graphicsmagick )
+        set( WT_UNIXONLY_DEPENDENCIES fcgi graphicsmagick postgresql)
     endif(UNIX)
     
     set( wt_CMAKE_ARGS
@@ -1082,7 +1082,7 @@ ELSE ( FETCH_ONLY )
             zlib libpng libharu
             openssl boost
             ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
-            postgresql
+#            postgresql
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
@@ -1099,7 +1099,7 @@ ELSE ( FETCH_ONLY )
             zlib libpng libharu
             openssl boost
             ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
-            postgresql
+#            postgresql
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
@@ -1134,6 +1134,8 @@ ELSE ( FETCH_ONLY )
    INSTALL(FILES "${WINST_PREFIX}/bin/zlibd.dll" "${WINST_PREFIX}/bin/zlib.dll" DESTINATION "bin" COMPONENT binaries)
    INSTALL(FILES "${WINST_PREFIX}/bin/ssleay32.dll" "${WINST_PREFIX}/bin/libeay32.dll" DESTINATION "bin" COMPONENT binaries)
    INSTALL(FILES "${WINST_PREFIX}/bin/ssleay32d.dll" "${WINST_PREFIX}/bin/libeay32d.dll" DESTINATION "bin" COMPONENT binaries)
+   INSTALL(FILES "${WINST_PREFIX}/bin/libmariadbd.dll" "${WINST_PREFIX}/bin/libmariadb.dll" DESTINATION "bin" COMPONENT binaries)
+#   INSTALL(FILES "${WINST_PREFIX}/bin/libpq.dll" DESTINATION "bin" COMPONENT binaries)
    INSTALL(FILES "${WINST_PREFIX}/bin/libpng14.dll" "${WINST_PREFIX}/bin/libpng14d.dll" DESTINATION "bin" COMPONENT binaries)
 #   INSTALL(FILES "${WINST_PREFIX}/bin/libpq.dll" "${WINST_PREFIX}/bin/libintl.dll" DESTINATION "bin" COMPONENT binaries)
    FILE(GLOB wt_install_libs "${WINST_PREFIX}/lib/wt*lib")
