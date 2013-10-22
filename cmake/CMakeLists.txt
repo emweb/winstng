@@ -569,12 +569,12 @@ ELSE ( FETCH_ONLY )
           set( OPENSSL_DEBUG_CONFIGURE_COMMAND ./Configure^^shared^^darwin64-x86_64-cc^^--prefix=${WINST_PREFIX} )
           set( OPENSSL_RELEASE_CONFIGURE_COMMAND ./Configure^^shared^^darwin64-x86_64-cc^^--prefix=${WINST_PREFIX} )
         else( APPLE AND CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Mac OS X 32-bit and all other Unix platforms
-          set( OPENSSL_DEBUG_CONFIGURE_COMMAND ./config^^shared^^--prefix=${WINST_PREFIX} )
-          set( OPENSSL_RELEASE_CONFIGURE_COMMAND ./config^^shared^^--prefix=${WINST_PREFIX} )
+          set( OPENSSL_DEBUG_CONFIGURE_COMMAND ./config^^-d^^shared^^threads^^zlib^^^^--prefix=${WINST_PREFIX} )
+          set( OPENSSL_RELEASE_CONFIGURE_COMMAND ./config^^shared^^threads^^zlib^^--prefix=${WINST_PREFIX} )
         endif( APPLE AND CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
         set( OPENSSL_BUILD_COMMAND ${CMAKE_BUILD_TOOL} )
-        set( OPENSSL_INSTALL_COMMAND ${CMAKE_BUILD_TOOL}^^install )
+        set( OPENSSL_INSTALL_COMMAND ${CMAKE_BUILD_TOOL}^^INSTALL_PREFIX=${WINST_PREFIX}^^install )
     endif( WIN32 AND NOT UNIX )
 
     set( _OLDPATH $ENV{PATH} )
