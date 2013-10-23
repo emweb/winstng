@@ -569,12 +569,12 @@ ELSE ( FETCH_ONLY )
           set( OPENSSL_DEBUG_CONFIGURE_COMMAND ./Configure^^shared^^darwin64-x86_64-cc^^--prefix=${WINST_PREFIX} )
           set( OPENSSL_RELEASE_CONFIGURE_COMMAND ./Configure^^shared^^darwin64-x86_64-cc^^--prefix=${WINST_PREFIX} )
         else( APPLE AND CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Mac OS X 32-bit and all other Unix platforms
-          set( OPENSSL_DEBUG_CONFIGURE_COMMAND ./config^^-d^^shared^^threads^^zlib^^^^--prefix=${WINST_PREFIX} )
-          set( OPENSSL_RELEASE_CONFIGURE_COMMAND ./config^^shared^^threads^^zlib^^--prefix=${WINST_PREFIX} )
+          set( OPENSSL_DEBUG_CONFIGURE_COMMAND "./config -d shared threads zlib --prefix=${WINST_PREFIX}" )
+          set( OPENSSL_RELEASE_CONFIGURE_COMMAND "./config shared threads zlib --prefix=${WINST_PREFIX}" )
         endif( APPLE AND CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
         set( OPENSSL_BUILD_COMMAND ${CMAKE_BUILD_TOOL} )
-        set( OPENSSL_INSTALL_COMMAND ${CMAKE_BUILD_TOOL}^^INSTALL_PREFIX=${WINST_PREFIX}^^install )
+        set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} install" )
     endif( WIN32 AND NOT UNIX )
 
     set( _OLDPATH $ENV{PATH} )
@@ -1124,18 +1124,36 @@ ELSE ( FETCH_ONLY )
 		TEST_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/doc ${WINST_PREFIX}/docs-to-install
     )
 	
-#installation for windows
+
+# INSTALLATION
+
+
    INSTALL(DIRECTORY "${WINST_PREFIX}/licenses" DESTINATION "." COMPONENT binaries)
-   INSTALL(DIRECTORY "${WINST_PREFIX}/include/Wt" DESTINATION "include" COMPONENT binaries)
-   INSTALL(DIRECTORY "${WINST_PREFIX}/include/boost-1_53/boost" DESTINATION "include" COMPONENT binaries)
    INSTALL(DIRECTORY "${WINST_PREFIX}/docs-to-install/" DESTINATION "doc" COMPONENT documentation)
+
+
+# Headers
+
+   INSTALL(DIRECTORY "${WINST_PREFIX}/include/Wt" DESTINATION "include" COMPONENT binaries)
+if(WIN32)
+   INSTALL(DIRECTORY "${WINST_PREFIX}/include/boost-1_53/boost" DESTINATION "include" COMPONENT binaries)
+else(WIN32)
+   INSTALL(DIRECTORY "${WINST_PREFIX}/include/boost" DESTINATION "include" COMPONENT binaries)
+endif(WIN32)
+
+
+# Libraries
+
    FILE(GLOB boost_install_libs "${WINST_PREFIX}/lib/libboost*")
    INSTALL(FILES ${boost_install_libs} DESTINATION "lib" COMPONENT binaries)
+
+if(WIN32)
+
+   # bzip2 ?
    INSTALL(FILES "${WINST_PREFIX}/bin/zlibd.dll" "${WINST_PREFIX}/bin/zlib.dll" DESTINATION "bin" COMPONENT binaries)
    INSTALL(FILES "${WINST_PREFIX}/bin/ssleay32.dll" "${WINST_PREFIX}/bin/libeay32.dll" DESTINATION "bin" COMPONENT binaries)
    INSTALL(FILES "${WINST_PREFIX}/bin/ssleay32d.dll" "${WINST_PREFIX}/bin/libeay32d.dll" DESTINATION "bin" COMPONENT binaries)
    INSTALL(FILES "${WINST_PREFIX}/bin/libmariadbd.dll" "${WINST_PREFIX}/bin/libmariadb.dll" DESTINATION "bin" COMPONENT binaries)
-#   INSTALL(FILES "${WINST_PREFIX}/bin/libpq.dll" DESTINATION "bin" COMPONENT binaries)
    INSTALL(FILES "${WINST_PREFIX}/bin/libpng14.dll" "${WINST_PREFIX}/bin/libpng14d.dll" DESTINATION "bin" COMPONENT binaries)
 #   INSTALL(FILES "${WINST_PREFIX}/bin/libpq.dll" "${WINST_PREFIX}/bin/libintl.dll" DESTINATION "bin" COMPONENT binaries)
    FILE(GLOB wt_install_libs "${WINST_PREFIX}/lib/wt*lib")
@@ -1152,6 +1170,60 @@ ELSE ( FETCH_ONLY )
      ENDIF(bat_contents MATCHES "This-is-a-wt-example")
    ENDFOREACH(b ${wt_all_bat})
    INSTALL(FILES ${wt_install_examples_bat} DESTINATION "bin" COMPONENT examples)
+
+else(WIN32)
+
+   FILE(GLOB bzip2_libs "${WINST_PREFIX}/lib/libbz2*")
+   INSTALL(FILES ${bzip2_libs} DESTINATION "lib" COMPONENT binaries)
+
+   FILE(GLOB zlib_libs "${WINST_PREFIX}/lib/libz*")
+   INSTALL(FILES ${zlib_libs} DESTINATION "lib" COMPONENT binaries)
+
+   FILE(GLOB openssl_ssl_libs "${WINST_PREFIX}/lib/libssl*")
+   FILE(GLOB openssl_crypto_libs "${WINST_PREFIX}/lib/libcrypto*")
+   INSTALL(FILES ${openssl_ssl_libs} ${openssl_crypto_libs} DESTINATION "lib" COMPONENT binaries)
+
+   FILE(GLOB mariadb_libs "${WINST_PREFIX}/lib/libmaria*")
+   INSTALL(FILES ${mariadb_libs} DESTINATION "lib" COMPONENT binaries)
+
+   FILE(GLOB png_libs "${WINST_PREFIX}/lib/libpng*")
+   INSTALL(FILES ${png_libs} DESTINATION "lib" COMPONENT binaries)
+
+   FILE(GLOB postgresql_pq_libs "${WINST_PREFIX}/lib/libpq*")
+   FILE(GLOB postgresql_ecpg_libs "${WINST_PREFIX}/lib/libecpg*")
+   FILE(GLOB postgresql_types_libs "${WINST_PREFIX}/lib/libpgtypes*")
+   FILE(GLOB_RECURSE postgresql_codecs_libs "${WINST_PREFIX}/lib/postgresql")
+   INSTALL(FILES ${postgresql_pq_libs} ${postgresql_ecpg_libs} ${postgresql_types_libs} DESTINATION "lib" COMPONENT binaries)
+   INSTALL(DIRECTORY "${WINST_PREFIX}/lib/postgresql" DESTINATION "lib" COMPONENT binaries)
+
+   FILE(GLOB fcgi_libs "${WINST_PREFIX}/lib/libfcgi*")
+   INSTALL(FILES ${fcgi_libs} DESTINATION "lib" COMPONENT binaries)
+   INSTALL(PROGRAMS "${WINST_PREFIX}/bin/cgi-fcgi" DESTINATION "bin" COMPONENT binaries)
+
+   FILE(GLOB ncurses_forms_libs "${WINST_PREFIX}/lib/libform*")
+   FILE(GLOB ncurses_menu_libs "${WINST_PREFIX}/lib/libmenu*")
+   FILE(GLOB ncurses_panel_libs "${WINST_PREFIX}/lib/libpanel*")
+   FILE(GLOB ncurses_terminfo "${WINST_PREFIX}/lib/terminfo*")
+   FILE(GLOB ncurses_libs "${WINST_PREFIX}/lib/libncurses*")
+   INSTALL(FILES ${ncurses_forms_libs} ${ncurses_menu_libs} ${ncurses_panel_libs} ${ncurses_libs} DESTINATION "lib" COMPONENT binaries)
+
+   FILE(GLOB graphicsmagick_libs "${WINST_PREFIX}/lib/libGraphicsMagick*")
+   FILE(GLOB_RECURSE graphicsmagick_config "${WINST_PREFIX}/lib/GraphicsMagick*")
+   INSTALL(FILES ${graphicsmagick_libs} ${graphicsmagick_config} DESTINATION "lib" COMPONENT binaries)
+
+   FILE(GLOB haru_libs "${WINST_PREFIX}/lib/libhpdf*")
+   INSTALL(FILES ${haru_libs} DESTINATION "lib" COMPONENT binaries)
+
+   FILE(GLOB jpeg_libs "${WINST_PREFIX}/lib/libjpeg*")
+   INSTALL(FILES ${jpeg_libs} DESTINATION "lib" COMPONENT binaries)
+
+   FILE(GLOB wt_libs "${WINST_PREFIX}/lib/libwt*")
+   FILE(GLOB_RECURSE wt_examples "${WINST_PREFIX}/lib/Wt")
+   INSTALL(FILES ${wt_libs} ${wt_examples} DESTINATION "lib" COMPONENT binaries)
+
+# TODO include, share
+endif(WIN32)
+
    INSTALL(DIRECTORY "${WINST_PREFIX}/lib/Wt" DESTINATION "lib" COMPONENT binaries)
    INSTALL(DIRECTORY "${WINST_PREFIX}/share/Wt" DESTINATION "lib/share" COMPONENT binaries)
 
