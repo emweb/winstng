@@ -1,0 +1,123 @@
+diff -rupd postgresql-9.3.1.orig/src/tools/msvc/MSBuildProject.pm postgresql-9.3.1/src/tools/msvc/MSBuildProject.pm
+--- postgresql-9.3.1.orig/src/tools/msvc/MSBuildProject.pm	Tue Oct  8 05:17:38 2013
++++ postgresql-9.3.1/src/tools/msvc/MSBuildProject.pm	Sat Oct 26 00:35:34 2013
+@@ -418,6 +418,27 @@ sub new
+ 	return $self;
+ }
+ 
++package VC2013Project;
++
++#
++# Package that encapsulates a Visual C++ 2013 project file
++#
++
++use strict;
++use warnings;
++use base qw(MSBuildProject);
++
++sub new
++{
++	my $classname = shift;
++	my $self      = $classname->SUPER::_new(@_);
++	bless($self, $classname);
++
++	$self->{vcver} = '12.00';
++
++	return $self;
++}
++
+ # This override adds the <PlatformToolset> element
+ # to the PropertyGroup labeled "Configuration"
+ sub WriteConfigurationPropertyGroup
+diff -rupd postgresql-9.3.1.orig/src/tools/msvc/Solution.pm postgresql-9.3.1/src/tools/msvc/Solution.pm
+--- postgresql-9.3.1.orig/src/tools/msvc/Solution.pm	Tue Oct  8 05:17:38 2013
++++ postgresql-9.3.1/src/tools/msvc/Solution.pm	Sat Oct 26 00:37:19 2013
+@@ -483,15 +483,15 @@ sub AddProject
+ 	if ($self->{options}->{zlib})
+ 	{
+ 		$proj->AddIncludeDir($self->{options}->{zlib} . '\include');
+-		$proj->AddLibrary($self->{options}->{zlib} . '\lib\zdll.lib');
++		$proj->AddLibrary($self->{options}->{zlib} . '\lib\zlib.lib');
+ 	}
+ 	if ($self->{options}->{openssl})
+ 	{
+ 		$proj->AddIncludeDir($self->{options}->{openssl} . '\include');
+ 		$proj->AddLibrary(
+-			$self->{options}->{openssl} . '\lib\VC\ssleay32.lib', 1);
++			$self->{options}->{openssl} . '\lib\ssleay32.lib', 1);
+ 		$proj->AddLibrary(
+-			$self->{options}->{openssl} . '\lib\VC\libeay32.lib', 1);
++			$self->{options}->{openssl} . '\lib\libeay32.lib', 1);
+ 	}
+ 	if ($self->{options}->{nls})
+ 	{
+@@ -723,6 +723,30 @@ sub new
+ 	$self->{solutionFileVersion} = '12.00';
+ 	$self->{vcver}               = '11.00';
+ 	$self->{visualStudioName}    = 'Visual Studio 2012';
++
++	return $self;
++}
++
++package VS2013Solution;
++
++#
++# Package that encapsulates a Visual Studio 2013 solution file
++#
++
++use Carp;
++use strict;
++use warnings;
++use base qw(Solution);
++
++sub new
++{
++	my $classname = shift;
++	my $self      = $classname->SUPER::_new(@_);
++	bless($self, $classname);
++
++	$self->{solutionFileVersion} = '13.00';
++	$self->{vcver}               = '12.00';
++	$self->{visualStudioName}    = 'Visual Studio 2013';
+ 
+ 	return $self;
+ }
+diff -rupd postgresql-9.3.1.orig/src/tools/msvc/VSObjectFactory.pm postgresql-9.3.1/src/tools/msvc/VSObjectFactory.pm
+--- postgresql-9.3.1.orig/src/tools/msvc/VSObjectFactory.pm	Tue Oct  8 05:17:38 2013
++++ postgresql-9.3.1/src/tools/msvc/VSObjectFactory.pm	Sat Oct 26 00:38:40 2013
+@@ -45,6 +45,10 @@ sub CreateSolution
+ 	{
+ 		return new VS2012Solution(@_);
+ 	}
++	elsif ($visualStudioVersion eq '12.00')
++	{
++		return new VS2013Solution(@_);
++	}
+ 	else
+ 	{
+ 		croak "The requested Visual Studio version is not supported.";
+@@ -76,6 +80,10 @@ sub CreateProject
+ 	{
+ 		return new VC2012Project(@_);
+ 	}
++	elsif ($visualStudioVersion eq '12.00')
++	{
++		return new VC2013Project(@_);
++	}
+ 	else
+ 	{
+ 		croak "The requested Visual Studio version is not supported.";
+@@ -115,11 +123,11 @@ sub DetermineVisualStudioVersion
+ sub _GetVisualStudioVersion
+ {
+ 	my ($major, $minor) = @_;
+-	if ($major > 11)
++	if ($major > 12)
+ 	{
+ 		carp
+ "The determined version of Visual Studio is newer than the latest supported version. Returning the latest supported version instead.";
+-		return '11.00';
++		return '12.00';
+ 	}
+ 	elsif ($major < 6)
+ 	{
