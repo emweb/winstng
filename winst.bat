@@ -37,8 +37,9 @@
 
 @SET PREFIX=%BASEDIR%\prefix
 
-@IF EXIST devutil GOTO MKDIRDOWNLOADS
-@mkdir devutil
+@IF EXIST prefix\bin GOTO MKDIRDOWNLOADS
+@mkdir prefix
+@mkdir prefix\bin
 
 :MKDIRDOWNLOADS
 @IF EXIST downloads GOTO MKDIRBUILD
@@ -93,6 +94,9 @@
 @rem rd /q /s "%CMAKE_DIRECTORY%"
 
 :BOOTSTRAP
+
+@set PATH=..\prefix;..\prefix\bin;%PATH%
+
 @echo Bootstrapping...
 
 @echo on
@@ -129,8 +133,6 @@
     @cd "%BASEDIR%\build"
     "%CMAKE_EXE%" %CMAKE_OPTIONS% -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" %* "%BATDIR%\cmake"
 )
-
-@set PATH=..\prefix;..\prefix\bin;%PATH%
 
 :: Required to workaround Assembla issue #20 (missing files in packages)
 :: %CMAKE_EXE% %BATDIR%\cmake

@@ -739,7 +739,6 @@ ELSE ( FETCH_ONLY )
         URL ${postgresql_URL}
         DOWNLOAD_NAME ${postgresql_NAME}
         URL_MD5 ${postgresql_MD5}
-        LIST_SEPARATOR ^^
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/postgresql-9.3.1.patch
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
@@ -756,22 +755,23 @@ ELSE ( FETCH_ONLY )
     if(WIN32)
         ExternalProject_Get_Property( postgresql-fetch source_dir )
         configure_file( ${winst_SOURCE_DIR}/postgresql-9.3.1-config_default.pl.cmake ${source_dir}/src/tools/msvc/config.pl @ONLY )
-		
-		set(postgresql_CONFIGURE_COMMAND "")
-		set(postgresql_BUILD_COMMAND "<SOURCE_DIR>/src/tools/msvc/build.bat")
-		set(postgresql_INSTALL_COMMAND "<SOURCE_DIR>/src/tools/msvc/install.bat ${WINST_PREFIX}")
-		set(postgresql_TEST_COMMAND "<SOURCE_DIR>/src/tools/msvc/clean.bat")
-	else(WIN32)
-		set(postgresql_CONFIGURE_COMMAND "./configure --prefix=${WINST_PREFIX} --without-readline")
-		set(postgresql_BUILD_COMMAND "${CMAKE_BUILD_TOOL}")
-		set(postgresql_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} install")
-		set(postgresql_TEST_COMMAND "${CMAKE_BUILD_TOOL} distclean")
-	endif(WIN32)
-	
+        
+        set(postgresql_CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo)
+        set(postgresql_BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/src/tools/msvc build.bat)
+        set(postgresql_INSTALL_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/src/tools/msvc install.bat ${WINST_PREFIX})
+        set(postgresql_TEST_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/src/tools/msvc clean.bat)
+    else(WIN32)
+        set(postgresql_CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX} --without-readline)
+        set(postgresql_BUILD_COMMAND ${CMAKE_BUILD_TOOL})
+        set(postgresql_INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install)
+        set(postgresql_TEST_COMMAND ${CMAKE_BUILD_TOOL} distclean)
+    endif(WIN32)
+
     ExternalProject_Add( postgresql-debug
         DEPENDS postgresql-fetch zlib openssl perl
         SOURCE_DIR ${CMAKE_BINARY_DIR}/postgresql-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+        CONFIGURE_COMMAND ${postgresql_CONFIGURE_COMMAND}
         BUILD_COMMAND ${postgresql_BUILD_COMMAND} DEBUG
         BUILD_IN_SOURCE 1
         INSTALL_COMMAND ${postgresql_INSTALL_COMMAND}
@@ -789,6 +789,7 @@ ELSE ( FETCH_ONLY )
         DEPENDS postgresql-fetch zlib openssl perl
         SOURCE_DIR ${CMAKE_BINARY_DIR}/postgresql-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+        CONFIGURE_COMMAND ${postgresql_CONFIGURE_COMMAND}
         BUILD_COMMAND ${postgresql_BUILD_COMMAND}
         BUILD_IN_SOURCE 1
         INSTALL_COMMAND ${postgresql_INSTALL_COMMAND}
