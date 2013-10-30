@@ -1,6 +1,6 @@
 diff -rupd postgresql-9.3.1.orig/src/tools/msvc/MSBuildProject.pm postgresql-9.3.1/src/tools/msvc/MSBuildProject.pm
 --- postgresql-9.3.1.orig/src/tools/msvc/MSBuildProject.pm	Tue Oct  8 05:17:38 2013
-+++ postgresql-9.3.1/src/tools/msvc/MSBuildProject.pm	Wed Oct 30 01:15:53 2013
++++ postgresql-9.3.1/src/tools/msvc/MSBuildProject.pm	Wed Oct 30 01:43:35 2013
 @@ -282,7 +282,10 @@ sub WriteItemDefinitionGroup
  	  ? 'Application'
  	  : ($self->{type} eq "dll" ? 'DynamicLibrary' : 'StaticLibrary');
@@ -33,7 +33,7 @@ diff -rupd postgresql-9.3.1.orig/src/tools/msvc/MSBuildProject.pm postgresql-9.3
        <SubSystem>Console</SubSystem>
        <TargetMachine>$targetmachine</TargetMachine>
  EOF
-@@ -335,7 +338,15 @@ EOF
+@@ -335,7 +338,16 @@ EOF
  	{
  		my $l = $self->{implib};
  		$l =~ s/__CFGNAME__/$cfgname/g;
@@ -44,13 +44,14 @@ diff -rupd postgresql-9.3.1.orig/src/tools/msvc/MSBuildProject.pm postgresql-9.3
 +		? 'd'
 +		: '';
 +
-+		my $ll = $l . $dbgsuffix;
++		my $ll = $l;
++		$ll =~ s/\.lib$/$dbgsuffix.lib/;
 +
 +		print $f "      <ImportLibrary>$ll</ImportLibrary>\n";
  	}
  	if ($self->{def})
  	{
-@@ -414,6 +425,27 @@ sub new
+@@ -414,6 +426,27 @@ sub new
  	bless($self, $classname);
  
  	$self->{vcver} = '11.00';
@@ -153,7 +154,7 @@ diff -rupd postgresql-9.3.1.orig/src/tools/msvc/Solution.pm postgresql-9.3.1/src
  }
 diff -rupd postgresql-9.3.1.orig/src/tools/msvc/VCBuildProject.pm postgresql-9.3.1/src/tools/msvc/VCBuildProject.pm
 --- postgresql-9.3.1.orig/src/tools/msvc/VCBuildProject.pm	Tue Oct  8 05:17:38 2013
-+++ postgresql-9.3.1/src/tools/msvc/VCBuildProject.pm	Wed Oct 30 01:16:23 2013
++++ postgresql-9.3.1/src/tools/msvc/VCBuildProject.pm	Wed Oct 30 01:43:31 2013
 @@ -167,7 +167,10 @@ sub WriteConfiguration
  	my $cfgtype =
  	  ($self->{type} eq "exe") ? 1 : ($self->{type} eq "dll" ? 2 : 4);
@@ -182,7 +183,7 @@ diff -rupd postgresql-9.3.1.orig/src/tools/msvc/VCBuildProject.pm postgresql-9.3
  		SubSystem="1" TargetMachine="$targetmachine"
  EOF
  	if ($self->{disablelinkerwarnings})
-@@ -201,7 +204,15 @@ EOF
+@@ -201,7 +204,16 @@ EOF
  	{
  		my $l = $self->{implib};
  		$l =~ s/__CFGNAME__/$cfgname/g;
@@ -193,13 +194,14 @@ diff -rupd postgresql-9.3.1.orig/src/tools/msvc/VCBuildProject.pm postgresql-9.3
 +		? 'd'
 +		: '';
 +
-+		my $ll = $l . $dbgsuffix;
++		my $ll = $l;
++		$ll =~ s/\.lib$/$dbgsuffix.lib/;
 +
 +		print $f "\t\tImportLibrary=\"$ll\"\n";
  	}
  	if ($self->{def})
  	{
-@@ -212,7 +223,7 @@ EOF
+@@ -212,7 +224,7 @@ EOF
  
  	print $f "\t/>\n";
  	print $f
