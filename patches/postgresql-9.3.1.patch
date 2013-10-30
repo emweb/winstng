@@ -1,10 +1,63 @@
 diff -rupd postgresql-9.3.1.orig/src/tools/msvc/MSBuildProject.pm postgresql-9.3.1/src/tools/msvc/MSBuildProject.pm
 --- postgresql-9.3.1.orig/src/tools/msvc/MSBuildProject.pm	Tue Oct  8 05:17:38 2013
-+++ postgresql-9.3.1/src/tools/msvc/MSBuildProject.pm	Sat Oct 26 00:35:34 2013
-@@ -418,6 +418,27 @@ sub new
- 	return $self;
- }
++++ postgresql-9.3.1/src/tools/msvc/MSBuildProject.pm	Wed Oct 30 01:15:53 2013
+@@ -282,7 +282,10 @@ sub WriteItemDefinitionGroup
+ 	  ? 'Application'
+ 	  : ($self->{type} eq "dll" ? 'DynamicLibrary' : 'StaticLibrary');
+ 	my $libs = $self->GetAdditionalLinkerDependencies($cfgname, ';');
+-
++	my $dbgsuffix = 
++	  ($cfgname eq "Debug")
++	  ? 'd'
++	  : '';
+ 	my $targetmachine =
+ 	  $self->{platform} eq 'Win32' ? 'MachineX86' : 'MachineX64';
  
+@@ -313,16 +316,16 @@ sub WriteItemDefinitionGroup
+       <CompileAs>Default</CompileAs>
+     </ClCompile>
+     <Link>
+-      <OutputFile>.\\$cfgname\\$self->{name}\\$self->{name}.$self->{type}</OutputFile>
++      <OutputFile>.\\$cfgname\\$self->{name}\\$self->{name}$dbgsuffix.$self->{type}</OutputFile>
+       <AdditionalDependencies>$libs;\%(AdditionalDependencies)</AdditionalDependencies>
+       <SuppressStartupBanner>true</SuppressStartupBanner>
+       <AdditionalLibraryDirectories>\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+       <IgnoreSpecificDefaultLibraries>libc;\%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+       <StackReserveSize>4194304</StackReserveSize>
+       <GenerateDebugInformation>true</GenerateDebugInformation>
+-      <ProgramDatabaseFile>.\\$cfgname\\$self->{name}\\$self->{name}.pdb</ProgramDatabaseFile>
++      <ProgramDatabaseFile>.\\$cfgname\\$self->{name}\\$self->{name}$dbgsuffix.pdb</ProgramDatabaseFile>
+       <GenerateMapFile>false</GenerateMapFile>
+-      <MapFileName>.\\$cfgname\\$self->{name}\\$self->{name}.map</MapFileName>
++      <MapFileName>.\\$cfgname\\$self->{name}\\$self->{name}$dbgsuffix.map</MapFileName>
+       <SubSystem>Console</SubSystem>
+       <TargetMachine>$targetmachine</TargetMachine>
+ EOF
+@@ -335,7 +338,15 @@ EOF
+ 	{
+ 		my $l = $self->{implib};
+ 		$l =~ s/__CFGNAME__/$cfgname/g;
+-		print $f "      <ImportLibrary>$l</ImportLibrary>\n";
++
++		my $dbgsuffix = 
++		($cfgname eq "Debug")
++		? 'd'
++		: '';
++
++		my $ll = $l . $dbgsuffix;
++
++		print $f "      <ImportLibrary>$ll</ImportLibrary>\n";
+ 	}
+ 	if ($self->{def})
+ 	{
+@@ -414,6 +425,27 @@ sub new
+ 	bless($self, $classname);
+ 
+ 	$self->{vcver} = '11.00';
++
++	return $self;
++}
++
 +package VC2013Project;
 +
 +#
@@ -22,28 +75,32 @@ diff -rupd postgresql-9.3.1.orig/src/tools/msvc/MSBuildProject.pm postgresql-9.3
 +	bless($self, $classname);
 +
 +	$self->{vcver} = '12.00';
-+
-+	return $self;
-+}
-+
- # This override adds the <PlatformToolset> element
- # to the PropertyGroup labeled "Configuration"
- sub WriteConfigurationPropertyGroup
- diff -rupd postgresql-9.3.1.orig/src/tools/msvc/Project.pm postgresql-9.3.1/src/tools/msvc/Project.pm
+ 
+ 	return $self;
+ }
+diff -rupd postgresql-9.3.1.orig/src/tools/msvc/Project.pm postgresql-9.3.1/src/tools/msvc/Project.pm
 --- postgresql-9.3.1.orig/src/tools/msvc/Project.pm	Tue Oct  8 05:17:38 2013
-+++ postgresql-9.3.1/src/tools/msvc/Project.pm	Sat Oct 26 00:15:07 2013
-@@ -373,7 +373,7 @@ sub Save
++++ postgresql-9.3.1/src/tools/msvc/Project.pm	Wed Oct 30 01:13:31 2013
+@@ -167,7 +167,6 @@ sub AddDefine
+ sub FullExportDLL
+ {
+ 	my ($self, $libname) = @_;
+-
+ 	$self->{builddef} = 1;
+ 	$self->{def}      = ".\\__CFGNAME__\\$self->{name}\\$self->{name}.def";
+ 	$self->{implib}   = "__CFGNAME__\\$self->{name}\\$libname";
+@@ -373,7 +372,7 @@ sub Save
  sub GetAdditionalLinkerDependencies
  {
  	my ($self, $cfgname, $seperator) = @_;
 -	my $libcfg = (uc $cfgname eq "RELEASE") ? "MD" : "MDd";
-+	my $libcfg = '';
++	my $libcfg = (uc $cfgname eq "RELEASE") ? "" : "d";
  	my $libs = '';
  	foreach my $lib (@{ $self->{libraries} })
  	{
 diff -rupd postgresql-9.3.1.orig/src/tools/msvc/Solution.pm postgresql-9.3.1/src/tools/msvc/Solution.pm
 --- postgresql-9.3.1.orig/src/tools/msvc/Solution.pm	Tue Oct  8 05:17:38 2013
-+++ postgresql-9.3.1/src/tools/msvc/Solution.pm	Sat Oct 26 00:37:19 2013
++++ postgresql-9.3.1/src/tools/msvc/Solution.pm	Sat Oct 26 15:25:46 2013
 @@ -483,15 +483,15 @@ sub AddProject
  	if ($self->{options}->{zlib})
  	{
@@ -94,9 +151,66 @@ diff -rupd postgresql-9.3.1.orig/src/tools/msvc/Solution.pm postgresql-9.3.1/src
  
  	return $self;
  }
+diff -rupd postgresql-9.3.1.orig/src/tools/msvc/VCBuildProject.pm postgresql-9.3.1/src/tools/msvc/VCBuildProject.pm
+--- postgresql-9.3.1.orig/src/tools/msvc/VCBuildProject.pm	Tue Oct  8 05:17:38 2013
++++ postgresql-9.3.1/src/tools/msvc/VCBuildProject.pm	Wed Oct 30 01:16:23 2013
+@@ -167,7 +167,10 @@ sub WriteConfiguration
+ 	my $cfgtype =
+ 	  ($self->{type} eq "exe") ? 1 : ($self->{type} eq "dll" ? 2 : 4);
+ 	my $libs = $self->GetAdditionalLinkerDependencies($cfgname, ' ');
+-
++	my $dbgsuffix = 
++	  ($self->{cfgname} eq "Debug")
++	  ? 'd'
++	  : '';
+ 	my $targetmachine = $self->{platform} eq 'Win32' ? 1 : 17;
+ 
+ 	print $f <<EOF;
+@@ -184,12 +187,12 @@ EOF
+ 		AssemblerOutput="0" AssemblerListingLocation=".\\$cfgname\\$self->{name}\\" ObjectFile=".\\$cfgname\\$self->{name}\\"
+ 		ProgramDataBaseFileName=".\\$cfgname\\$self->{name}\\" BrowseInformation="0"
+ 		WarningLevel="3" SuppressStartupBanner="TRUE" DebugInformationFormat="3" CompileAs="0"/>
+-	<Tool Name="VCLinkerTool" OutputFile=".\\$cfgname\\$self->{name}\\$self->{name}.$self->{type}"
++	<Tool Name="VCLinkerTool" OutputFile=".\\$cfgname\\$self->{name}\\$self->{name}$dbgsuffix.$self->{type}"
+ 		AdditionalDependencies="$libs"
+ 		LinkIncremental="0" SuppressStartupBanner="TRUE" AdditionalLibraryDirectories="" IgnoreDefaultLibraryNames="libc"
+ 		StackReserveSize="4194304" DisableSpecificWarnings="$self->{disablewarnings}"
+-		GenerateDebugInformation="TRUE" ProgramDatabaseFile=".\\$cfgname\\$self->{name}\\$self->{name}.pdb"
+-		GenerateMapFile="FALSE" MapFileName=".\\$cfgname\\$self->{name}\\$self->{name}.map"
++		GenerateDebugInformation="TRUE" ProgramDatabaseFile=".\\$cfgname\\$self->{name}\\$self->{name}$dbgsuffix.pdb"
++		GenerateMapFile="FALSE" MapFileName=".\\$cfgname\\$self->{name}\\$self->{name}$dbgsuffix.map"
+ 		SubSystem="1" TargetMachine="$targetmachine"
+ EOF
+ 	if ($self->{disablelinkerwarnings})
+@@ -201,7 +204,15 @@ EOF
+ 	{
+ 		my $l = $self->{implib};
+ 		$l =~ s/__CFGNAME__/$cfgname/g;
+-		print $f "\t\tImportLibrary=\"$l\"\n";
++
++		my $dbgsuffix = 
++		($cfgname eq "Debug")
++		? 'd'
++		: '';
++
++		my $ll = $l . $dbgsuffix;
++
++		print $f "\t\tImportLibrary=\"$ll\"\n";
+ 	}
+ 	if ($self->{def})
+ 	{
+@@ -212,7 +223,7 @@ EOF
+ 
+ 	print $f "\t/>\n";
+ 	print $f
+-"\t<Tool Name=\"VCLibrarianTool\" OutputFile=\".\\$cfgname\\$self->{name}\\$self->{name}.lib\" IgnoreDefaultLibraryNames=\"libc\" />\n";
++"\t<Tool Name=\"VCLibrarianTool\" OutputFile=\".\\$cfgname\\$self->{name}\\$self->{name}$dbgsuffix.lib\" IgnoreDefaultLibraryNames=\"libc\" />\n";
+ 	print $f
+ "\t<Tool Name=\"VCResourceCompilerTool\" AdditionalIncludeDirectories=\"src\\include\" />\n";
+ 	if ($self->{builddef})
 diff -rupd postgresql-9.3.1.orig/src/tools/msvc/VSObjectFactory.pm postgresql-9.3.1/src/tools/msvc/VSObjectFactory.pm
 --- postgresql-9.3.1.orig/src/tools/msvc/VSObjectFactory.pm	Tue Oct  8 05:17:38 2013
-+++ postgresql-9.3.1/src/tools/msvc/VSObjectFactory.pm	Sat Oct 26 00:38:40 2013
++++ postgresql-9.3.1/src/tools/msvc/VSObjectFactory.pm	Sat Oct 26 15:25:46 2013
 @@ -45,6 +45,10 @@ sub CreateSolution
  	{
  		return new VS2012Solution(@_);
