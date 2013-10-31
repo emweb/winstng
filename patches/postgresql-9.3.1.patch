@@ -81,7 +81,7 @@ diff -rupd postgresql-9.3.1.orig/src/tools/msvc/MSBuildProject.pm postgresql-9.3
  }
 diff -rupd postgresql-9.3.1.orig/src/tools/msvc/Project.pm postgresql-9.3.1/src/tools/msvc/Project.pm
 --- postgresql-9.3.1.orig/src/tools/msvc/Project.pm	Tue Oct  8 05:17:38 2013
-+++ postgresql-9.3.1/src/tools/msvc/Project.pm	Wed Oct 30 01:13:31 2013
++++ postgresql-9.3.1/src/tools/msvc/Project.pm	Thu Oct 31 00:17:18 2013
 @@ -167,7 +167,6 @@ sub AddDefine
  sub FullExportDLL
  {
@@ -90,7 +90,7 @@ diff -rupd postgresql-9.3.1.orig/src/tools/msvc/Project.pm postgresql-9.3.1/src/
  	$self->{builddef} = 1;
  	$self->{def}      = ".\\__CFGNAME__\\$self->{name}\\$self->{name}.def";
  	$self->{implib}   = "__CFGNAME__\\$self->{name}\\$libname";
-@@ -373,7 +372,7 @@ sub Save
+@@ -373,11 +372,16 @@ sub Save
  sub GetAdditionalLinkerDependencies
  {
  	my ($self, $cfgname, $seperator) = @_;
@@ -99,6 +99,15 @@ diff -rupd postgresql-9.3.1.orig/src/tools/msvc/Project.pm postgresql-9.3.1/src/
  	my $libs = '';
  	foreach my $lib (@{ $self->{libraries} })
  	{
+ 		my $xlib = $lib;
++
++		if($xlib =~ m/^__CFGNAME__/) {
++			$xlib =~ s/\.lib$/$libcfg.lib/;
++		}
++
+ 		foreach my $slib (@{ $self->{suffixlib} })
+ 		{
+ 			if ($slib eq $lib)
 diff -rupd postgresql-9.3.1.orig/src/tools/msvc/Solution.pm postgresql-9.3.1/src/tools/msvc/Solution.pm
 --- postgresql-9.3.1.orig/src/tools/msvc/Solution.pm	Tue Oct  8 05:17:38 2013
 +++ postgresql-9.3.1/src/tools/msvc/Solution.pm	Sat Oct 26 15:25:46 2013
