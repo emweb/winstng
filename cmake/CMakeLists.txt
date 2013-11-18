@@ -70,9 +70,9 @@ else(WIN32)
 endif(WIN32)
 set( _PACKAGES ${_PACKAGES} openssl )
 
-#set( libharu_URL http://libharu.org/files/libhpdf-2.3.0RC2.tar.bz2 )
-#set( libharu_MD5 504afd61fc26b65279a2179a2b0aa948 )
-set( libharu_URL https://github.com/libharu/libharu.git )
+set( libharu_URL http://github.com/libharu/libharu/archive/RELEASE_2_3_0RC3.tar.gz )
+set( libharu_MD5 f71fab9043bcdb05cc694015de48a5d5 )
+#set( libharu_URL https://github.com/libharu/libharu.git )
 set( _PACKAGES ${_PACKAGES} libharu )
 
 set( mariadb_URL http://mariadb.cu.be/client-native-1.0.0/Source/mariadb-native-client.tar.gz )
@@ -874,11 +874,13 @@ ELSE ( FETCH_ONLY )
     ExternalProject_Add( libharu-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libharu-src
         DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
-        GIT_REPOSITORY ${libharu_URL}
+        URL ${libharu_URL}
+        URL_MD5 ${libharu_MD5}
+#        GIT_REPOSITORY ${libharu_URL}
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
-		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/README ${WINST_PREFIX}/licenses/libharu/
+	TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/README ${WINST_PREFIX}/licenses/libharu/
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
     )
@@ -1001,6 +1003,7 @@ ELSE ( FETCH_ONLY )
         -DFCGI_PREFIX:PATH=${WINST_PREFIX}
         -DGM_PREFIX=${WINST_PREFIX}
         -DHARU_PREFIX=${WINST_PREFIX}
+        -DHARU_DYNAMIC:BOOL=1
         -DPOSTGRES_PREFIX=${WINST_PREFIX}
         -DZLIB_PREFIX=${WINST_PREFIX}
         -DRUNDIR=${WINST_PREFIX}/var/run/wt
@@ -1138,6 +1141,10 @@ ELSE ( FETCH_ONLY )
 #   INSTALL(FILES "${WINST_PREFIX}/bin/libpq.dll" DESTINATION "bin" COMPONENT binaries)
    INSTALL(FILES "${WINST_PREFIX}/bin/libpng14.dll" "${WINST_PREFIX}/bin/libpng14d.dll" DESTINATION "bin" COMPONENT binaries)
 #   INSTALL(FILES "${WINST_PREFIX}/bin/libpq.dll" "${WINST_PREFIX}/bin/libintl.dll" DESTINATION "bin" COMPONENT binaries)
+   FILE(GLOB haru_install_includes "${WINST_PREFIX}/include/hpdf*")
+   INSTALL(FILES ${haru_install_includes} DESTINATION "include" COMPONENT binaries)
+   INSTALL(FILES "${WINST_PREFIX}/lib/libhpdf.lib" "${WINST_PREFIX}/lib/libhpdfd.lib" DESTINATION "lib" COMPONENT binaries)
+   INSTALL(FILES "${WINST_PREFIX}/bin/libhpdf.dll" "${WINST_PREFIX}/lib/libhpdfd.dll" DESTINATION "bin" COMPONENT binaries)
    FILE(GLOB wt_install_libs "${WINST_PREFIX}/lib/wt*lib")
    INSTALL(FILES ${wt_install_libs} DESTINATION "lib" COMPONENT binaries)
    FILE(GLOB wt_install_dlls "${WINST_PREFIX}/bin/wt*dll")
