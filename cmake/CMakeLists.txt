@@ -61,6 +61,10 @@ set( freetype_URL http://download.savannah.gnu.org/releases/freetype/freetype-2.
 set( freetype_MD5 c72e9010b1d986d556fc0b2b5fcbf31a )
 set( _PACKAGES ${_PACKAGES} freetype )
 
+set( postgresql_URL http://ftp3.de.postgresql.org/pub/Mirrors/ftp.postgresql.org/source/v9.3.1/postgresql-9.3.1.tar.bz2 )
+set( postgresql_MD5 c003d871f712d4d3895956b028a96e74 )
+set( _PACKAGES ${_PACKAGES} postgresql )
+
 if(WIN32)
     set( openssl_URL https://github.com/openssl/openssl/archive/OpenSSL_1_0_1e.zip )
     set( openssl_MD5 5a8d690c6cd83f0c532a96f5bb55a0b8 )
@@ -122,10 +126,6 @@ if( WIN32 AND NOT UNIX )
 		set( perl_MD5 2f00e848a678c425b9affb593c664537 )
 		set( _PACKAGES ${_PACKAGES} perl )
 
-		set( postgresql_URL http://get.enterprisedb.com/postgresql/postgresql-9.3.1-1-windows-x64-binaries.zip )
-		set( postgresql_MD5 d3425593ebda827b40b11798306bc6e3 )
-		set( _PACKAGES ${_PACKAGES} postgresql )
-
 		set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/graphicsmagick-binaries/1.3.18/GraphicsMagick-1.3.18-Q8-win64-dll.exe )
 		set( graphicsmagick_MD5 bd25adb9e8218aabcd68a034116396e6 )
 		set( _PACKAGES ${_PACKAGES} graphicsmagick )
@@ -140,10 +140,6 @@ if( WIN32 AND NOT UNIX )
         set (perl_MD5 8f3ef667e9a2b7fc402610da29bb8074 )
         set( _PACKAGES ${_PACKAGES} perl )
 
-        set( postgresql_URL http://get.enterprisedb.com/postgresql/postgresql-9.3.1-1-windows-binaries.zip )
-        set( postgresql_MD5 3893bb12570ac3c450745a768fe11fe4 )
-        set( _PACKAGES ${_PACKAGES} postgresql )
-        
         set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0_Win32.zip )
         set( firebirdsql_MD5 ae81c884896c9c93ca7a55a4f5d86369 )
         set( _PACKAGE ${_PACKAGES} firebirdsql )
@@ -173,10 +169,6 @@ else( WIN32 AND NOT UNIX )
     set( perl_URL http://www.cpan.org/src/5.0/perl-5.16.3.tar.gz )
     set( perl_MD5 eb5c40f2575df6c155bc99e3fe0a9d82 )
     set( _PACKAGES ${_PACKAGES} perl )
-
-    set( postgresql_URL http://ftp3.de.postgresql.org/pub/Mirrors/ftp.postgresql.org/source/v9.3.1/postgresql-9.3.1.tar.bz2 )
-    set( postgresql_MD5 c003d871f712d4d3895956b028a96e74 )
-    set( _PACKAGES ${_PACKAGES} postgresql )
 
     set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/GraphicsMagick-1.3.18.tar.bz2 )
     set( graphicsmagick_MD5 b2c7f2fbfc0862525b047655953efd62 )
@@ -569,12 +561,12 @@ ELSE ( FETCH_ONLY )
           set( OPENSSL_DEBUG_CONFIGURE_COMMAND ./Configure^^shared^^darwin64-x86_64-cc^^--prefix=${WINST_PREFIX} )
           set( OPENSSL_RELEASE_CONFIGURE_COMMAND ./Configure^^shared^^darwin64-x86_64-cc^^--prefix=${WINST_PREFIX} )
         else( APPLE AND CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Mac OS X 32-bit and all other Unix platforms
-          set( OPENSSL_DEBUG_CONFIGURE_COMMAND ./config^^shared^^--prefix=${WINST_PREFIX} )
-          set( OPENSSL_RELEASE_CONFIGURE_COMMAND ./config^^shared^^--prefix=${WINST_PREFIX} )
+          set( OPENSSL_DEBUG_CONFIGURE_COMMAND "./config -d shared threads zlib --prefix=${WINST_PREFIX}" )
+          set( OPENSSL_RELEASE_CONFIGURE_COMMAND "./config shared threads zlib --prefix=${WINST_PREFIX}" )
         endif( APPLE AND CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
         set( OPENSSL_BUILD_COMMAND ${CMAKE_BUILD_TOOL} )
-        set( OPENSSL_INSTALL_COMMAND ${CMAKE_BUILD_TOOL}^^install )
+        set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} install" )
     endif( WIN32 AND NOT UNIX )
 
     set( _OLDPATH $ENV{PATH} )
@@ -662,10 +654,10 @@ ELSE ( FETCH_ONLY )
         CMAKE_ARGS
           -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include
           -DCMAKE_BUILD_TYPE=Debug
-	  -DCMAKE_MODULE_PATH:STRING=${WINST_MODULE_PATH}
+          -DCMAKE_MODULE_PATH:STRING=${WINST_MODULE_PATH}
           -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
           -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
-	  -DSSL_PREFIX:STRING=${WINST_PREFIX}
+          -DSSL_PREFIX:STRING=${WINST_PREFIX}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -684,8 +676,8 @@ ELSE ( FETCH_ONLY )
           -DCMAKE_BUILD_TYPE=MinSizeRel
           -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
           -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
-	  -DCMAKE_MODULE_PATH:STRING=${WINST_MODULE_PATH}
-	  -DSSL_PREFIX:STRING=${WINST_PREFIX}
+          -DCMAKE_MODULE_PATH:STRING=${WINST_MODULE_PATH}
+          -DSSL_PREFIX:STRING=${WINST_PREFIX}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -738,40 +730,87 @@ ELSE ( FETCH_ONLY )
 #    else( WIN32 AND NOT UNIX )
         
 #    endif( WIN32 AND NOT UNIX )
-    
-    if( WIN32 AND NOT UNIX )
-#      ExternalProject_Add( postgresql
-#	    DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
-#	    URL ${postgresql_URL}
-#	    URL_MD5 ${postgresql_MD5}
-#	    CONFIGURE_COMMAND ""
-#	    BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${WINST_PREFIX}
-#	    INSTALL_COMMAND ""
-#	    LOG_DOWNLOAD 1
-#	    LOG_UPDATE 1
-#	    LOG_CONFIGURE 1
-#	    LOG_BUILD 1
-#	    LOG_TEST 1
-#	    LOG_INSTALL 1
-#	    )
-    else( WIN32 AND NOT UNIX )
-        ExternalProject_Add( postgresql
-	    DEPENDS perl openssl zlib
-            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
-            URL ${postgresql_URL}
-            URL_MD5 ${postgresql_MD5}
-            CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX}  --without-readline
-            BUILD_COMMAND ${CMAKE_BUILD_TOOL}
-            BUILD_IN_SOURCE 1
-            INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
-            LOG_DOWNLOAD 1
-            LOG_UPDATE 1
-            LOG_CONFIGURE 1
-            LOG_BUILD 1
-            LOG_TEST 1
-            LOG_INSTALL 1
-            )
-    endif( WIN32 AND NOT UNIX )
+
+	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/postgresql)
+    ExternalProject_Add( postgresql-fetch
+        DEPENDS patch
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/postgresql-src
+        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+        URL ${postgresql_URL}
+        DOWNLOAD_NAME ${postgresql_NAME}
+        URL_MD5 ${postgresql_MD5}
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/postgresql-9.3.1.patch
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
+		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/COPYRIGHT ${WINST_PREFIX}/licenses/postgresql/
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        )
+
+    if(WIN32)
+        ExternalProject_Get_Property( postgresql-fetch source_dir )
+        configure_file( ${winst_SOURCE_DIR}/postgresql-9.3.1-config_default.pl.cmake ${source_dir}/src/tools/msvc/config.pl @ONLY )
+        
+        set(postgresql_CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo)
+        set(postgresql_BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/src/tools/msvc build.bat)
+        set(postgresql_INSTALL_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/src/tools/msvc install.bat ${WINST_PREFIX})
+        set(postgresql_TEST_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/src/tools/msvc clean.bat)
+    else(WIN32)
+        set(postgresql_CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX} --without-readline)
+        set(postgresql_BUILD_COMMAND ${CMAKE_BUILD_TOOL})
+        set(postgresql_INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install)
+        set(postgresql_TEST_COMMAND ${CMAKE_BUILD_TOOL} distclean)
+    endif(WIN32)
+
+    ExternalProject_Add( postgresql-debug
+        DEPENDS postgresql-fetch zlib openssl perl
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/postgresql-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+        CONFIGURE_COMMAND ${postgresql_CONFIGURE_COMMAND}
+        BUILD_COMMAND ${postgresql_BUILD_COMMAND} DEBUG
+        BUILD_IN_SOURCE 1
+        INSTALL_COMMAND ${postgresql_INSTALL_COMMAND}
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        TEST_AFTER_INSTALL 1
+        TEST_COMMAND ${postgresql_TEST_COMMAND}
+        )
+
+    ExternalProject_Add( postgresql-release
+        DEPENDS postgresql-fetch zlib openssl perl
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/postgresql-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+        CONFIGURE_COMMAND ${postgresql_CONFIGURE_COMMAND}
+        BUILD_COMMAND ${postgresql_BUILD_COMMAND}
+        BUILD_IN_SOURCE 1
+        INSTALL_COMMAND ${postgresql_INSTALL_COMMAND}
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        TEST_AFTER_INSTALL 1
+        TEST_COMMAND ${postgresql_TEST_COMMAND}
+        )
+
+    ExternalProject_Add( postgresql
+        DEPENDS postgresql-release postgresql-debug
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/postgresql-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
+        )
 
     # FastCGI - Only Unix, on Windows Wt builds the ISAPI connector
     if(NOT WIN32)
@@ -989,7 +1028,7 @@ ELSE ( FETCH_ONLY )
     endif(WIN32)
 
     if(UNIX)
-        set( WT_UNIXONLY_DEPENDENCIES fcgi graphicsmagick postgresql)
+        set( WT_UNIXONLY_DEPENDENCIES fcgi graphicsmagick )
     endif(UNIX)
     
     set( wt_CMAKE_ARGS
@@ -1085,7 +1124,7 @@ ELSE ( FETCH_ONLY )
             zlib libpng libharu
             openssl boost
             ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
-#            postgresql
+            postgresql
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
@@ -1102,7 +1141,7 @@ ELSE ( FETCH_ONLY )
             zlib libpng libharu
             openssl boost
             ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
-#            postgresql
+            postgresql
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
@@ -1127,18 +1166,36 @@ ELSE ( FETCH_ONLY )
 		TEST_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/doc ${WINST_PREFIX}/docs-to-install
     )
 	
-#installation for windows
+
+# INSTALLATION
+
+
    INSTALL(DIRECTORY "${WINST_PREFIX}/licenses" DESTINATION "." COMPONENT binaries)
-   INSTALL(DIRECTORY "${WINST_PREFIX}/include/Wt" DESTINATION "include" COMPONENT binaries)
-   INSTALL(DIRECTORY "${WINST_PREFIX}/include/boost-1_53/boost" DESTINATION "include" COMPONENT binaries)
    INSTALL(DIRECTORY "${WINST_PREFIX}/docs-to-install/" DESTINATION "doc" COMPONENT documentation)
+
+
+# Headers
+
+   INSTALL(DIRECTORY "${WINST_PREFIX}/include/Wt" DESTINATION "include" COMPONENT binaries)
+if(WIN32)
+   INSTALL(DIRECTORY "${WINST_PREFIX}/include/boost-1_53/boost" DESTINATION "include" COMPONENT binaries)
+else(WIN32)
+   INSTALL(DIRECTORY "${WINST_PREFIX}/include/boost" DESTINATION "include" COMPONENT binaries)
+endif(WIN32)
+
+
+# Libraries
+
    FILE(GLOB boost_install_libs "${WINST_PREFIX}/lib/libboost*")
    INSTALL(FILES ${boost_install_libs} DESTINATION "lib" COMPONENT binaries)
+
+if(WIN32)
+
+   # bzip2 ?
    INSTALL(FILES "${WINST_PREFIX}/bin/zlibd.dll" "${WINST_PREFIX}/bin/zlib.dll" DESTINATION "bin" COMPONENT binaries)
    INSTALL(FILES "${WINST_PREFIX}/bin/ssleay32.dll" "${WINST_PREFIX}/bin/libeay32.dll" DESTINATION "bin" COMPONENT binaries)
    INSTALL(FILES "${WINST_PREFIX}/bin/ssleay32d.dll" "${WINST_PREFIX}/bin/libeay32d.dll" DESTINATION "bin" COMPONENT binaries)
    INSTALL(FILES "${WINST_PREFIX}/bin/libmariadbd.dll" "${WINST_PREFIX}/bin/libmariadb.dll" DESTINATION "bin" COMPONENT binaries)
-#   INSTALL(FILES "${WINST_PREFIX}/bin/libpq.dll" DESTINATION "bin" COMPONENT binaries)
    INSTALL(FILES "${WINST_PREFIX}/bin/libpng14.dll" "${WINST_PREFIX}/bin/libpng14d.dll" DESTINATION "bin" COMPONENT binaries)
 #   INSTALL(FILES "${WINST_PREFIX}/bin/libpq.dll" "${WINST_PREFIX}/bin/libintl.dll" DESTINATION "bin" COMPONENT binaries)
    FILE(GLOB haru_install_includes "${WINST_PREFIX}/include/hpdf*")
@@ -1159,6 +1216,60 @@ ELSE ( FETCH_ONLY )
      ENDIF(bat_contents MATCHES "This-is-a-wt-example")
    ENDFOREACH(b ${wt_all_bat})
    INSTALL(FILES ${wt_install_examples_bat} DESTINATION "bin" COMPONENT examples)
+
+else(WIN32)
+
+   FILE(GLOB bzip2_libs "${WINST_PREFIX}/lib/libbz2*")
+   INSTALL(FILES ${bzip2_libs} DESTINATION "lib" COMPONENT binaries)
+
+   FILE(GLOB zlib_libs "${WINST_PREFIX}/lib/libz*")
+   INSTALL(FILES ${zlib_libs} DESTINATION "lib" COMPONENT binaries)
+
+   FILE(GLOB openssl_ssl_libs "${WINST_PREFIX}/lib/libssl*")
+   FILE(GLOB openssl_crypto_libs "${WINST_PREFIX}/lib/libcrypto*")
+   INSTALL(FILES ${openssl_ssl_libs} ${openssl_crypto_libs} DESTINATION "lib" COMPONENT binaries)
+
+   FILE(GLOB mariadb_libs "${WINST_PREFIX}/lib/libmaria*")
+   INSTALL(FILES ${mariadb_libs} DESTINATION "lib" COMPONENT binaries)
+
+   FILE(GLOB png_libs "${WINST_PREFIX}/lib/libpng*")
+   INSTALL(FILES ${png_libs} DESTINATION "lib" COMPONENT binaries)
+
+   FILE(GLOB postgresql_pq_libs "${WINST_PREFIX}/lib/libpq*")
+   FILE(GLOB postgresql_ecpg_libs "${WINST_PREFIX}/lib/libecpg*")
+   FILE(GLOB postgresql_types_libs "${WINST_PREFIX}/lib/libpgtypes*")
+   FILE(GLOB_RECURSE postgresql_codecs_libs "${WINST_PREFIX}/lib/postgresql")
+   INSTALL(FILES ${postgresql_pq_libs} ${postgresql_ecpg_libs} ${postgresql_types_libs} DESTINATION "lib" COMPONENT binaries)
+   INSTALL(DIRECTORY "${WINST_PREFIX}/lib/postgresql" DESTINATION "lib" COMPONENT binaries)
+
+   FILE(GLOB fcgi_libs "${WINST_PREFIX}/lib/libfcgi*")
+   INSTALL(FILES ${fcgi_libs} DESTINATION "lib" COMPONENT binaries)
+   INSTALL(PROGRAMS "${WINST_PREFIX}/bin/cgi-fcgi" DESTINATION "bin" COMPONENT binaries)
+
+   FILE(GLOB ncurses_forms_libs "${WINST_PREFIX}/lib/libform*")
+   FILE(GLOB ncurses_menu_libs "${WINST_PREFIX}/lib/libmenu*")
+   FILE(GLOB ncurses_panel_libs "${WINST_PREFIX}/lib/libpanel*")
+   FILE(GLOB ncurses_terminfo "${WINST_PREFIX}/lib/terminfo*")
+   FILE(GLOB ncurses_libs "${WINST_PREFIX}/lib/libncurses*")
+   INSTALL(FILES ${ncurses_forms_libs} ${ncurses_menu_libs} ${ncurses_panel_libs} ${ncurses_libs} DESTINATION "lib" COMPONENT binaries)
+
+   FILE(GLOB graphicsmagick_libs "${WINST_PREFIX}/lib/libGraphicsMagick*")
+   FILE(GLOB_RECURSE graphicsmagick_config "${WINST_PREFIX}/lib/GraphicsMagick*")
+   INSTALL(FILES ${graphicsmagick_libs} ${graphicsmagick_config} DESTINATION "lib" COMPONENT binaries)
+
+   FILE(GLOB haru_libs "${WINST_PREFIX}/lib/libhpdf*")
+   INSTALL(FILES ${haru_libs} DESTINATION "lib" COMPONENT binaries)
+
+   FILE(GLOB jpeg_libs "${WINST_PREFIX}/lib/libjpeg*")
+   INSTALL(FILES ${jpeg_libs} DESTINATION "lib" COMPONENT binaries)
+
+   FILE(GLOB wt_libs "${WINST_PREFIX}/lib/libwt*")
+   FILE(GLOB_RECURSE wt_examples "${WINST_PREFIX}/lib/Wt")
+   INSTALL(FILES ${wt_libs} ${wt_examples} DESTINATION "lib" COMPONENT binaries)
+
+# TODO include, share
+endif(WIN32)
+
    INSTALL(DIRECTORY "${WINST_PREFIX}/lib/Wt" DESTINATION "lib" COMPONENT binaries)
    INSTALL(DIRECTORY "${WINST_PREFIX}/share/Wt" DESTINATION "lib/share" COMPONENT binaries)
 

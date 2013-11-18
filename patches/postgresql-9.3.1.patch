@@ -1,0 +1,260 @@
+diff -rupd postgresql-9.3.1.orig/src/tools/msvc/MSBuildProject.pm postgresql-9.3.1/src/tools/msvc/MSBuildProject.pm
+--- postgresql-9.3.1.orig/src/tools/msvc/MSBuildProject.pm	Tue Oct  8 05:17:38 2013
++++ postgresql-9.3.1/src/tools/msvc/MSBuildProject.pm	Wed Oct 30 01:43:35 2013
+@@ -282,7 +282,10 @@ sub WriteItemDefinitionGroup
+ 	  ? 'Application'
+ 	  : ($self->{type} eq "dll" ? 'DynamicLibrary' : 'StaticLibrary');
+ 	my $libs = $self->GetAdditionalLinkerDependencies($cfgname, ';');
+-
++	my $dbgsuffix = 
++	  ($cfgname eq "Debug")
++	  ? 'd'
++	  : '';
+ 	my $targetmachine =
+ 	  $self->{platform} eq 'Win32' ? 'MachineX86' : 'MachineX64';
+ 
+@@ -313,16 +316,16 @@ sub WriteItemDefinitionGroup
+       <CompileAs>Default</CompileAs>
+     </ClCompile>
+     <Link>
+-      <OutputFile>.\\$cfgname\\$self->{name}\\$self->{name}.$self->{type}</OutputFile>
++      <OutputFile>.\\$cfgname\\$self->{name}\\$self->{name}$dbgsuffix.$self->{type}</OutputFile>
+       <AdditionalDependencies>$libs;\%(AdditionalDependencies)</AdditionalDependencies>
+       <SuppressStartupBanner>true</SuppressStartupBanner>
+       <AdditionalLibraryDirectories>\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+       <IgnoreSpecificDefaultLibraries>libc;\%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+       <StackReserveSize>4194304</StackReserveSize>
+       <GenerateDebugInformation>true</GenerateDebugInformation>
+-      <ProgramDatabaseFile>.\\$cfgname\\$self->{name}\\$self->{name}.pdb</ProgramDatabaseFile>
++      <ProgramDatabaseFile>.\\$cfgname\\$self->{name}\\$self->{name}$dbgsuffix.pdb</ProgramDatabaseFile>
+       <GenerateMapFile>false</GenerateMapFile>
+-      <MapFileName>.\\$cfgname\\$self->{name}\\$self->{name}.map</MapFileName>
++      <MapFileName>.\\$cfgname\\$self->{name}\\$self->{name}$dbgsuffix.map</MapFileName>
+       <SubSystem>Console</SubSystem>
+       <TargetMachine>$targetmachine</TargetMachine>
+ EOF
+@@ -335,7 +338,16 @@ EOF
+ 	{
+ 		my $l = $self->{implib};
+ 		$l =~ s/__CFGNAME__/$cfgname/g;
+-		print $f "      <ImportLibrary>$l</ImportLibrary>\n";
++
++		my $dbgsuffix = 
++		($cfgname eq "Debug")
++		? 'd'
++		: '';
++
++		my $ll = $l;
++		$ll =~ s/\.lib$/$dbgsuffix.lib/;
++
++		print $f "      <ImportLibrary>$ll</ImportLibrary>\n";
+ 	}
+ 	if ($self->{def})
+ 	{
+@@ -414,6 +426,27 @@ sub new
+ 	bless($self, $classname);
+ 
+ 	$self->{vcver} = '11.00';
++
++	return $self;
++}
++
++package VC2013Project;
++
++#
++# Package that encapsulates a Visual C++ 2013 project file
++#
++
++use strict;
++use warnings;
++use base qw(MSBuildProject);
++
++sub new
++{
++	my $classname = shift;
++	my $self      = $classname->SUPER::_new(@_);
++	bless($self, $classname);
++
++	$self->{vcver} = '12.00';
+ 
+ 	return $self;
+ }
+diff -rupd postgresql-9.3.1.orig/src/tools/msvc/Project.pm postgresql-9.3.1/src/tools/msvc/Project.pm
+--- postgresql-9.3.1.orig/src/tools/msvc/Project.pm	Tue Oct  8 05:17:38 2013
++++ postgresql-9.3.1/src/tools/msvc/Project.pm	Thu Oct 31 00:17:18 2013
+@@ -167,7 +167,6 @@ sub AddDefine
+ sub FullExportDLL
+ {
+ 	my ($self, $libname) = @_;
+-
+ 	$self->{builddef} = 1;
+ 	$self->{def}      = ".\\__CFGNAME__\\$self->{name}\\$self->{name}.def";
+ 	$self->{implib}   = "__CFGNAME__\\$self->{name}\\$libname";
+@@ -373,11 +372,16 @@ sub Save
+ sub GetAdditionalLinkerDependencies
+ {
+ 	my ($self, $cfgname, $seperator) = @_;
+-	my $libcfg = (uc $cfgname eq "RELEASE") ? "MD" : "MDd";
++	my $libcfg = (uc $cfgname eq "RELEASE") ? "" : "d";
+ 	my $libs = '';
+ 	foreach my $lib (@{ $self->{libraries} })
+ 	{
+ 		my $xlib = $lib;
++
++		if($xlib =~ m/^__CFGNAME__/) {
++			$xlib =~ s/\.lib$/$libcfg.lib/;
++		}
++
+ 		foreach my $slib (@{ $self->{suffixlib} })
+ 		{
+ 			if ($slib eq $lib)
+diff -rupd postgresql-9.3.1.orig/src/tools/msvc/Solution.pm postgresql-9.3.1/src/tools/msvc/Solution.pm
+--- postgresql-9.3.1.orig/src/tools/msvc/Solution.pm	Tue Oct  8 05:17:38 2013
++++ postgresql-9.3.1/src/tools/msvc/Solution.pm	Sat Oct 26 15:25:46 2013
+@@ -483,15 +483,15 @@ sub AddProject
+ 	if ($self->{options}->{zlib})
+ 	{
+ 		$proj->AddIncludeDir($self->{options}->{zlib} . '\include');
+-		$proj->AddLibrary($self->{options}->{zlib} . '\lib\zdll.lib');
++		$proj->AddLibrary($self->{options}->{zlib} . '\lib\zlib.lib');
+ 	}
+ 	if ($self->{options}->{openssl})
+ 	{
+ 		$proj->AddIncludeDir($self->{options}->{openssl} . '\include');
+ 		$proj->AddLibrary(
+-			$self->{options}->{openssl} . '\lib\VC\ssleay32.lib', 1);
++			$self->{options}->{openssl} . '\lib\ssleay32.lib', 1);
+ 		$proj->AddLibrary(
+-			$self->{options}->{openssl} . '\lib\VC\libeay32.lib', 1);
++			$self->{options}->{openssl} . '\lib\libeay32.lib', 1);
+ 	}
+ 	if ($self->{options}->{nls})
+ 	{
+@@ -723,6 +723,30 @@ sub new
+ 	$self->{solutionFileVersion} = '12.00';
+ 	$self->{vcver}               = '11.00';
+ 	$self->{visualStudioName}    = 'Visual Studio 2012';
++
++	return $self;
++}
++
++package VS2013Solution;
++
++#
++# Package that encapsulates a Visual Studio 2013 solution file
++#
++
++use Carp;
++use strict;
++use warnings;
++use base qw(Solution);
++
++sub new
++{
++	my $classname = shift;
++	my $self      = $classname->SUPER::_new(@_);
++	bless($self, $classname);
++
++	$self->{solutionFileVersion} = '13.00';
++	$self->{vcver}               = '12.00';
++	$self->{visualStudioName}    = 'Visual Studio 2013';
+ 
+ 	return $self;
+ }
+diff -rupd postgresql-9.3.1.orig/src/tools/msvc/VCBuildProject.pm postgresql-9.3.1/src/tools/msvc/VCBuildProject.pm
+--- postgresql-9.3.1.orig/src/tools/msvc/VCBuildProject.pm	Tue Oct  8 05:17:38 2013
++++ postgresql-9.3.1/src/tools/msvc/VCBuildProject.pm	Wed Oct 30 01:43:31 2013
+@@ -167,7 +167,10 @@ sub WriteConfiguration
+ 	my $cfgtype =
+ 	  ($self->{type} eq "exe") ? 1 : ($self->{type} eq "dll" ? 2 : 4);
+ 	my $libs = $self->GetAdditionalLinkerDependencies($cfgname, ' ');
+-
++	my $dbgsuffix = 
++	  ($self->{cfgname} eq "Debug")
++	  ? 'd'
++	  : '';
+ 	my $targetmachine = $self->{platform} eq 'Win32' ? 1 : 17;
+ 
+ 	print $f <<EOF;
+@@ -184,12 +187,12 @@ EOF
+ 		AssemblerOutput="0" AssemblerListingLocation=".\\$cfgname\\$self->{name}\\" ObjectFile=".\\$cfgname\\$self->{name}\\"
+ 		ProgramDataBaseFileName=".\\$cfgname\\$self->{name}\\" BrowseInformation="0"
+ 		WarningLevel="3" SuppressStartupBanner="TRUE" DebugInformationFormat="3" CompileAs="0"/>
+-	<Tool Name="VCLinkerTool" OutputFile=".\\$cfgname\\$self->{name}\\$self->{name}.$self->{type}"
++	<Tool Name="VCLinkerTool" OutputFile=".\\$cfgname\\$self->{name}\\$self->{name}$dbgsuffix.$self->{type}"
+ 		AdditionalDependencies="$libs"
+ 		LinkIncremental="0" SuppressStartupBanner="TRUE" AdditionalLibraryDirectories="" IgnoreDefaultLibraryNames="libc"
+ 		StackReserveSize="4194304" DisableSpecificWarnings="$self->{disablewarnings}"
+-		GenerateDebugInformation="TRUE" ProgramDatabaseFile=".\\$cfgname\\$self->{name}\\$self->{name}.pdb"
+-		GenerateMapFile="FALSE" MapFileName=".\\$cfgname\\$self->{name}\\$self->{name}.map"
++		GenerateDebugInformation="TRUE" ProgramDatabaseFile=".\\$cfgname\\$self->{name}\\$self->{name}$dbgsuffix.pdb"
++		GenerateMapFile="FALSE" MapFileName=".\\$cfgname\\$self->{name}\\$self->{name}$dbgsuffix.map"
+ 		SubSystem="1" TargetMachine="$targetmachine"
+ EOF
+ 	if ($self->{disablelinkerwarnings})
+@@ -201,7 +204,16 @@ EOF
+ 	{
+ 		my $l = $self->{implib};
+ 		$l =~ s/__CFGNAME__/$cfgname/g;
+-		print $f "\t\tImportLibrary=\"$l\"\n";
++
++		my $dbgsuffix = 
++		($cfgname eq "Debug")
++		? 'd'
++		: '';
++
++		my $ll = $l;
++		$ll =~ s/\.lib$/$dbgsuffix.lib/;
++
++		print $f "\t\tImportLibrary=\"$ll\"\n";
+ 	}
+ 	if ($self->{def})
+ 	{
+@@ -212,7 +224,7 @@ EOF
+ 
+ 	print $f "\t/>\n";
+ 	print $f
+-"\t<Tool Name=\"VCLibrarianTool\" OutputFile=\".\\$cfgname\\$self->{name}\\$self->{name}.lib\" IgnoreDefaultLibraryNames=\"libc\" />\n";
++"\t<Tool Name=\"VCLibrarianTool\" OutputFile=\".\\$cfgname\\$self->{name}\\$self->{name}$dbgsuffix.lib\" IgnoreDefaultLibraryNames=\"libc\" />\n";
+ 	print $f
+ "\t<Tool Name=\"VCResourceCompilerTool\" AdditionalIncludeDirectories=\"src\\include\" />\n";
+ 	if ($self->{builddef})
+diff -rupd postgresql-9.3.1.orig/src/tools/msvc/VSObjectFactory.pm postgresql-9.3.1/src/tools/msvc/VSObjectFactory.pm
+--- postgresql-9.3.1.orig/src/tools/msvc/VSObjectFactory.pm	Tue Oct  8 05:17:38 2013
++++ postgresql-9.3.1/src/tools/msvc/VSObjectFactory.pm	Sat Oct 26 15:25:46 2013
+@@ -45,6 +45,10 @@ sub CreateSolution
+ 	{
+ 		return new VS2012Solution(@_);
+ 	}
++	elsif ($visualStudioVersion eq '12.00')
++	{
++		return new VS2013Solution(@_);
++	}
+ 	else
+ 	{
+ 		croak "The requested Visual Studio version is not supported.";
+@@ -76,6 +80,10 @@ sub CreateProject
+ 	{
+ 		return new VC2012Project(@_);
+ 	}
++	elsif ($visualStudioVersion eq '12.00')
++	{
++		return new VC2013Project(@_);
++	}
+ 	else
+ 	{
+ 		croak "The requested Visual Studio version is not supported.";
+@@ -115,11 +123,11 @@ sub DetermineVisualStudioVersion
+ sub _GetVisualStudioVersion
+ {
+ 	my ($major, $minor) = @_;
+-	if ($major > 11)
++	if ($major > 12)
+ 	{
+ 		carp
+ "The determined version of Visual Studio is newer than the latest supported version. Returning the latest supported version instead.";
+-		return '11.00';
++		return '12.00';
+ 	}
+ 	elsif ($major < 6)
+ 	{
