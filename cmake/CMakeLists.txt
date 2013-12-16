@@ -39,6 +39,18 @@ else( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # 32-bit
 	set(_WT_ARCH x86)		 
 endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
+if(MSVC)
+     if(MSVC10)
+             set(FANCY_MSVC_VERSION "2010")
+     elseif(MSVC11)
+             set(FANCY_MSVC_VERSION "2012")
+     elseif(MSVC12)
+             set(FANCY_MSVC_VERSION "2013")
+     else()
+             set(FANCY_MSVC_VERSION "${MSVC_VERSION}")
+     endif()
+endif(MSVC)
+
 # Files to download
 
 set( zlib_URL http://prdownloads.sourceforge.net/libpng/zlib-1.2.8.tar.gz )
@@ -87,6 +99,14 @@ set( _PACKAGES ${_PACKAGES} mariadb )
 set( boost_URL http://prdownloads.sourceforge.net/boost/boost_1_53_0.tar.bz2 )
 set( boost_MD5 a00d22605d5dbcfb4c9936a9b35bc4c2 )
 set( _PACKAGES ${_PACKAGES} boost )
+
+# required to build skia
+# depot_tools also installs git, svn, and python, required to build skia
+set( depot_tools_URL https://src.chromium.org/svn/trunk/tools/depot_tools.zip)
+set( _PACKAGES ${_PACKAGES} depot_tools )
+
+set( skia_URL http://skia.googlecode.com/svn/trunk)
+set( _PACKAGES ${_PACKAGES} skia )
 
 set( tinymce_URL http://download.moxiecode.com/tinymce/tinymce_3.5.9.zip )
 set( tinymce_MD5 f84ee9b528d2cf73c722957a072b1ef1 )
@@ -503,6 +523,78 @@ ELSE ( FETCH_ONLY )
         LOG_BUILD 1
         LOG_TEST 1
         LOG_INSTALL 1
+        )
+
+        ExternalProject_Add( depot_tools
+                DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
+                URL ${depot_tools_URL}
+                #URL_MD5 ${depot_tools_MD5}
+                CONFIGURE_COMMAND ""
+                BUILD_COMMAND ""
+                INSTALL_COMMAND ""
+                LOG_DOWNLOAD 1
+                LOG_UPDATE 1
+                LOG_CONFIGURE 1
+                LOG_BUILD 1
+                LOG_TEST 1
+                LOG_INSTALL 1
+                )
+        SET(DEPOT_TOOLS_PATH ${WINST_BASEDIR}/build/depot_tools-prefix/src/depot_tools)
+
+    ExternalProject_Add( skia-fetch
+        DEPENDS depot_tools
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
+        DOWNLOAD_COMMAND ${WINST_BATDIR}/cmake/execute-with-path.bat ${DEPOT_TOOLS_PATH} ${CMAKE_COMMAND} -E chdir <SOURCE_DIR> gclient.bat config ${skia_URL}
+        UPDATE_COMMAND ${WINST_BATDIR}/cmake/execute-with-path.bat ${DEPOT_TOOLS_PATH} ${CMAKE_COMMAND} -E chdir <SOURCE_DIR> gclient.bat sync
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
+        #TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/zlib.h ${WINST_PREFIX}/licenses/zlib/
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        )
+
+    ExternalProject_Add( skia-debug
+        DEPENDS skia-fetch
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/trunk python.bat gyp_skia
+        BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/trunk ${WINST_BATDIR}/cmake/build-skia.bat Debug
+        INSTALL_COMMAND ""
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        )
+
+    ExternalProject_Add( skia-release
+        DEPENDS skia-fetch
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/trunk python.bat gyp_skia
+        BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/trunk ${WINST_BATDIR}/cmake/build-skia.bat Release
+        INSTALL_COMMAND ""
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        )
+
+     ExternalProject_Add( skia
+        DEPENDS skia-debug skia-release
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
         )
 
     # OpenSSL requires some extra effort
@@ -1040,7 +1132,8 @@ ELSE ( FETCH_ONLY )
         -DBOOST_ROOT:PATH=${WINST_PREFIX}
         -DCONFIGDIR:PATH=${WINST_PREFIX}/etc/wt
         -DFCGI_PREFIX:PATH=${WINST_PREFIX}
-        -DGM_PREFIX=${WINST_PREFIX}
+        -DSKIA_PREFIX=${CMAKE_BINARY_DIR}/skia-src/trunk
+	-DWT_WRASTERIMAGE_IMPLEMENTATION=skia
         -DHARU_PREFIX=${WINST_PREFIX}
         -DHARU_DYNAMIC:BOOL=1
         -DPOSTGRES_PREFIX=${WINST_PREFIX}
@@ -1125,6 +1218,7 @@ ELSE ( FETCH_ONLY )
             openssl boost
             ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
             postgresql
+            skia
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
@@ -1142,6 +1236,7 @@ ELSE ( FETCH_ONLY )
             openssl boost
             ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
             postgresql
+            skia
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
@@ -1276,16 +1371,7 @@ endif(WIN32)
 
    # Compose a meaningful compiler string
    if(MSVC)
-	set(_WT_COMPILER "msvc")
-	if(MSVC10)
-		set(_WT_COMPILER "${_WT_COMPILER}2010")
-	elseif(MSVC11)
-		set(_WT_COMPILER "${_WT_COMPILER}2012")
-	elseif(MSVC12)
-		set(_WT_COMPILER "${_WT_COMPILER}2013")
-	else()
-		set(_WT_COMPILER "${_WT_COMPILER}${MSVC_VERSION}")
-	endif()
+	set(_WT_COMPILER "msvc${FANCY_MSVC_VERSION}")
    elseif(CMAKE_COMPILER_IS_GNUCC)
 		set(_WT_COMPILER "gcc") # TODO Use the specific mingw version, i. e. the output of uname
    endif()
