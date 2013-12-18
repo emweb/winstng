@@ -1143,6 +1143,7 @@ ELSE ( FETCH_ONLY )
         -DMYSQL_PREFIX=${WINST_PREFIX}
         -DMYSQL_LIBRARY=libmariadb
         -DEXAMPLES_DESTINATION=lib/Wt/examples
+        -DENABLE_OPENGL:BOOL=1
         )
 		
 	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/wt)
