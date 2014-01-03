@@ -861,6 +861,8 @@ ELSE ( FETCH_ONLY )
         set(postgresql_TEST_COMMAND ${CMAKE_BUILD_TOOL} distclean)
     endif(WIN32)
 
+# fails for now on win32
+if(NOT WIN32)
     ExternalProject_Add( postgresql-debug
         DEPENDS postgresql-fetch zlib openssl perl
         SOURCE_DIR ${CMAKE_BINARY_DIR}/postgresql-src
@@ -905,6 +907,7 @@ ELSE ( FETCH_ONLY )
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
         )
+endif(NOT WIN32)
 
     # FastCGI - Only Unix, on Windows Wt builds the ISAPI connector
     if(NOT WIN32)
