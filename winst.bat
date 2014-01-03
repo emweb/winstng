@@ -23,7 +23,7 @@
 @SET WGET_FTP_SITE=ftp.kfki.hu
 @SET WGET_FTP_DIRECTORY=/pub/w2
 
-@IF EXIST downloaddir.txt (SET /p DOWNLOADS<=downloaddir.txt) else (SET DOWNLOADS=%BASEDIR%/downloads)
+@IF EXIST downloaddir.txt (SET /p DOWNLOADS=<downloaddir.txt) else (SET DOWNLOADS=%BASEDIR%/downloads)
 @echo Downloading into %DOWNLOADS%
 
 @SET UNZIP_SFX=unz600xn.exe
