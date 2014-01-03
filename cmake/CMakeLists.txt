@@ -1218,7 +1218,7 @@ ELSE ( FETCH_ONLY )
             zlib libpng libharu
             openssl boost
             ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
-            postgresql
+#            postgresql
             skia
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
@@ -1236,7 +1236,7 @@ ELSE ( FETCH_ONLY )
             zlib libpng libharu
             openssl boost
             ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
-            postgresql
+#            postgresql
             skia
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
@@ -1331,12 +1331,12 @@ else(WIN32)
    FILE(GLOB png_libs "${WINST_PREFIX}/lib/libpng*")
    INSTALL(FILES ${png_libs} DESTINATION "lib" COMPONENT binaries)
 
-   FILE(GLOB postgresql_pq_libs "${WINST_PREFIX}/lib/libpq*")
-   FILE(GLOB postgresql_ecpg_libs "${WINST_PREFIX}/lib/libecpg*")
-   FILE(GLOB postgresql_types_libs "${WINST_PREFIX}/lib/libpgtypes*")
-   FILE(GLOB_RECURSE postgresql_codecs_libs "${WINST_PREFIX}/lib/postgresql")
-   INSTALL(FILES ${postgresql_pq_libs} ${postgresql_ecpg_libs} ${postgresql_types_libs} DESTINATION "lib" COMPONENT binaries)
-   INSTALL(DIRECTORY "${WINST_PREFIX}/lib/postgresql" DESTINATION "lib" COMPONENT binaries)
+#   FILE(GLOB postgresql_pq_libs "${WINST_PREFIX}/lib/libpq*")
+#   FILE(GLOB postgresql_ecpg_libs "${WINST_PREFIX}/lib/libecpg*")
+#   FILE(GLOB postgresql_types_libs "${WINST_PREFIX}/lib/libpgtypes*")
+#   FILE(GLOB_RECURSE postgresql_codecs_libs "${WINST_PREFIX}/lib/postgresql")
+#   INSTALL(FILES ${postgresql_pq_libs} ${postgresql_ecpg_libs} ${postgresql_types_libs} DESTINATION "lib" COMPONENT binaries)
+#   INSTALL(DIRECTORY "${WINST_PREFIX}/lib/postgresql" DESTINATION "lib" COMPONENT binaries)
 
    FILE(GLOB fcgi_libs "${WINST_PREFIX}/lib/libfcgi*")
    INSTALL(FILES ${fcgi_libs} DESTINATION "lib" COMPONENT binaries)
