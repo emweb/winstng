@@ -23,6 +23,9 @@
 @SET WGET_FTP_SITE=ftp.kfki.hu
 @SET WGET_FTP_DIRECTORY=/pub/w2
 
+@IF EXIST downloaddir.txt (SET /p DOWNLOADS<=downloaddir.txt) else (SET DOWNLOADS=%BASEDIR%/downloads)
+@echo Downloading into %DOWNLOADS%
+
 @SET UNZIP_SFX=unz600xn.exe
 @SET UNZIP_FULLURL=http://www.mirrorservice.org/sites/ftp.info-zip.org/pub/infozip/win32/%UNZIP_SFX%
 
@@ -42,8 +45,8 @@
 @mkdir prefix\bin
 
 :MKDIRDOWNLOADS
-@IF EXIST downloads GOTO MKDIRBUILD
-@mkdir downloads
+@IF EXIST %DOWNLOADS% GOTO MKDIRBUILD
+@mkdir %DOWNLOADS%
 
 :MKDIRBUILD
 @IF EXIST build GOTO WGET
@@ -52,20 +55,20 @@
 :WGET
 @echo Downloading wget...
 
-@IF EXIST "%BASEDIR%\downloads\%WGET_FILENAME%" GOTO DOWNLOAD
-@echo open %WGET_FTP_SITE% >> "%BASEDIR%\downloads\curl.ftp"
-@echo anonymous >> "%BASEDIR%\downloads\curl.ftp"
-@echo pass ano@nymo.us >> "%BASEDIR%\downloads\curl.ftp"
-@echo binary >> "%BASEDIR%\downloads\curl.ftp"
-@echo get %WGET_FTP_PATH% %BASEDIR%\downloads/%WGET_FILENAME% >> "%BASEDIR%\downloads\curl.ftp"
-@echo close >> "%BASEDIR%\downloads\curl.ftp"
+@IF EXIST "%DOWNLOADS%\%WGET_FILENAME%" GOTO DOWNLOAD
+@echo open %WGET_FTP_SITE% >> "%DOWNLOADS%\curl.ftp"
+@echo anonymous >> "%DOWNLOADS%\curl.ftp"
+@echo pass ano@nymo.us >> "%DOWNLOADS%\curl.ftp"
+@echo binary >> "%DOWNLOADS%\curl.ftp"
+@echo get %WGET_FTP_PATH% %DOWNLOADS%/%WGET_FILENAME% >> "%DOWNLOADS%\curl.ftp"
+@echo close >> "%DOWNLOADS%\curl.ftp"
 
-@echo quit >> "%BASEDIR%\downloads\curl.ftp"
+@echo quit >> "%DOWNLOADS%\curl.ftp"
 
-@ftp -s:"%BASEDIR%\downloads\curl.ftp"
+@ftp -s:"%DOWNLOADS%\curl.ftp"
 
 :DOWNLOAD
-@cd downloads
+@cd %DOWNLOADS%
 
 :DOWNLOADUNZIP
 @echo Downloading unzip...
@@ -84,12 +87,12 @@
 :INSTALLUNZIP
 @echo Setting up unzip...
 @IF EXIST unzip.exe GOTO INSTALLCMAKE
-@"%BASEDIR%\downloads\%UNZIP_SFX%" -o
+@"%DOWNLOADS%\%UNZIP_SFX%" -o
 
 :INSTALLCMAKE
 @echo Setting up CMake...
 @IF EXIST "%CMAKE_EXE%" GOTO BOOTSTRAP
-@unzip "%BASEDIR%\downloads\%CMAKE_ZIP%"
+@unzip "%DOWNLOADS%\%CMAKE_ZIP%"
 @rem xcopy /Y /S "%CMAKE_DIRECTORY%\*.*" "%PREFIX%\"
 @rem rd /q /s "%CMAKE_DIRECTORY%"
 
@@ -104,7 +107,7 @@
     @IF /I "%1"=="fetch" ( 
         SHIFT
         cd "%BASEDIR%\build"
-        "%CMAKE_EXE%" -DFETCH_ONLY:BOOL=1 %* "%BATDIR%\cmake"
+        "%CMAKE_EXE%" -DWINST_DOWNLOADS_DIR:PATH="%DOWNLOADS%" -DFETCH_ONLY:BOOL=1 %* "%BATDIR%\cmake"
     ) ELSE (
         @IF /I "%1"=="git" (
             set WTGIT=-DWTGIT:BOOL=1
@@ -116,11 +119,11 @@
             @rd /q /s "%BASEDIR%\build"
             @mkdir "%BASEDIR%\build"
             @cd "%BASEDIR%\build"
-            "%CMAKE_EXE%" -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" %WTGIT% %* "%BATDIR%\cmake"
+            "%CMAKE_EXE%" -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" -DWINST_DOWNLOADS_DIR:PATH="%DOWNLOADS%" %WTGIT% %* "%BATDIR%\cmake"
         ) ELSE (
             @IF EXIST %BASEDIR%\build\Nul (
                 @cd "%BASEDIR%\build"
-                "%CMAKE_EXE%" %CMAKE_OPTIONS% -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" %WTGIT% %* "%BATDIR%\cmake"
+                "%CMAKE_EXE%" %CMAKE_OPTIONS% -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" -DWINST_DOWNLOADS_DIR:PATH="%DOWNLOADS%" %WTGIT% %* "%BATDIR%\cmake"
             )
         )
     )
@@ -131,7 +134,7 @@
     )
 
     @cd "%BASEDIR%\build"
-    "%CMAKE_EXE%" %CMAKE_OPTIONS% -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" %* "%BATDIR%\cmake"
+    "%CMAKE_EXE%" %CMAKE_OPTIONS% -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" -DWINST_DOWNLOADS_DIR:PATH="%DOWNLOADS%" %* "%BATDIR%\cmake"
 )
 
 :: Required to workaround Assembla issue #20 (missing files in packages)

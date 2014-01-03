@@ -18,6 +18,8 @@ set(WINST_BATDIR ${WINST_BATDIR_} CACHE PATH "winst source directory" FORCE)
 set(WINST_BASEDIR ${WINST_BASEDIR_} CACHE PATH "winst global work directory" FORCE)
 set(WINST_PREFIX ${WINST_PREFIX_} CACHE PATH "winst prefix directory" FORCE)
 
+SET(WINST_DOWNLOADS_DIR ${WINST_BASEDIR}/downloads CACHE PATH "path for downloads")
+
 set(CMAKE_INSTALL_PREFIX "${WINST_BASEDIR}/build/installation" CACHE PATH "Installation prefix, required for CPack due to absolute paths" FORCE)
 
 #our version of FindXXX.cmake
@@ -222,7 +224,7 @@ if (FETCH_ONLY )
     foreach( pkg ${_PACKAGES} )
 	message( STATUS "Downloading ${pkg}" )
         get_filename_component( fn ${${pkg}_URL} NAME )
-        file( DOWNLOAD ${${pkg}_URL} ${WINST_BASEDIR}/downloads/${fn} EXPECTED_MD5 ${${pkg}_MD5} SHOW_PROGRESS )
+        file( DOWNLOAD ${${pkg}_URL} ${WINST_DOWNLOADS_DIR}/${fn} EXPECTED_MD5 ${${pkg}_MD5} SHOW_PROGRESS )
     endforeach(pkg)
     
     file( WRITE ${PROJECT_BINARY_DIR}/fetch-only "" )
@@ -232,7 +234,7 @@ ELSE ( FETCH_ONLY )
     # GNU patch
     if( WIN32 AND NOT UNIX )
         ExternalProject_Add( patch
-            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+            DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
             URL ${patch_URL}
             URL_MD5 ${patch_MD5}
             CONFIGURE_COMMAND ""
@@ -248,7 +250,7 @@ ELSE ( FETCH_ONLY )
         set( PATCH_EXECUTABLE ${WINST_PREFIX}\\bin\\patch.exe )
     else( WIN32 AND NOT UNIX )
         ExternalProject_Add( patch
-            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
+            DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
             URL ${patch_URL}
             URL_MD5 ${patch_MD5}
             CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX}
@@ -271,7 +273,7 @@ ELSE ( FETCH_ONLY )
     # Netwide Assembler
     if( WIN32 AND NOT UNIX )
         ExternalProject_Add( nasm
-            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+            DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
             URL ${nasm_URL}
             URL_MD5 ${nasm_MD5}
             CONFIGURE_COMMAND ""
@@ -286,7 +288,7 @@ ELSE ( FETCH_ONLY )
             )
     else( WIN32 AND NOT UNIX )
         ExternalProject_Add( nasm
-            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
+            DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
             URL ${nasm_URL}
             URL_MD5 ${nasm_MD5}
             CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX}
@@ -305,7 +307,7 @@ ELSE ( FETCH_ONLY )
     # Perl - required for OpenSSL
     if( WIN32 AND NOT UNIX )
         ExternalProject_Add( perl
-                DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+                DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
                 URL ${perl_URL}
                 URL_MD5 ${perl_MD5}
                 CONFIGURE_COMMAND ""
@@ -320,7 +322,7 @@ ELSE ( FETCH_ONLY )
                 )
     else( WIN32 AND NOT UNIX )
         ExternalProject_Add( perl
-            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
+            DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
             URL ${perl_URL}
             URL_MD5 ${perl_MD5}
             CONFIGURE_COMMAND ./Configure -de -Dprefix=${WINST_PREFIX}
@@ -339,7 +341,7 @@ ELSE ( FETCH_ONLY )
 	
 	if(WIN32)
         ExternalProject_Add( nsis
-			DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+			DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
 			URL ${nsis_URL}
 			URL_MD5 ${nsis_MD5}
 			CONFIGURE_COMMAND ""
@@ -357,7 +359,7 @@ ELSE ( FETCH_ONLY )
 	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/zlib)
     ExternalProject_Add( zlib-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/zlib-src
-        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${zlib_URL}
         URL_MD5 ${zlib_MD5}
         LIST_SEPARATOR ^^
@@ -414,7 +416,7 @@ ELSE ( FETCH_ONLY )
 	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/bzip2)
     ExternalProject_Add( bzip2
         DEPENDS patch
-        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${bzip2_URL}
         URL_MD5 ${bzip2_MD5}
 		LIST_SEPARATOR ^^
@@ -432,7 +434,7 @@ ELSE ( FETCH_ONLY )
 	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/libpng)
     ExternalProject_Add( libpng-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libpng-src
-        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${libpng_URL}
         URL_MD5 ${libpng_MD5}
         CONFIGURE_COMMAND ""
@@ -492,7 +494,7 @@ ELSE ( FETCH_ONLY )
 	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/libjpeg)
     ExternalProject_Add( libjpeg
         DEPENDS patch
-        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${libjpeg_URL}
         URL_MD5 ${libjpeg_MD5}
 		LIST_SEPARATOR ^^
@@ -510,7 +512,7 @@ ELSE ( FETCH_ONLY )
 	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/freetype)
     ExternalProject_Add( freetype
         DEPENDS zlib libpng patch
-        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${freetype_URL}
         URL_MD5 ${freetype_MD5}
 		LIST_SEPARATOR ^^
@@ -526,7 +528,7 @@ ELSE ( FETCH_ONLY )
         )
 
         ExternalProject_Add( depot_tools
-                DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
+                DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
                 URL ${depot_tools_URL}
                 #URL_MD5 ${depot_tools_MD5}
                 CONFIGURE_COMMAND ""
@@ -666,7 +668,7 @@ ELSE ( FETCH_ONLY )
     set( ENV{PATH} "${_NEWPATH}" )
     ExternalProject_Add( openssl-release
         DEPENDS zlib perl patch nasm
-        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${openssl_URL}
         URL_MD5 ${openssl_MD5}
 		LIST_SEPARATOR ^^
@@ -686,7 +688,7 @@ ELSE ( FETCH_ONLY )
 
     ExternalProject_Add( openssl-debug
         DEPENDS zlib perl patch nasm
-        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${openssl_URL}
         URL_MD5 ${openssl_MD5}
 		LIST_SEPARATOR ^^
@@ -707,7 +709,7 @@ ELSE ( FETCH_ONLY )
 	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/openssl)
     ExternalProject_Add( openssl
         DEPENDS openssl-release openssl-debug
-        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${openssl_URL}
         URL_MD5 ${openssl_MD5}
         CONFIGURE_COMMAND ""
@@ -720,7 +722,7 @@ ELSE ( FETCH_ONLY )
     ExternalProject_Add( mariadb-fetch
         DEPENDS patch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
-        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${mariadb_URL}
         DOWNLOAD_NAME ${mariadb_NAME}
         URL_MD5 ${mariadb_MD5}
@@ -790,7 +792,7 @@ ELSE ( FETCH_ONLY )
 
 #    if( WIN32 AND NOT UNIX )
             # ExternalProject_Add( 7zip
-            # DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+            # DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
             # URL ${7zip_URL}
             # URL_MD5 ${7zip_MD5}
             # CONFIGURE_COMMAND ""
@@ -806,7 +808,7 @@ ELSE ( FETCH_ONLY )
 
 #        ExternalProject_Add( git
 #            DEPENDS 7zip
-#            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+#            DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
 #            URL ${git_URL}
 #            URL_MD5 ${git_MD5}
 #            BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${WINST_PREFIX}/git
@@ -827,7 +829,7 @@ ELSE ( FETCH_ONLY )
     ExternalProject_Add( postgresql-fetch
         DEPENDS patch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/postgresql-src
-        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${postgresql_URL}
         DOWNLOAD_NAME ${postgresql_NAME}
         URL_MD5 ${postgresql_MD5}
@@ -908,7 +910,7 @@ ELSE ( FETCH_ONLY )
     if(NOT WIN32)
         ExternalProject_Add( fcgi
             DEPENDS patch
-            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
+            DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
             URL ${fcgi_URL}
             URL_MD5 ${fcgi_MD5}
             PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/fcgi-2.4.0-cstdiofix.patch
@@ -931,7 +933,7 @@ ELSE ( FETCH_ONLY )
 		  set( PLATFORM_SPECIFIC_FLAGS -with-shared )
 		endif(APPLE)
         ExternalProject_Add( ncurses
-        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
+        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${ncurses_URL}
         URL_MD5 ${ncurses_MD5}
         CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX} ${PLATFORM_SPECIFIC_FLAGS} --with-shared --disable-rpath --without-progs --without-debug --without-ada
@@ -949,7 +951,7 @@ ELSE ( FETCH_ONLY )
     
     if( UNIX )
         ExternalProject_Add( fakerootng
-            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
+            DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
             URL ${fakerootng_URL}
             URL_MD5 ${fakerootng_MD5}
             #PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/fakerootng-0.18-fixBroken32Bit.patch
@@ -969,7 +971,7 @@ ELSE ( FETCH_ONLY )
     if( WIN32 )
 	# Download and extract firebird binaries. Or build it?
         ExternalProject_Add( firebirdsql
-            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+            DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
             URL ${firebirdsql_URL}
             URL_MD5 ${firebirdsql_MD5}
             CONFIGURE_COMMAND ""
@@ -986,7 +988,7 @@ ELSE ( FETCH_ONLY )
     else( WIN32 )
         #ExternalProject_Add( firebirdsql
 	#    DEPENDS fakerootng
-        #    DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
+        #    DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         #    URL ${firebirdsql_URL}
         #    URL_MD5 ${firebirdsql_MD5}
         #    CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX} --without-editline --enable-superserver --enable-shared
@@ -1004,7 +1006,7 @@ ELSE ( FETCH_ONLY )
 	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/libharu)
     ExternalProject_Add( libharu-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libharu-src
-        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${libharu_URL}
         URL_MD5 ${libharu_MD5}
 #        GIT_REPOSITORY ${libharu_URL}
@@ -1053,7 +1055,7 @@ ELSE ( FETCH_ONLY )
     if( UNIX AND NOT WIN32 )
         ExternalProject_Add( graphicsmagick
             DEPENDS libpng zlib bzip2 libjpeg
-            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads
+            DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
             URL ${graphicsmagick_URL}
             URL_MD5 ${graphicsmagick_MD5}
             CONFIGURE_COMMAND ./configure --enable-shared --prefix=${WINST_PREFIX}
@@ -1098,7 +1100,7 @@ ELSE ( FETCH_ONLY )
     set( boost_COMMAND ${boost_BJAM} --build-type=minimal ${boost_TOOLSET} ${boost_ADDRESS_MODEL} --variant=release --without-python ${boost_LINKAGE} threading=multi include=${WINST_PREFIX}/include linkflags=-L${WINST_PREFIX}/lib )
     ExternalProject_Add( boost
 	DEPENDS zlib bzip2
-        DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${boost_URL}
         URL_MD5 ${boost_MD5}
 		PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/boost-1.53-vc12.patch
@@ -1160,7 +1162,7 @@ ELSE ( FETCH_ONLY )
         ExternalProject_Add( wt-fetch
             # git
             SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
-            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+            DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
             GIT_REPOSITORY http://www.webtoolkit.eu/git/wt.git
             LOG_DOWNLOAD 1
             LOG_UPDATE 1
@@ -1176,7 +1178,7 @@ ELSE ( FETCH_ONLY )
     else( WTGIT )
         ExternalProject_Add( wt-fetch
             SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
-            DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+            DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
             URL ${wt_URL}
             URL_MD5 ${wt_MD5}
             LOG_DOWNLOAD 1
@@ -1198,7 +1200,7 @@ ELSE ( FETCH_ONLY )
 	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/tinymce)
 	ExternalProject_Add( tinymce
 	DEPENDS wt-fetch
-	DOWNLOAD_DIR ${WINST_BASEDIR}/downloads 
+	DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
 	URL ${tinymce_URL}
 	URL_MD5 ${tinymce_MD5}
 	CONFIGURE_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/jscripts/ ${source_dir}/resources/
