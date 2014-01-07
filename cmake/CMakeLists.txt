@@ -31,6 +31,7 @@ set(CMAKE_PREFIX_PATH ${WINST_PREFIX} )
 # Are we building for 32-bit or 64-bit?
 # TODO Support ARM, MIPS and others
 if( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # 64-bit
+	set(_WT_ADDRESS_WIDTH 64)
 	if( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
 		set(_WT_ARCH x64)
 	else( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
@@ -38,6 +39,7 @@ if( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # 64-bit
 		message( ERROR "${CMAKE_SYSTEM_PROCESSOR} architecture is not supported by the Wt bootstrapper, please build manually." )
 	endif( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
 else( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # 32-bit
+	set(_WT_ADDRESS_WIDTH 32)
 	set(_WT_ARCH x86)		 
 endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
@@ -564,7 +566,7 @@ ELSE ( FETCH_ONLY )
         DEPENDS skia-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/trunk python.bat gyp_skia
+        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/trunk ${_WT_ADDRESS_WIDTH} python.bat gyp_skia
         BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/trunk ${WINST_BATDIR}/cmake/build-skia.bat Debug
         INSTALL_COMMAND ""
         LOG_DOWNLOAD 1
@@ -579,7 +581,7 @@ ELSE ( FETCH_ONLY )
         DEPENDS skia-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/trunk python.bat gyp_skia
+        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/trunk ${_WT_ADDRESS_WIDTH} python.bat gyp_skia
         BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/trunk ${WINST_BATDIR}/cmake/build-skia.bat Release
         INSTALL_COMMAND ""
         LOG_DOWNLOAD 1
