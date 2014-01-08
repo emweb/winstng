@@ -130,10 +130,6 @@ if( WIN32 AND NOT UNIX )
     set( nasm_MD5 1dafe433d8c83854188934617eec3032 )
     set( _PACKAGES ${_PACKAGES} nasm )
 	
-	set( nsis_URL http://prdownloads.sourceforge.net/nsis/nsis-2.46.zip )
-	set( nsis_MD5 d7e43beabc017a7d892a3d6663e988d4 )
-	set( _PACKAGES ${_PACKAGES} nsis )
-
 #    if( FETCH_ONLY OR WTGIT )
         # set( 7zip_URL http://prdownloads.sourceforge.net/sevenzip/7za920.zip )
         # set( 7zip_MD5 2fac454a90ae96021f4ffc607d4c00f8 )
@@ -341,23 +337,6 @@ ELSE ( FETCH_ONLY )
         set( PERL_EXECUTABLE ${WINST_PREFIX}/bin/perl )
     endif( WIN32 AND NOT UNIX )
 	
-	if(WIN32)
-        ExternalProject_Add( nsis
-			DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-			URL ${nsis_URL}
-			URL_MD5 ${nsis_MD5}
-			CONFIGURE_COMMAND ""
-			BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${WINST_PREFIX}/
-			INSTALL_COMMAND ""
-			LOG_DOWNLOAD 1
-			LOG_UPDATE 1
-			LOG_CONFIGURE 1
-			LOG_BUILD 1
-			LOG_TEST 1
-			LOG_INSTALL 1
-			)
-	endif(WIN32)
-
 	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/zlib)
     ExternalProject_Add( zlib-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/zlib-src
