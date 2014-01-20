@@ -22,6 +22,7 @@ SET(WINST_DOWNLOADS_DIR ${WINST_BASEDIR}/downloads CACHE PATH "path for download
 
 set(CMAKE_INSTALL_PREFIX "${WINST_BASEDIR}/build/installation" CACHE PATH "Installation prefix, required for CPack due to absolute paths" FORCE)
 
+set(WTGIT ${WTGIT} CACHE BOOL "build git version instead of release version" FORCE)
 #our version of FindXXX.cmake
 set(WINST_MODULE_PATH ${WINST_BATDIR}/cmake/Modules)
 
