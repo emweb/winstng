@@ -30,9 +30,10 @@
 @SET UNZIP_FULLURL=http://www.mirrorservice.org/sites/ftp.info-zip.org/pub/infozip/win32/%UNZIP_SFX%
 
 @SET WGET_FTP_PATH=%WGET_FTP_DIRECTORY%/%WGET_FILENAME%
-@SET CMAKE_ZIP=cmake-2.8.12.1-win32-x86.zip
+@SET CMAKE_VERSION=2.8.12.1
+@SET CMAKE_ZIP=cmake-%CMAKE_VERSION%-win32-x86.zip
 @SET CMAKE_FULLURL=http://www.cmake.org/files/v2.8/%CMAKE_ZIP%
-@SET CMAKE_DIRECTORY=%BASEDIR%/prefix/cmake-2.8.11.2-win32-x86
+@SET CMAKE_DIRECTORY=%BASEDIR%/prefix/cmake-%CMAKE_VERSION%-win32-x86
 @SET CMAKE_EXE=%CMAKE_DIRECTORY%/bin/cmake.exe
 @SET CPACK_EXE=%CMAKE_DIRECTORY%/bin/cpack.exe
 
