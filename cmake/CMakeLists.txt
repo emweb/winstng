@@ -110,7 +110,7 @@ set( _PACKAGES ${_PACKAGES} boost )
 set( depot_tools_URL https://src.chromium.org/svn/trunk/tools/depot_tools.zip)
 set( _PACKAGES ${_PACKAGES} depot_tools )
 
-set( skia_URL http://skia.googlecode.com/svn/trunk)
+set( skia_URL https://skia.googlesource.com/skia.git@394c7bb04d89667d2164a554f310e8e6f819abc2)
 set( _PACKAGES ${_PACKAGES} skia )
 
 set( tinymce_URL http://download.moxiecode.com/tinymce/tinymce_3.5.9.zip )
@@ -1148,7 +1148,7 @@ endif(NOT WIN32)
             # git
             SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
             DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-            GIT_REPOSITORY http://www.webtoolkit.eu/git/wt.git
+            GIT_REPOSITORY git://github.com/kdeforche/wt.git
             LOG_DOWNLOAD 1
             LOG_UPDATE 1
             LOG_CONFIGURE 1
