@@ -110,7 +110,8 @@ set( _PACKAGES ${_PACKAGES} boost )
 set( depot_tools_URL https://src.chromium.org/svn/trunk/tools/depot_tools.zip)
 set( _PACKAGES ${_PACKAGES} depot_tools )
 
-set( skia_URL https://skia.googlesource.com/skia.git@394c7bb04d89667d2164a554f310e8e6f819abc2)
+set( skia_REVISION "@394c7bb04d89667d2164a554f310e8e6f819abc2")
+set( skia_URL https://skia.googlesource.com/skia.git${skia_REVISION})
 set( _PACKAGES ${_PACKAGES} skia )
 
 set( tinymce_URL http://download.moxiecode.com/tinymce/tinymce_3.5.9.zip )
@@ -546,8 +547,8 @@ ELSE ( FETCH_ONLY )
         DEPENDS skia-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/trunk ${_WT_ADDRESS_WIDTH} python.bat gyp_skia
-        BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/trunk ${WINST_BATDIR}/cmake/build-skia.bat Debug
+        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/skia.git${skia_REVISION} ${_WT_ADDRESS_WIDTH} python.bat gyp_skia
+        BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/skia.git${skia_REVISION} ${WINST_BATDIR}/cmake/build-skia.bat Debug
         INSTALL_COMMAND ""
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -561,8 +562,8 @@ ELSE ( FETCH_ONLY )
         DEPENDS skia-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/trunk ${_WT_ADDRESS_WIDTH} python.bat gyp_skia
-        BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/trunk ${WINST_BATDIR}/cmake/build-skia.bat Release
+        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/skia.git${skia_REVISION} ${_WT_ADDRESS_WIDTH} python.bat gyp_skia
+        BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/skia.git${skia_REVISION} ${WINST_BATDIR}/cmake/build-skia.bat Release
         INSTALL_COMMAND ""
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -994,6 +995,7 @@ endif(NOT WIN32)
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${libharu_URL}
         URL_MD5 ${libharu_MD5}
+	PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libharu-2.3.0RC3.patch
 #        GIT_REPOSITORY ${libharu_URL}
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
@@ -1119,7 +1121,7 @@ endif(NOT WIN32)
         -DBOOST_ROOT:PATH=${WINST_PREFIX}
         -DCONFIGDIR:PATH=${WINST_PREFIX}/etc/wt
         -DFCGI_PREFIX:PATH=${WINST_PREFIX}
-        -DSKIA_PREFIX=${CMAKE_BINARY_DIR}/skia-src/trunk
+        -DSKIA_PREFIX=${CMAKE_BINARY_DIR}/skia-src/skia.git${skia_REVISION}
 	-DWT_WRASTERIMAGE_IMPLEMENTATION=skia
         -DHARU_PREFIX=${WINST_PREFIX}
         -DHARU_DYNAMIC:BOOL=1
@@ -1141,6 +1143,7 @@ endif(NOT WIN32)
         -DSSL_LIB_NAMES=ssleay32
         -DSSL_LIB_TOO_NAMES=libeay32
         -DENABLE_QT4:BOOL=0
+        -DWTHTTP_CONFIGURATION:PATH=c:/witty/wthttpd
        )
     ENDIF(WIN32)
     if( WTGIT )
@@ -1203,10 +1206,11 @@ endif(NOT WIN32)
     ExternalProject_Add( wt-debug
         DEPENDS tinymce wt-fetch
             zlib libpng libharu
-            openssl boost
+            openssl
             ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
 #            postgresql
             skia
+            boost
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
@@ -1221,10 +1225,11 @@ endif(NOT WIN32)
     ExternalProject_Add( wt-release
         DEPENDS tinymce wt-fetch
             zlib libpng libharu
-            openssl boost
+            openssl
             ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
 #            postgresql
             skia
+            boost
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
