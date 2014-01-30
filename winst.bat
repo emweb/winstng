@@ -113,6 +113,7 @@
         @IF /I "%1"=="git" (
             set WTGIT=-DWTGIT:BOOL=ON
             echo "Using git version of Wt"
+            SHIFT
         ) ELSE (
             set WTGIT=-DWTGIT:BOOL=OFF
             echo "Using release version of Wt"
