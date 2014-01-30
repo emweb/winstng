@@ -112,8 +112,10 @@
     ) ELSE (
         @IF /I "%1"=="git" (
             set WTGIT=-DWTGIT:BOOL=1
+            echo "Using git version of Wt"
         ) ELSE (
             set WTGIT=-DWTGIT:BOOL=0
+            echo "Using release version of Wt"
         )
         
         @IF EXIST "%BASEDIR%\build\fetch-only" (
