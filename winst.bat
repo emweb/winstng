@@ -111,10 +111,10 @@
         "%CMAKE_EXE%" -DWINST_DOWNLOADS_DIR:PATH="%DOWNLOADS%" -DFETCH_ONLY:BOOL=1 %* "%BATDIR%\cmake"
     ) ELSE (
         @IF /I "%1"=="git" (
-            set WTGIT=-DWTGIT:BOOL=1
+            set WTGIT=-DWTGIT:BOOL=ON
             echo "Using git version of Wt"
         ) ELSE (
-            set WTGIT=-DWTGIT:BOOL=0
+            set WTGIT=-DWTGIT:BOOL=OFF
             echo "Using release version of Wt"
         )
         
