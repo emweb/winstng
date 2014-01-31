@@ -110,7 +110,10 @@ set( _PACKAGES ${_PACKAGES} boost )
 set( depot_tools_URL https://src.chromium.org/svn/trunk/tools/depot_tools.zip)
 set( _PACKAGES ${_PACKAGES} depot_tools )
 
-set( skia_REVISION "@394c7bb04d89667d2164a554f310e8e6f819abc2")
+# revision ID's become part of filename and filename gets too long with full
+# revision ID, causing problems in jenkins build
+#set( skia_REVISION "@394c7bb04d89667d2164a554f310e8e6f819abc2")
+set( skia_REVISION "@394c7b")
 set( skia_URL https://skia.googlesource.com/skia.git${skia_REVISION})
 set( _PACKAGES ${_PACKAGES} skia )
 
