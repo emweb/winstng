@@ -23,6 +23,12 @@ SET(WINST_DOWNLOADS_DIR ${WINST_BASEDIR}/downloads CACHE PATH "path for download
 set(CMAKE_INSTALL_PREFIX "${WINST_BASEDIR}/build/installation" CACHE PATH "Installation prefix, required for CPack due to absolute paths" FORCE)
 
 set(WTGIT ${WTGIT} CACHE BOOL "build git version instead of release version" FORCE)
+
+IF(NOT WTGITREPO)
+  set(WTGITREPO "git://github.com/kdeforche/wt.git")
+ENDIF(NOT WTGITREPO)
+set(WTGITREPO ${WTGITREPO} CACHE BOOL "git repository for wt" FORCE)
+
 #our version of FindXXX.cmake
 set(WINST_MODULE_PATH ${WINST_BATDIR}/cmake/Modules)
 
@@ -1154,7 +1160,7 @@ endif(NOT WIN32)
             # git
             SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
             DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-            GIT_REPOSITORY git://github.com/kdeforche/wt.git
+            GIT_REPOSITORY ${WTGITREPO}
             LOG_DOWNLOAD 1
             LOG_UPDATE 1
             LOG_CONFIGURE 1
