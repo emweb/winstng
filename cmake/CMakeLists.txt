@@ -1263,6 +1263,36 @@ endif(NOT WIN32)
 		TEST_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/doc ${WINST_PREFIX}/docs-to-install
     )
 	
+# Wt version extraction
+SET(WCONFIG_H
+ ${CMAKE_CURRENT_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/Wt/WConfig.h
+)
+IF(EXISTS ${WCONFIG_H})
+  file(
+    STRINGS ${WCONFIG_H}
+    WT_VERSION_MAJOR
+    REGEX "#define[ ]+WT_SERIES[ ]+[0-9.]+"
+  )
+  string(REGEX MATCH "[0-9]+" WT_VERSION_MAJOR ${WT_VERSION_MAJOR})
+  file(
+    STRINGS ${WCONFIG_H}
+    WT_VERSION_MINOR
+    REGEX "#define[ ]+WT_MAJOR[ ]+[0-9.]+"
+  )
+  string(REGEX MATCH "[0-9]+" WT_VERSION_MINOR ${WT_VERSION_MINOR})
+  file(
+    STRINGS ${WCONFIG_H}
+    WT_VERSION_PATCH
+    REGEX "#define[ ]+WT_MINOR[ ]+[0-9.]+"
+  )
+  string(REGEX MATCH "[0-9]+" WT_VERSION_PATCH ${WT_VERSION_PATCH})
+ELSE(EXISTS ${WCONFIG_H})
+  MESSAGE("Warning: Could not find WConfig.h, could not extract version number")
+  SET(WT_VERSION_MAJOR X)
+  SET(WT_VERSION_MINOR Y)
+  SET(WT_VERSION_PATCH Z)
+ENDIF(EXISTS ${WCONFIG_H})
+
 
 # INSTALLATION
 
@@ -1290,19 +1320,43 @@ if(WIN32)
 
    # bzip2 ?
    INSTALL(FILES "${WINST_PREFIX}/bin/zlibd.dll" "${WINST_PREFIX}/bin/zlib.dll" DESTINATION "bin" COMPONENT binaries)
+   INSTALL(FILES "${CMAKE_BINARY_DIR}/zlib-debug-prefix/src/zlib-debug-build/zlibd.pdb" DESTINATION "bin" COMPONENT symbols)
+
    INSTALL(FILES "${WINST_PREFIX}/bin/ssleay32.dll" "${WINST_PREFIX}/bin/libeay32.dll" DESTINATION "bin" COMPONENT binaries)
    INSTALL(FILES "${WINST_PREFIX}/bin/ssleay32d.dll" "${WINST_PREFIX}/bin/libeay32d.dll" DESTINATION "bin" COMPONENT binaries)
+   INSTALL(FILES "${WINST_PREFIX}/openssl-debug-prefix/src/openssl-debug/out32dll.dbg/libeay32d.pdb" "${WINST_PREFIX}/openssl-debug-prefix/src/openssl-debug/out32dll.dbg/ssleay32d.pdb" DESTINATION "bin" COMPONENT symbols)
+
    INSTALL(FILES "${WINST_PREFIX}/bin/libmariadbd.dll" "${WINST_PREFIX}/bin/libmariadb.dll" DESTINATION "bin" COMPONENT binaries)
+   INSTALL(FILES "${CMAKE_BINARY_DIR}/mariadb-debug-prefix/src/mariadb-debug-build/libmysql/libmariadbd.pdb" DESTINATION "bin" COMPONENT symbols)
+
    INSTALL(FILES "${WINST_PREFIX}/bin/libpng14.dll" "${WINST_PREFIX}/bin/libpng14d.dll" DESTINATION "bin" COMPONENT binaries)
+   INSTALL(FILES "${CMAKE_BINARY_DIR}/libpng-debug-prefix/src/libpng-debug-build/libpng14d.pdb" DESTINATION "bin" COMPONENT symbols)
+
 #   INSTALL(FILES "${WINST_PREFIX}/bin/libpq.dll" "${WINST_PREFIX}/bin/libintl.dll" DESTINATION "bin" COMPONENT binaries)
+
    FILE(GLOB haru_install_includes "${WINST_PREFIX}/include/hpdf*")
    INSTALL(FILES ${haru_install_includes} DESTINATION "include" COMPONENT binaries)
    INSTALL(FILES "${WINST_PREFIX}/lib/libhpdf.lib" "${WINST_PREFIX}/lib/libhpdfd.lib" DESTINATION "lib" COMPONENT binaries)
    INSTALL(FILES "${WINST_PREFIX}/bin/libhpdf.dll" "${WINST_PREFIX}/bin/libhpdfd.dll" DESTINATION "bin" COMPONENT binaries)
+   INSTALL(FILES "${CMAKE_BINARY_DIR}/libharu-debug-prefix/src/libharu-debug-build/src/libhpdfd.pdb" DESTINATION "bin" COMPONENT symbols)
+
+
    FILE(GLOB wt_install_libs "${WINST_PREFIX}/lib/wt*lib")
    INSTALL(FILES ${wt_install_libs} DESTINATION "lib" COMPONENT binaries)
    FILE(GLOB wt_install_dlls "${WINST_PREFIX}/bin/wt*dll")
    INSTALL(FILES ${wt_install_dlls} DESTINATION "bin" COMPONENT binaries)
+   INSTALL(FILES
+     "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/wtd.pdb"
+     "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/wtdbod.pdb"
+     "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbofirebirdd.pdb"
+     "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbomysqld.pdb"
+     "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbosqlite3d.pdb"
+     "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/http/wthttpd.pdb"
+     "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/wttestd.pdb"
+     DESTINATION "bin" COMPONENT symbols
+   )
+
+
    FILE(GLOB_RECURSE wt_install_examples "${WINST_PREFIX}/lib/Wt/*.exe")
    INSTALL(FILES ${wt_install_examples} DESTINATION "bin" COMPONENT examples)
    FILE(GLOB wt_all_bat "${WINST_PREFIX}/bin/*.bat")
@@ -1373,7 +1427,7 @@ endif(WIN32)
 
    # Compose a meaningful compiler string
    if(MSVC)
-	set(_WT_COMPILER "msvc${FANCY_MSVC_VERSION}")
+	set(_WT_COMPILER "msvs${FANCY_MSVC_VERSION}")
    elseif(CMAKE_COMPILER_IS_GNUCC)
 		set(_WT_COMPILER "gcc") # TODO Use the specific mingw version, i. e. the output of uname
    endif()
@@ -1390,10 +1444,10 @@ endif(WIN32)
    SET(CPACK_PACKAGE_VENDOR "emweb bvba")
    SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/ReadMe.txt")
    SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/Copyright.txt")
-   SET(CPACK_PACKAGE_VERSION_MAJOR "3")
-   SET(CPACK_PACKAGE_VERSION_MINOR "3")
-   SET(CPACK_PACKAGE_VERSION_PATCH "1")
-   SET(CPACK_PACKAGE_INSTALL_DIRECTORY "Wt ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
+   SET(CPACK_PACKAGE_VERSION_MAJOR ${WT_VERSION_MAJOR})
+   SET(CPACK_PACKAGE_VERSION_MINOR ${WT_VERSION_MINOR})
+   SET(CPACK_PACKAGE_VERSION_PATCH ${WT_VERSION_PATCH})
+   SET(CPACK_PACKAGE_INSTALL_DIRECTORY "Wt ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH} ${_WT_COMPILER} ${_WT_ARCH}")
    
    if(WIN32)
 	SET(CPACK_GENERATOR "ZIP;NSIS")
@@ -1403,7 +1457,7 @@ endif(WIN32)
     SET(CPACK_GENERATOR "TBZ2")
    endif(WIN32)
    
-   set(CPACK_COMPONENTS_ALL binaries documentation examples)
+   set(CPACK_COMPONENTS_ALL binaries documentation examples symbols)
    
    set(CPACK_COMPONENT_BINARIES_DISPLAY_NAME "Binaries")
    set(CPACK_COMPONENT_BINARIES_DESCRIPTION "Wt binaries and third party dependencies. Includes DLLs and import libraries.")
@@ -1411,6 +1465,8 @@ endif(WIN32)
    set(CPACK_COMPONENT_EXAMPLES_DESCRIPTION "Examples, ready to run. Source code is not included.")
    set(CPACK_COMPONENT_DOCUMENTATION_DISPLAY_NAME "Documentation")
    set(CPACK_COMPONENT_DOCUMENTATION_DESCRIPTION "Wt documentation in HTML format")
+   set(CPACK_COMPONENT_SYMBOLS_DISPLAY_NAME "Debug Symbols")
+   set(CPACK_COMPONENT_SYMBOLS_DESCRIPTION "PDB files for all debug DLLs")
    
    set(CPACK_COMPONENT_BINARIES_REQUIRED TRUE)
    

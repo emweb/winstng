@@ -24,9 +24,11 @@ This is the list of included software and its license:
    glib			LGPLv2
    FCGI			FastCGI license
    TinyMCE		LGPLv2.1
+   skia			BSD License + 3rd party licenses
 
 The full text of the licenses is available in the "licenses" directory 
 in the installed SDK.
 
 Depending on what version of the SDK you downloaded, one or more of these 
 components (and its license) may be missing from the package.
+
