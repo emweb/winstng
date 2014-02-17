@@ -1324,7 +1324,7 @@ if(WIN32)
 
    INSTALL(FILES "${WINST_PREFIX}/bin/ssleay32.dll" "${WINST_PREFIX}/bin/libeay32.dll" DESTINATION "bin" COMPONENT binaries)
    INSTALL(FILES "${WINST_PREFIX}/bin/ssleay32d.dll" "${WINST_PREFIX}/bin/libeay32d.dll" DESTINATION "bin" COMPONENT binaries)
-   INSTALL(FILES "${WINST_PREFIX}/openssl-debug-prefix/src/openssl-debug/out32dll.dbg/libeay32d.pdb" "${WINST_PREFIX}/openssl-debug-prefix/src/openssl-debug/out32dll.dbg/ssleay32d.pdb" DESTINATION "bin" COMPONENT symbols)
+   INSTALL(FILES "${CMAKE_BINARY_DIR}/openssl-debug-prefix/src/openssl-debug/out32dll.dbg/libeay32d.pdb" "${CMAKE_BINARY_DIR}/openssl-debug-prefix/src/openssl-debug/out32dll.dbg/ssleay32d.pdb" DESTINATION "bin" COMPONENT symbols)
 
    INSTALL(FILES "${WINST_PREFIX}/bin/libmariadbd.dll" "${WINST_PREFIX}/bin/libmariadb.dll" DESTINATION "bin" COMPONENT binaries)
    INSTALL(FILES "${CMAKE_BINARY_DIR}/mariadb-debug-prefix/src/mariadb-debug-build/libmysql/libmariadbd.pdb" DESTINATION "bin" COMPONENT symbols)
