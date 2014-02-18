@@ -133,7 +133,6 @@ set( tinymce_MD5 f84ee9b528d2cf73c722957a072b1ef1 )
 set( _PACKAGES ${_PACKAGES} tinymce )
 
 set( wt_URL http://prdownloads.sourceforge.net/witty/wt-${WT_VERSION}.tar.gz )
-set( wt_MD5 3e93152c0ba3feb4ee687e7370b27552 )
 set( _PACKAGES ${_PACKAGES} wt )
 
 if( WIN32 AND NOT UNIX )
@@ -1182,7 +1181,6 @@ endif(NOT WIN32)
             SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
             DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
             URL ${wt_URL}
-            URL_MD5 ${wt_MD5}
             LOG_DOWNLOAD 1
             LOG_UPDATE 1
             LOG_CONFIGURE 1
