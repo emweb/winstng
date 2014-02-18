@@ -35,7 +35,13 @@ setlocal
         echo Using git repository %2
         SHIFT
       ) ELSE (
-        set CMAKE_ARGS=%CMAKE_ARGS% %1
+        @IF /I "%~1"=="wtversion" (
+          set WTVERSION=-DWT_VERSION:STRING=%2
+          echo Using wt version %2
+          SHIFT
+        ) ELSE (
+          set CMAKE_ARGS=%CMAKE_ARGS% %1
+        )
       )
     )
   )
@@ -133,18 +139,18 @@ setlocal
 @IF NOT [%1]==[] (
     @IF /I "%FETCHONLY"=="1" (
         cd "%BASEDIR%\build"
-        "%CMAKE_EXE%" -DWINST_DOWNLOADS_DIR:PATH="%DOWNLOADS%" -DFETCH_ONLY:BOOL=1 %WTGIT% %WTGITREPO% %CMAKE_ARGS% "%BATDIR%\cmake"
+        "%CMAKE_EXE%" -DWINST_DOWNLOADS_DIR:PATH="%DOWNLOADS%" -DFETCH_ONLY:BOOL=1 %WTGIT% %WTGITREPO% %WTVERSION% %CMAKE_ARGS% "%BATDIR%\cmake"
     ) ELSE (
         
         @IF EXIST "%BASEDIR%\build\fetch-only" (
             @rd /q /s "%BASEDIR%\build"
             @mkdir "%BASEDIR%\build"
             @cd "%BASEDIR%\build"
-            "%CMAKE_EXE%" -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" -DWINST_DOWNLOADS_DIR:PATH="%DOWNLOADS%" %WTGIT% %WTGITREPO% %CMAKE_ARGS% "%BATDIR%\cmake"
+            "%CMAKE_EXE%" -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" -DWINST_DOWNLOADS_DIR:PATH="%DOWNLOADS%" %WTGIT% %WTGITREPO% %WTVERSION% %CMAKE_ARGS% "%BATDIR%\cmake"
         ) ELSE (
             @IF EXIST %BASEDIR%\build\Nul (
                 @cd "%BASEDIR%\build"
-                "%CMAKE_EXE%" %CMAKE_OPTIONS% -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" -DWINST_DOWNLOADS_DIR:PATH="%DOWNLOADS%" %WTGIT% %WTGITREPO% %CMAKE_ARGS% "%BATDIR%\cmake"
+                "%CMAKE_EXE%" %CMAKE_OPTIONS% -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" -DWINST_DOWNLOADS_DIR:PATH="%DOWNLOADS%" %WTGIT% %WTGITREPO% %WTVERSION% %CMAKE_ARGS% "%BATDIR%\cmake"
             )
         )
     )
@@ -155,7 +161,7 @@ setlocal
     )
 
     @cd "%BASEDIR%\build"
-    "%CMAKE_EXE%" %CMAKE_OPTIONS% -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" -DWINST_DOWNLOADS_DIR:PATH="%DOWNLOADS%" %WTGIT% %WTGITREPO% %CMAKE_ARGS% "%BATDIR%\cmake"
+    "%CMAKE_EXE%" %CMAKE_OPTIONS% -DWINST_BASEDIR_:PATH=%BASEDIR% -DWINST_BATDIR_:PATH=%BATDIR% -DWINST_PREFIX_:PATH="%PREFIX%" -DWINST_DOWNLOADS_DIR:PATH="%DOWNLOADS%" %WTGIT% %WTGITREPO% %WTVERSION% %CMAKE_ARGS% "%BATDIR%\cmake"
 )
 
 :: Required to workaround Assembla issue #20 (missing files in packages)

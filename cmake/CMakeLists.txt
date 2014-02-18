@@ -24,6 +24,11 @@ set(CMAKE_INSTALL_PREFIX "${WINST_BASEDIR}/build/installation" CACHE PATH "Insta
 
 set(WTGIT ${WTGIT} CACHE BOOL "build git version instead of release version" FORCE)
 
+IF (NOT WT_VERSION)
+  SET(WT_VERSION "3.3.2-rc1")
+ENDIF (NOT WT_VERSION)
+set(WT_VERSION ${WT_VERSION} CACHE STRING "Wt version to download (if not WTGIT)" FORCE)
+
 IF(NOT WTGITREPO)
   set(WTGITREPO "git://github.com/kdeforche/wt.git")
 ENDIF(NOT WTGITREPO)
@@ -127,7 +132,7 @@ set( tinymce_URL http://download.moxiecode.com/tinymce/tinymce_3.5.9.zip )
 set( tinymce_MD5 f84ee9b528d2cf73c722957a072b1ef1 )
 set( _PACKAGES ${_PACKAGES} tinymce )
 
-set( wt_URL http://prdownloads.sourceforge.net/witty/wt-3.3.1.tar.gz )
+set( wt_URL http://prdownloads.sourceforge.net/witty/wt-${WT_VERSION}.tar.gz )
 set( wt_MD5 3e93152c0ba3feb4ee687e7370b27552 )
 set( _PACKAGES ${_PACKAGES} wt )
 
@@ -1184,7 +1189,7 @@ endif(NOT WIN32)
             LOG_BUILD 1
             LOG_TEST 1
             LOG_INSTALL 1
-			PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/wt-3.3.1-msvc2013.patch
+            #PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/wt-3.3.1-msvc2013.patch
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ""
             INSTALL_COMMAND ""
@@ -1472,7 +1477,12 @@ endif(WIN32)
    
    #set(CPACK_COMPONENT_EXAMPLES_DEPENDS binaries)
    
+IF(WT_GIT)
    SET(CPACK_PACKAGE_FILE_NAME "Wt-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}-${_WT_COMPILER}-${CMAKE_SYSTEM_NAME}-${_WT_ARCH}-SDK")
+ELSE(WT_GIT)
+   #want to get release candidate indication in filename version
+   SET(CPACK_PACKAGE_FILE_NAME "Wt-${WT_VERSION}-${_WT_COMPILER}-${CMAKE_SYSTEM_NAME}-${_WT_ARCH}-SDK")
+ENDIF(WT_GIT)
    
    INCLUDE(CPack)
 ENDIF( FETCH_ONLY )
