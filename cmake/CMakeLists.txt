@@ -107,9 +107,8 @@ set( libharu_MD5 f71fab9043bcdb05cc694015de48a5d5 )
 #set( libharu_URL https://github.com/libharu/libharu.git )
 set( _PACKAGES ${_PACKAGES} libharu )
 
-set( mariadb_URL http://mariadb.cu.be/client-native-1.0.0/Source/mariadb-native-client.tar.gz )
-set( mariadb_NAME "mariadb-native-client.tar.gz" )
-set( mariadb_MD5 3a6fb7b4fdda4fb247ed3474995ad4ff )
+set( mariadb_URL http://mariadb.cu.be/client-native-2.0.0/src/mariadb_client-2.0.0-src.tar.gz )
+set( mariadb_MD5 a233181e03d3c307668b4c722d881661 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
 set( boost_URL http://prdownloads.sourceforge.net/boost/boost_1_53_0.tar.bz2 )
@@ -720,7 +719,7 @@ ELSE ( FETCH_ONLY )
         SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${mariadb_URL}
-        DOWNLOAD_NAME ${mariadb_NAME}
+#        DOWNLOAD_NAME ${mariadb_NAME}
         URL_MD5 ${mariadb_MD5}
         LIST_SEPARATOR ^^
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/mariadb-native-client.patch

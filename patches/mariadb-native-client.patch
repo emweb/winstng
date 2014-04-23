@@ -1,75 +1,85 @@
-diff -rupd mariadb-native-client.orig/CMakeLists.txt mariadb-native-client/CMakeLists.txt
---- mariadb-native-client.orig/CMakeLists.txt	2012-11-29 04:29:20.000000000 +0100
-+++ mariadb-native-client/CMakeLists.txt	2013-10-12 17:12:09.143269681 +0200
-@@ -14,6 +14,8 @@ IF(COMMAND CMAKE_POLICY)
-   CMAKE_POLICY(SET CMP0003 NEW)
- ENDIF(COMMAND CMAKE_POLICY)
+diff -ru mariadb-src/CMakeLists.txt mariadb-src-modified/CMakeLists.txt
+--- mariadb-src/CMakeLists.txt	2014-04-04 12:21:01.000000000 +0200
++++ mariadb-src-modified/CMakeLists.txt	2014-04-23 15:42:48.165780100 +0200
+@@ -27,34 +27,35 @@
  
+ OPTION(WITH_SQLITE "Enables Sqlite support" OFF)
+ OPTION(WITH_EXTERNAL_ZLIB "Enables use of external zlib" OFF)
 +SET(DEBUG_LIB_POSTFIX "d" CACHE STRING "String appended to debug libraries")
-+
- IF(WIN32)
-   # Speedup system tests
-   INCLUDE(${CMAKE_SOURCE_DIR}/WindowsCache.cmake)
-@@ -111,12 +113,6 @@ IF(BUILD_DOCS)
+ ###############
+ 
+ IF(WITH_RTC)
+   SET(RTC_OPTIONS "/RTC1 /RTCc")
  ENDIF()
  
- 
--IF(WIN32)
-- SET(CMAKE_INSTALL_PREFIX "")
+-IF(MSVC)
+-  # Speedup system tests
+-  INCLUDE(${CMAKE_SOURCE_DIR}/cmake/WindowsCache.cmake)
+-  IF (MSVC)
+-    SET(CONFIG_TYPES "DEBUG" "RELEASE" "RELWITHDEBINFO")
+-    FOREACH(BUILD_TYPE ${CONFIG_TYPES})
+-      FOREACH(COMPILER CXX C)
+-        SET(COMPILER_FLAGS "${CMAKE_${COMPILER}_FLAGS_${BUILD_TYPE}}")
+-        IF (NOT COMPILER_FLAGS STREQUAL "")
+-          STRING(REPLACE "/MD" "/MT" COMPILER_FLAGS ${COMPILER_FLAGS})
+-          IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
+-            SET(COMPILER_FLAGS "${COMPILER_FLAGS} ${RTC_OPTIONS}")
+-            STRING(REPLACE "/Zi" "/ZI" COMPILER_FLAGS ${COMPILER_FLAGS})
+-          ENDIF()
+-          MESSAGE (STATUS "CMAKE_${COMPILER}_FLAGS_${BUILD_TYPE}= ${COMPILER_FLAGS}") 
+-          SET(CMAKE_${COMPILER}_FLAGS_${BUILD_TYPE} ${COMPILER_FLAGS} CACHE 
+-               STRING "overwritten by libmariadb" FORCE)
+-        ENDIF()
+-      ENDFOREACH()
+-    ENDFOREACH()
+-  ENDIF()
 -ENDIF()
--
--
--
- SET(CPACK_PACKAGE_VENDOR "Monty Program AB")
- SET(CPACK_PACKAGE_DESCRIPTION "MariaDB client library. A library for connecting to MariaDB and MySQL servers")
- SET(CPACK_PACKAGE_NAME "mariadb_client")
-diff -rupd mariadb-native-client.orig/libmysql/CMakeLists.txt mariadb-native-client/libmysql/CMakeLists.txt
---- mariadb-native-client.orig/libmysql/CMakeLists.txt	2012-11-29 04:29:20.000000000 +0100
-+++ mariadb-native-client/libmysql/CMakeLists.txt	2013-10-12 17:12:09.143269681 +0200
-@@ -132,6 +132,9 @@ TARGET_LINK_LIBRARIES(mariadbclient ${CM
- IF(OPENSSL_FOUND)
-   TARGET_LINK_LIBRARIES(mariadbclient ${OPENSSL_LIBRARIES})
++#IF(MSVC)
++#  # Speedup system tests
++#  INCLUDE(${CMAKE_SOURCE_DIR}/cmake/WindowsCache.cmake)
++#  IF (MSVC)
++#    SET(CONFIG_TYPES "DEBUG" "RELEASE" "RELWITHDEBINFO")
++#    FOREACH(BUILD_TYPE ${CONFIG_TYPES})
++#      FOREACH(COMPILER CXX C)
++#        SET(COMPILER_FLAGS "${CMAKE_${COMPILER}_FLAGS_${BUILD_TYPE}}")
++#        IF (NOT COMPILER_FLAGS STREQUAL "")
++#          STRING(REPLACE "/MD" "/MT" COMPILER_FLAGS ${COMPILER_FLAGS})
++#          IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
++#            SET(COMPILER_FLAGS "${COMPILER_FLAGS} ${RTC_OPTIONS}")
++#            STRING(REPLACE "/Zi" "/ZI" COMPILER_FLAGS ${COMPILER_FLAGS})
++#          ENDIF()
++#          MESSAGE (STATUS "CMAKE_${COMPILER}_FLAGS_${BUILD_TYPE}= ${COMPILER_FLAGS}") 
++#          SET(CMAKE_${COMPILER}_FLAGS_${BUILD_TYPE} ${COMPILER_FLAGS} CACHE 
++#               STRING "overwritten by libmariadb" FORCE)
++#        ENDIF()
++#      ENDFOREACH()
++#    ENDFOREACH()
++#  ENDIF()
++#ENDIF()
+ 
+ # Disable dbug information for release builds 
+ SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -DDBUG_OFF")
+diff -ru mariadb-src/libmariadb/CMakeLists.txt mariadb-src-modified/libmariadb/CMakeLists.txt
+--- mariadb-src/libmariadb/CMakeLists.txt	2014-04-04 12:21:01.000000000 +0200
++++ mariadb-src-modified/libmariadb/CMakeLists.txt	2014-04-23 15:43:46.712128700 +0200
+@@ -169,7 +169,10 @@
+   TARGET_LINK_LIBRARIES (libmariadb "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/version_script.txt")
  ENDIF()
-+SET_TARGET_PROPERTIES(mariadbclient PROPERTIES
-+   DEBUG_POSTFIX ${DEBUG_LIB_POSTFIX}
-+)
  
- ADD_LIBRARY(libmariadb SHARED ${LIBMYSQL_SOURCES})
- TARGET_LINK_LIBRARIES(libmariadb ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
-@@ -156,9 +159,12 @@ ENDIF()
- 
- SET_TARGET_PROPERTIES(libmariadb PROPERTIES PREFIX "")
- 
--SET_TARGET_PROPERTIES(libmariadb PROPERTIES VERSION 
--   ${CPACK_PACKAGE_VERSION_MAJOR}
--   SOVERSION ${CPACK_PACKAGE_VERSION_MAJOR})
+-SET_TARGET_PROPERTIES(libmariadb PROPERTIES PREFIX "")
 +SET_TARGET_PROPERTIES(libmariadb PROPERTIES
-+   VERSION ${CPACK_PACKAGE_VERSION_MAJOR}
-+   SOVERSION ${CPACK_PACKAGE_VERSION_MAJOR}
-+   PREFIX ""
-+   DEBUG_POSTFIX ${DEBUG_LIB_POSTFIX}
++  PREFIX ""
++  DEBUG_POSTFIX ${DEBUG_LIB_POSTFIX}
 +)
  
- #
- # Installation
-@@ -166,7 +172,7 @@ SET_TARGET_PROPERTIES(libmariadb PROPERT
+ SET_TARGET_PROPERTIES(libmariadb PROPERTIES VERSION 
+    ${CPACK_PACKAGE_VERSION_MAJOR}
+@@ -210,7 +213,7 @@
  
  INSTALL(TARGETS
            libmariadb mariadbclient
--          RUNTIME DESTINATION "lib"
-+          RUNTIME DESTINATION "bin"
-           LIBRARY DESTINATION "lib"
-           ARCHIVE DESTINATION "lib")
- 
-diff -rupd mariadb-native-client.orig/libmysql/my_stmt.c mariadb-native-client/libmysql/my_stmt.c
---- mariadb-native-client.orig/libmysql/my_stmt.c	2012-11-29 04:29:20.000000000 +0100
-+++ mariadb-native-client/libmysql/my_stmt.c	2013-10-12 17:12:55.599271537 +0200
-@@ -637,7 +637,7 @@ unsigned char* mysql_stmt_execute_genera
- 
- mem_error:
-   SET_CLIENT_STMT_ERROR(stmt, CR_OUT_OF_MEMORY, SQLSTATE_UNKNOWN, 0);
--  my_free((gptr)start, MYF(ALLOW_ZERO_PTR));
-+  my_free((gptr)start, MYF(MY_ALLOW_ZERO_PTR));
-   *request_len= 0;
-   DBUG_RETURN(NULL);
- }
+-          RUNTIME DESTINATION "lib/mariadb"
++          RUNTIME DESTINATION "bin/mariadb"
+           LIBRARY DESTINATION "lib/mariadb"
+           ARCHIVE DESTINATION "lib/mariadb")
+ IF(NOT WIN32 AND WITH_MYSQLCOMPAT)
