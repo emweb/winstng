@@ -59,6 +59,22 @@ diff -ru mariadb-src/CMakeLists.txt mariadb-src-modified/CMakeLists.txt
  
  # Disable dbug information for release builds 
  SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -DDBUG_OFF")
+diff -ru mariadb-src-modified/CMakeLists.txt mariadb-src/CMakeLists.txt
+--- mariadb-src-modified/CMakeLists.txt 2014-04-23 15:42:48.165780100 +0200
++++ mariadb-src/CMakeLists.txt  2014-04-29 09:58:51.532821500 +0200
+@@ -191,9 +191,9 @@
+ ENDIF()
+
+
+-IF(MSVC)
+- SET(CMAKE_INSTALL_PREFIX "")
+-ENDIF()
++#IF(MSVC)
++# SET(CMAKE_INSTALL_PREFIX "")
++#ENDIF()
+
+ IF(WIN32 AND CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+   ADD_SUBDIRECTORY(win/packaging)
 diff -ru mariadb-src/libmariadb/CMakeLists.txt mariadb-src-modified/libmariadb/CMakeLists.txt
 --- mariadb-src/libmariadb/CMakeLists.txt	2014-04-04 12:21:01.000000000 +0200
 +++ mariadb-src-modified/libmariadb/CMakeLists.txt	2014-04-23 15:43:46.712128700 +0200
