@@ -90,12 +90,14 @@ diff -ru mariadb-src/libmariadb/CMakeLists.txt mariadb-src-modified/libmariadb/C
  
  SET_TARGET_PROPERTIES(libmariadb PROPERTIES VERSION 
     ${CPACK_PACKAGE_VERSION_MAJOR}
-@@ -210,7 +213,7 @@
+@@ -210,9 +213,9 @@
  
  INSTALL(TARGETS
            libmariadb mariadbclient
 -          RUNTIME DESTINATION "lib/mariadb"
-+          RUNTIME DESTINATION "bin/mariadb"
-           LIBRARY DESTINATION "lib/mariadb"
-           ARCHIVE DESTINATION "lib/mariadb")
+-          LIBRARY DESTINATION "lib/mariadb"
+-          ARCHIVE DESTINATION "lib/mariadb")
++          RUNTIME DESTINATION "bin"
++          LIBRARY DESTINATION "lib"
++          ARCHIVE DESTINATION "lib")
  IF(NOT WIN32 AND WITH_MYSQLCOMPAT)
