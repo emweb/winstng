@@ -1329,7 +1329,7 @@ if(WIN32)
    INSTALL(FILES "${CMAKE_BINARY_DIR}/openssl-debug-prefix/src/openssl-debug/out32dll.dbg/libeay32d.pdb" "${CMAKE_BINARY_DIR}/openssl-debug-prefix/src/openssl-debug/out32dll.dbg/ssleay32d.pdb" DESTINATION "bin" COMPONENT symbols)
 
    INSTALL(FILES "${WINST_PREFIX}/bin/libmariadbd.dll" "${WINST_PREFIX}/bin/libmariadb.dll" DESTINATION "bin" COMPONENT binaries)
-   INSTALL(FILES "${CMAKE_BINARY_DIR}/mariadb-debug-prefix/src/mariadb-debug-build/libmysql/libmariadbd.pdb" DESTINATION "bin" COMPONENT symbols)
+   INSTALL(FILES "${CMAKE_BINARY_DIR}/mariadb-debug-prefix/src/mariadb-debug-build/libmariadb/libmariadbd.pdb" DESTINATION "bin" COMPONENT symbols)
 
    INSTALL(FILES "${WINST_PREFIX}/bin/libpng14.dll" "${WINST_PREFIX}/bin/libpng14d.dll" DESTINATION "bin" COMPONENT binaries)
    INSTALL(FILES "${CMAKE_BINARY_DIR}/libpng-debug-prefix/src/libpng-debug-build/libpng14d.pdb" DESTINATION "bin" COMPONENT symbols)
