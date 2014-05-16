@@ -67,6 +67,12 @@ if(MSVC)
      endif()
 endif(MSVC)
 
+# concatenate files
+function(cat IN_FILE OUT_FILE)
+  file(READ ${IN_FILE} CONTENTS)
+  file(APPEND ${OUT_FILE} ${CONTENTS})
+endfunction()
+
 # Files to download
 
 set( zlib_URL http://prdownloads.sourceforge.net/libpng/zlib-1.2.8.tar.gz )
@@ -1262,7 +1268,7 @@ endif(NOT WIN32)
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
-		TEST_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/doc ${WINST_PREFIX}/docs-to-install
+	TEST_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/doc ${WINST_PREFIX}/docs-to-install
     )
 	
 # Wt version extraction
@@ -1370,6 +1376,13 @@ if(WIN32)
    ENDFOREACH(b ${wt_all_bat})
    INSTALL(FILES ${wt_install_examples_bat} DESTINATION "bin" COMPONENT examples)
 
+   # modified CMakeLists.txt, so that examples can be compiled
+   FILE(WRITE CMakeLists.txt.in "")
+   CAT(example-cmakelists-prefix.txt CMakeLists.txt.in)
+   CAT("${WINST_PREFIX}/lib/Wt/examples/CMakeLists.txt" CMakeLists.txt.in)
+   CONFIGURE_FILE(CMakeLists.txt.in CMakeLists.txt)
+   INSTALL(FILES CMakeLists.txt DESTINATION "examples" COMPONENT binaries)
+
 else(WIN32)
 
    FILE(GLOB bzip2_libs "${WINST_PREFIX}/lib/libbz2*")
@@ -1419,6 +1432,7 @@ else(WIN32)
    FILE(GLOB wt_libs "${WINST_PREFIX}/lib/libwt*")
    FILE(GLOB_RECURSE wt_examples "${WINST_PREFIX}/lib/Wt")
    INSTALL(FILES ${wt_libs} ${wt_examples} DESTINATION "lib" COMPONENT binaries)
+
 
 # TODO include, share
 endif(WIN32)
