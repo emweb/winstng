@@ -1376,12 +1376,14 @@ if(WIN32)
    ENDFOREACH(b ${wt_all_bat})
    INSTALL(FILES ${wt_install_examples_bat} DESTINATION "bin" COMPONENT examples)
 
-   # modified CMakeLists.txt, so that examples can be compiled
-   FILE(WRITE CMakeLists.txt.in "")
-   CAT(example-cmakelists-prefix.txt CMakeLists.txt.in)
-   CAT("${WINST_PREFIX}/lib/Wt/examples/CMakeLists.txt" CMakeLists.txt.in)
-   CONFIGURE_FILE(CMakeLists.txt.in CMakeLists.txt)
-   INSTALL(FILES CMakeLists.txt DESTINATION "examples" COMPONENT binaries)
+   if(EXISTS "${WINST_PREFIX}/lib/Wt/examples/CMakeLists.txt")
+     # modified CMakeLists.txt, so that examples can be compiled
+     FILE(WRITE CMakeLists.txt.in "")
+     CAT(example-cmakelists-prefix.txt CMakeLists.txt.in)
+     CAT("${WINST_PREFIX}/lib/Wt/examples/CMakeLists.txt" CMakeLists.txt.in)
+     CONFIGURE_FILE(CMakeLists.txt.in CMakeLists.txt)
+     INSTALL(FILES CMakeLists.txt DESTINATION "examples" COMPONENT binaries)
+   endif(EXISTS "${WINST_PREFIX}/lib/Wt/examples/CMakeLists.txt")
 
 else(WIN32)
 
