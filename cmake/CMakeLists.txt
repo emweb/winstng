@@ -67,12 +67,6 @@ if(MSVC)
      endif()
 endif(MSVC)
 
-# concatenate files
-function(cat IN_FILE OUT_FILE)
-  file(READ ${IN_FILE} CONTENTS)
-  file(APPEND ${OUT_FILE} ${CONTENTS})
-endfunction()
-
 # Files to download
 
 set( zlib_URL http://prdownloads.sourceforge.net/libpng/zlib-1.2.8.tar.gz )
@@ -1375,15 +1369,6 @@ if(WIN32)
      ENDIF(bat_contents MATCHES "This-is-a-wt-example")
    ENDFOREACH(b ${wt_all_bat})
    INSTALL(FILES ${wt_install_examples_bat} DESTINATION "bin" COMPONENT examples)
-
-   if(EXISTS "${WINST_PREFIX}/lib/Wt/examples/CMakeLists.txt")
-     # modified CMakeLists.txt, so that examples can be compiled
-     FILE(WRITE CMakeLists.txt.in "")
-     CAT(example-cmakelists-prefix.txt CMakeLists.txt.in)
-     CAT("${WINST_PREFIX}/lib/Wt/examples/CMakeLists.txt" CMakeLists.txt.in)
-     CONFIGURE_FILE(CMakeLists.txt.in CMakeLists.txt)
-     INSTALL(FILES CMakeLists.txt DESTINATION "examples" COMPONENT binaries)
-   endif(EXISTS "${WINST_PREFIX}/lib/Wt/examples/CMakeLists.txt")
 
 else(WIN32)
 
