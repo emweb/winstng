@@ -831,7 +831,7 @@ ELSE ( FETCH_ONLY )
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/postgresql-9.3.1.patch
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
-        INSTALL_COMMAND ${WINST_BATDIR}/cmake/install-postgres-headerfiles.bat <SOURCE_DIR> ${WINST_PREFIX}/include ${CMAKE_COMMAND}
+        INSTALL_COMMAND ""
 	TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/COPYRIGHT ${WINST_PREFIX}/licenses/postgresql/
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -939,7 +939,7 @@ endif(NOT WIN32)
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
-        INSTALL_COMMAND ""
+        INSTALL_COMMAND ${WINST_BATDIR}/cmake/install-postgres-headerfiles.bat <SOURCE_DIR> ${WINST_PREFIX}/include ${CMAKE_COMMAND}
         )
 
     # FastCGI - Only Unix, on Windows Wt builds the ISAPI connector
