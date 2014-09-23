@@ -831,8 +831,8 @@ ELSE ( FETCH_ONLY )
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/postgresql-9.3.1.patch
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
-        INSTALL_COMMAND ""
-		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/COPYRIGHT ${WINST_PREFIX}/licenses/postgresql/
+        INSTALL_COMMAND ${WINST_BATDIR}/cmake/install-postgres-headerfiles.bat <SOURCE_DIR> ${WINST_PREFIX}/include ${CMAKE_COMMAND}
+	TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/COPYRIGHT ${WINST_PREFIX}/licenses/postgresql/
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -856,7 +856,6 @@ ELSE ( FETCH_ONLY )
         set(postgresql_TEST_COMMAND ${CMAKE_BUILD_TOOL} distclean)
     endif(WIN32)
 
-# fails for now on win32
 if(NOT WIN32)
     ExternalProject_Add( postgresql-debug
         DEPENDS postgresql-fetch zlib openssl perl
@@ -894,6 +893,46 @@ if(NOT WIN32)
         TEST_COMMAND ${postgresql_TEST_COMMAND}
         )
 
+else(NOT WIN32)
+    ExternalProject_Add( postgresql-debug
+        DEPENDS postgresql-fetch zlib openssl
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/postgresql-src/src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+        CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo
+        #for ssl: add SSL_INC="..." SSL_LIB_PATH="..." USE_SSL=1
+        BUILD_COMMAND ${CMAKE_BUILD_TOOL} -f win32.mak DEBUG=1
+        BUILD_IN_SOURCE 1
+        INSTALL_COMMAND ${CMAKE_COMMAND} -E copy interfaces/libpq/Debug/libpqd.lib ${WINST_PREFIX}/lib/
+        INSTALL_COMMAND ""
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        TEST_AFTER_INSTALL 1
+        TEST_COMMAND ${CMAKE_COMMAND} -E echo
+        )
+
+    ExternalProject_Add( postgresql-release
+        DEPENDS postgresql-fetch zlib openssl
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/postgresql-src/src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+        CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo
+        BUILD_COMMAND ${CMAKE_BUILD_TOOL} -f win32.mak
+        BUILD_IN_SOURCE 1
+        INSTALL_COMMAND ${CMAKE_COMMAND} -E copy interfaces/libpq/Release/libpq.lib ${WINST_PREFIX}/lib/
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        TEST_AFTER_INSTALL 1
+        TEST_COMMAND ${CMAKE_COMMAND} -E echo
+        )
+endif(NOT WIN32)
+
     ExternalProject_Add( postgresql
         DEPENDS postgresql-release postgresql-debug
         SOURCE_DIR ${CMAKE_BINARY_DIR}/postgresql-src
@@ -902,7 +941,6 @@ if(NOT WIN32)
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
         )
-endif(NOT WIN32)
 
     # FastCGI - Only Unix, on Windows Wt builds the ISAPI connector
     if(NOT WIN32)
@@ -1219,7 +1257,7 @@ endif(NOT WIN32)
             zlib libpng libharu
             openssl
             ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
-#            postgresql
+            postgresql
             skia
             boost
             ${WT_UNIXONLY_DEPENDENCIES}
@@ -1238,7 +1276,7 @@ endif(NOT WIN32)
             zlib libpng libharu
             openssl
             ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
-#            postgresql
+            postgresql
             skia
             boost
             ${WT_UNIXONLY_DEPENDENCIES}
