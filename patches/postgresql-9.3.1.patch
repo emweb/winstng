@@ -1,6 +1,5 @@
-diff -rNu orig/postgresql-9.3.1/src/interfaces/libpq/win32.mak postgresql-9.3.1/src/interfaces/libpq/win32.mak
---- orig/postgresql-9.3.1/src/interfaces/libpq/win32.mak	2013-10-08 05:17:38.000000000 +0200
-+++ postgresql-9.3.1/src/interfaces/libpq/win32.mak	2013-11-19 10:24:42.059948500 +0100
+--- orig/postgresql-9.3.5/src/interfaces/libpq/win32.mak	2014-07-21 21:10:42.000000000 +0200
++++ postgresql-9.3.5/src/interfaces/libpq/win32.mak	2014-09-23 22:16:18.864503000 +0200
 @@ -115,6 +115,7 @@
  	-@erase "$(INTDIR)\open.obj"
  	-@erase "$(INTDIR)\win32error.obj"
@@ -19,6 +18,15 @@ diff -rNu orig/postgresql-9.3.1/src/interfaces/libpq/win32.mak postgresql-9.3.1/
  
  
  config: ..\..\include\pg_config.h ..\..\include\pg_config_ext.h pg_config_paths.h  ..\..\include\pg_config_os.h
+@@ -208,7 +210,7 @@
+ LINK32=link.exe
+ LINK32_FLAGS=kernel32.lib user32.lib advapi32.lib shfolder.lib wsock32.lib ws2_32.lib secur32.lib $(SSL_LIBS)  $(KFW_LIB) $(ADD_SECLIB) \
+  /nologo /subsystem:windows /dll $(LOPT) /incremental:no \
+- /pdb:"$(OUTDIR)\libpqdll.pdb" /machine:$(CPU) \
++ /pdb:"$(OUTDIR)\libpqdll.pdb" \
+  /out:"$(OUTDIR)\$(OUTFILENAME).dll"\
+  /implib:"$(OUTDIR)\$(OUTFILENAME)dll.lib"  \
+  /libpath:"$(SSL_LIB_PATH)" /libpath:"$(KFW_LIB_PATH)" \
 @@ -235,9 +237,11 @@
  # Inclusion of manifest
  !IF "$(_NMAKE_VER)" != "6.00.8168.0" && "$(_NMAKE_VER)" != "7.00.9466"
