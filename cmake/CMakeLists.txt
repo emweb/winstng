@@ -111,8 +111,8 @@ set( mariadb_URL http://mariadb.cu.be/client-native-2.0.0/src/mariadb_client-2.0
 set( mariadb_MD5 a233181e03d3c307668b4c722d881661 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
-set( boost_URL http://prdownloads.sourceforge.net/boost/boost_1_53_0.tar.bz2 )
-set( boost_MD5 a00d22605d5dbcfb4c9936a9b35bc4c2 )
+set( boost_URL http://prdownloads.sourceforge.net/boost/boost_1_56_0.tar.bz2 )
+set( boost_MD5 a744cf167b05d72335f27c88115f211d)
 set( _PACKAGES ${_PACKAGES} boost )
 
 # required to build skia
