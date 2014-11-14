@@ -1140,7 +1140,7 @@ endif(NOT WIN32)
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${boost_URL}
         URL_MD5 ${boost_MD5}
-		PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/boost-1.53-vc12.patch
+#		PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/boost-1.53-vc12.patch
         CONFIGURE_COMMAND ${boost_BOOTSTRAP_COMMAND}
         BUILD_COMMAND ${boost_COMMAND}
         BUILD_IN_SOURCE 1
