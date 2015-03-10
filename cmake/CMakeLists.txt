@@ -111,7 +111,8 @@ set( mariadb_URL http://mariadb.cu.be/client-native-2.0.0/src/mariadb_client-2.0
 set( mariadb_MD5 a233181e03d3c307668b4c722d881661 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
-set( boost_URL http://prdownloads.sourceforge.net/boost/boost_1_56_0.tar.bz2 )
+set( boost_ver "1_56" )
+set( boost_URL http://prdownloads.sourceforge.net/boost/boost_${boost_ver}_0.tar.bz2 )
 set( boost_MD5 a744cf167b05d72335f27c88115f211d)
 set( _PACKAGES ${_PACKAGES} boost )
 
@@ -1345,7 +1346,7 @@ ENDIF(EXISTS ${WCONFIG_H})
 
    INSTALL(DIRECTORY "${WINST_PREFIX}/include/Wt" DESTINATION "include" COMPONENT binaries)
 if(WIN32)
-   INSTALL(DIRECTORY "${WINST_PREFIX}/include/boost-1_53/boost" DESTINATION "include" COMPONENT binaries)
+   INSTALL(DIRECTORY "${WINST_PREFIX}/include/boost-${boost_ver}/boost" DESTINATION "include" COMPONENT binaries)
 else(WIN32)
    INSTALL(DIRECTORY "${WINST_PREFIX}/include/boost" DESTINATION "include" COMPONENT binaries)
 endif(WIN32)
