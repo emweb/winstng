@@ -94,16 +94,16 @@ set( postgresql_MD5 c003d871f712d4d3895956b028a96e74 )
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 if(WIN32)
-    set( openssl_URL https://github.com/openssl/openssl/archive/OpenSSL_1_0_1l.zip )
-    set( openssl_MD5 5f530fba0162ad0bdb5ebfbc5becd2a7 )
+    set( openssl_URL https://github.com/openssl/openssl/archive/OpenSSL_1_0_2d.zip )
+    set( openssl_MD5 147dcd24de23ef08af7bcc87511728e8 )
 else(WIN32)
-    set( openssl_URL http://openssl.org/source/openssl-1.0.1l.tar.gz )
-    set( openssl_MD5 cdb22925fc9bc97ccbf1e007661f2aa6 )
+    set( openssl_URL http://openssl.org/source/openssl-1.0.2d.tar.gz )
+    set( openssl_MD5 38dd619b2e77cbac69b99f52a053d25a )
 endif(WIN32)
 set( _PACKAGES ${_PACKAGES} openssl )
 
-set( libharu_URL http://github.com/libharu/libharu/archive/RELEASE_2_3_0RC3.tar.gz )
-set( libharu_MD5 f71fab9043bcdb05cc694015de48a5d5 )
+set( libharu_URL http://github.com/libharu/libharu/archive/RELEASE_2_3_0.tar.gz )
+set( libharu_MD5 4f916aa49c3069b3a10850013c507460 )
 #set( libharu_URL https://github.com/libharu/libharu.git )
 set( _PACKAGES ${_PACKAGES} libharu )
 
@@ -111,9 +111,9 @@ set( mariadb_URL http://mariadb.cu.be/client-native-2.0.0/src/mariadb_client-2.0
 set( mariadb_MD5 a233181e03d3c307668b4c722d881661 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
-set( boost_ver "1_56" )
+set( boost_ver "1_58" )
 set( boost_URL http://prdownloads.sourceforge.net/boost/boost_${boost_ver}_0.tar.bz2 )
-set( boost_MD5 a744cf167b05d72335f27c88115f211d)
+set( boost_MD5 b8839650e61e9c1c0a89f371dd475546)
 set( _PACKAGES ${_PACKAGES} boost )
 
 # required to build skia
