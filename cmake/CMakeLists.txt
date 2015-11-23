@@ -62,6 +62,8 @@ if(MSVC)
              set(FANCY_MSVC_VERSION "2012")
      elseif(MSVC12)
              set(FANCY_MSVC_VERSION "2013")
+     elseif(MSVC14)
+             set(FANCY_MSVC_VERSION "2015")
      else()
              set(FANCY_MSVC_VERSION "${MSVC_VERSION}")
      endif()
@@ -89,8 +91,8 @@ set( freetype_URL http://download.savannah.gnu.org/releases/freetype/freetype-2.
 set( freetype_MD5 c72e9010b1d986d556fc0b2b5fcbf31a )
 set( _PACKAGES ${_PACKAGES} freetype )
 
-set( postgresql_URL http://ftp3.de.postgresql.org/pub/Mirrors/ftp.postgresql.org/source/v9.3.1/postgresql-9.3.1.tar.bz2 )
-set( postgresql_MD5 c003d871f712d4d3895956b028a96e74 )
+set( postgresql_URL https://ftp.postgresql.org/pub/source/v9.4.4/postgresql-9.4.4.tar.bz2 )
+set( postgresql_MD5 1fe952c44ed26d7e6a335cf991a9c1c6 )
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 if(WIN32)
@@ -107,8 +109,9 @@ set( libharu_MD5 4f916aa49c3069b3a10850013c507460 )
 #set( libharu_URL https://github.com/libharu/libharu.git )
 set( _PACKAGES ${_PACKAGES} libharu )
 
-set( mariadb_URL http://mariadb.cu.be/client-native-2.0.0/src/mariadb_client-2.0.0-src.tar.gz )
-set( mariadb_MD5 a233181e03d3c307668b4c722d881661 )
+#set( mariadb_URL http://mariadb.cu.be/client-native-2.0.0/src/mariadb_client-2.0.0-src.tar.gz )
+set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c.git )
+#set( mariadb_MD5 a233181e03d3c307668b4c722d881661 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
 set( boost_ver "1_58" )
@@ -132,7 +135,7 @@ set( tinymce_URL http://download.moxiecode.com/tinymce/tinymce_3.5.9.zip )
 set( tinymce_MD5 f84ee9b528d2cf73c722957a072b1ef1 )
 set( _PACKAGES ${_PACKAGES} tinymce )
 
-set( wt_URL http://prdownloads.sourceforge.net/witty/wt-${WT_VERSION}.tar.gz )
+set( wt_URL https://github.com/kdeforche/wt/archive/${WT_VERSION}.tar.gz )
 set( _PACKAGES ${_PACKAGES} wt )
 
 if( WIN32 AND NOT UNIX )
@@ -719,9 +722,9 @@ ELSE ( FETCH_ONLY )
         DEPENDS patch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-        URL ${mariadb_URL}
+        GIT_REPOSITORY ${mariadb_URL}
 #        DOWNLOAD_NAME ${mariadb_NAME}
-        URL_MD5 ${mariadb_MD5}
+#        URL_MD5 ${mariadb_MD5}
         LIST_SEPARATOR ^^
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/mariadb-native-client.patch
         CONFIGURE_COMMAND ""

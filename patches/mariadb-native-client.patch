@@ -1,9 +1,10 @@
-diff -ru mariadb-src/CMakeLists.txt mariadb-src-modified/CMakeLists.txt
---- mariadb-src/CMakeLists.txt	2014-04-04 12:21:01.000000000 +0200
-+++ mariadb-src-modified/CMakeLists.txt	2014-04-23 15:42:48.165780100 +0200
-@@ -27,34 +27,35 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index d800d98..4dee2ac 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -29,34 +29,35 @@ ELSE()
+ ENDIF()
  
- OPTION(WITH_SQLITE "Enables Sqlite support" OFF)
  OPTION(WITH_EXTERNAL_ZLIB "Enables use of external zlib" OFF)
 +SET(DEBUG_LIB_POSTFIX "d" CACHE STRING "String appended to debug libraries")
  ###############
@@ -59,27 +60,51 @@ diff -ru mariadb-src/CMakeLists.txt mariadb-src-modified/CMakeLists.txt
  
  # Disable dbug information for release builds 
  SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -DDBUG_OFF")
-diff -ru mariadb-src-modified/CMakeLists.txt mariadb-src/CMakeLists.txt
---- mariadb-src-modified/CMakeLists.txt 2014-04-23 15:42:48.165780100 +0200
-+++ mariadb-src/CMakeLists.txt  2014-04-29 09:58:51.532821500 +0200
-@@ -191,9 +191,9 @@
+@@ -214,9 +215,9 @@ IF(CLIENT_DOCS)
+           DESTINATION ${DOCS_INSTALL_DIR_${INSTALL_LAYOUT}})
  ENDIF()
-
-
+ 
 -IF(MSVC)
 - SET(CMAKE_INSTALL_PREFIX "")
 -ENDIF()
 +#IF(MSVC)
 +# SET(CMAKE_INSTALL_PREFIX "")
 +#ENDIF()
-
+ 
  IF(WIN32 AND CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
    ADD_SUBDIRECTORY(win/packaging)
-diff -ru mariadb-src/libmariadb/CMakeLists.txt mariadb-src-modified/libmariadb/CMakeLists.txt
---- mariadb-src/libmariadb/CMakeLists.txt	2014-04-04 12:21:01.000000000 +0200
-+++ mariadb-src-modified/libmariadb/CMakeLists.txt	2014-04-23 15:43:46.712128700 +0200
-@@ -169,7 +169,10 @@
-   TARGET_LINK_LIBRARIES (libmariadb "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/version_script.txt")
+diff --git a/cmake/CheckFunctions.cmake b/cmake/CheckFunctions.cmake
+index 8a2208f..69d2b74 100644
+--- a/cmake/CheckFunctions.cmake
++++ b/cmake/CheckFunctions.cmake
+@@ -3,6 +3,8 @@
+ # include/my_config.h.in
+ # You will find the appropiate defines in 
+ 
++SET(CMAKE_REQUIRED_INCLUDES "stdlib.h")
++
+ INCLUDE(CheckFunctionExists)
+ 
+ CHECK_FUNCTION_EXISTS (access HAVE_ACCESS)
+diff --git a/include/my_pthread.h b/include/my_pthread.h
+index 2117868..043e98b 100644
+--- a/include/my_pthread.h
++++ b/include/my_pthread.h
+@@ -25,6 +25,8 @@
+ #define ETIME ETIMEDOUT				/* For FreeBSD */
+ #endif
+ 
++#define _TIMESPEC_DEFINED
++
+ #ifdef  __cplusplus
+ extern "C" {
+ #endif /* __cplusplus */ 
+diff --git a/libmariadb/CMakeLists.txt b/libmariadb/CMakeLists.txt
+index 3ea50db..45acfa8 100644
+--- a/libmariadb/CMakeLists.txt
++++ b/libmariadb/CMakeLists.txt
+@@ -378,7 +378,10 @@ IF(CMAKE_SYSTEM_NAME MATCHES "Linux")
+   TARGET_LINK_LIBRARIES (mariadbclient "-Wl,--version-script=${EXPORT_FILE}")
  ENDIF()
  
 -SET_TARGET_PROPERTIES(libmariadb PROPERTIES PREFIX "")
@@ -90,14 +115,16 @@ diff -ru mariadb-src/libmariadb/CMakeLists.txt mariadb-src-modified/libmariadb/C
  
  SET_TARGET_PROPERTIES(libmariadb PROPERTIES VERSION 
     ${CPACK_PACKAGE_VERSION_MAJOR}
-@@ -210,9 +213,9 @@
+@@ -419,9 +422,9 @@ ENDIF()
  
  INSTALL(TARGETS
            libmariadb mariadbclient
--          RUNTIME DESTINATION "lib/mariadb"
--          LIBRARY DESTINATION "lib/mariadb"
--          ARCHIVE DESTINATION "lib/mariadb")
+-          RUNTIME DESTINATION "${LIB_INSTALL_DIR}/${SUFFIX_INSTALL_DIR}"
+-          LIBRARY DESTINATION "${LIB_INSTALL_DIR}/${SUFFIX_INSTALL_DIR}"
+-          ARCHIVE DESTINATION "${LIB_INSTALL_DIR}/${SUFFIX_INSTALL_DIR}")
 +          RUNTIME DESTINATION "bin"
 +          LIBRARY DESTINATION "lib"
 +          ARCHIVE DESTINATION "lib")
+ 
  IF(NOT WIN32 AND WITH_MYSQLCOMPAT)
+   INSTALL(FILES "${CMAKE_BINARY_DIR}/libmariadb/libmysql${CMAKE_SHARED_LIBRARY_SUFFIX}"
