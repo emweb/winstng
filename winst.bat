@@ -111,7 +111,7 @@ setlocal
 :DOWNLOADCMAKE
 @echo Downloading CMake...
 @IF EXIST %CMAKE_ZIP% GOTO INSTALLSTEP
-@wget -N -c %CMAKE_FULLURL%
+@wget --no-check-certificate -N -c %CMAKE_FULLURL%
 
 :INSTALLSTEP
 @echo Setting up prerequisites...
