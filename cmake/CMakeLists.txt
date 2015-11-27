@@ -79,16 +79,16 @@ set( bzip2_URL http://bzip.org/1.0.6/bzip2-1.0.6.tar.gz )
 set( bzip2_MD5 00b516f4704d4a7cb50a1d97e6e8e15b )
 set( _PACKAGES ${_PACKAGES} bzip2 )
 
-set( libpng_URL http://sourceforge.net/projects/libpng/files/libpng14/older-releases/1.4.3/libpng-1.4.3.tar.gz ) 
-set( libpng_MD5 df3521f61a1b8b69489d297c0ca8c1f8 )
+set( libpng_URL http://sourceforge.net/projects/libpng/files/libpng14/1.4.17/libpng-1.4.17.tar.gz )
+set( libpng_MD5 2747b91440c5dd8a1e10b390affaa5fc )
 set( _PACKAGES ${_PACKAGES} libpng )
 
 set( libjpeg_URL http://www.ijg.org/files/jpegsrc.v8d.tar.gz )
 set( libjpeg_MD5 52654eb3b2e60c35731ea8fc87f1bd29 )
 set( _PACKAGES ${_PACKAGES} libjpeg )
 
-set( freetype_URL http://download.savannah.gnu.org/releases/freetype/freetype-2.5.0.1.tar.bz2 )
-set( freetype_MD5 c72e9010b1d986d556fc0b2b5fcbf31a )
+set( freetype_URL http://download.savannah.gnu.org/releases/freetype/freetype-2.5.5.tar.bz2 )
+set( freetype_MD5 2a7a314927011d5030903179cf183be0 )
 set( _PACKAGES ${_PACKAGES} freetype )
 
 set( postgresql_URL https://ftp.postgresql.org/pub/source/v9.4.4/postgresql-9.4.4.tar.bz2 )
@@ -109,14 +109,16 @@ set( libharu_MD5 4f916aa49c3069b3a10850013c507460 )
 #set( libharu_URL https://github.com/libharu/libharu.git )
 set( _PACKAGES ${_PACKAGES} libharu )
 
-#set( mariadb_URL http://mariadb.cu.be/client-native-2.0.0/src/mariadb_client-2.0.0-src.tar.gz )
-set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c.git )
+#set( mariadb_URL http://mariadb.cu.be/client-native-2.2.1/src/mariadb_client-2.2.1-src.tar.gz )
+#set( mariadb_URL https://downloads.mariadb.org/interstitial/connector-c-2.2.1/mariadb-connector-c-2.2.1-src.tar.gz )
+set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c.git)
+set( mariadb_TAG v2.2.1 )
 #set( mariadb_MD5 a233181e03d3c307668b4c722d881661 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
-set( boost_ver "1_58" )
+set( boost_ver "1_59" )
 set( boost_URL http://prdownloads.sourceforge.net/boost/boost_${boost_ver}_0.tar.bz2 )
-set( boost_MD5 b8839650e61e9c1c0a89f371dd475546)
+set( boost_MD5 6aa9a5c6a4ca1016edd0ed1178e3cb87)
 set( _PACKAGES ${_PACKAGES} boost )
 
 # required to build skia
@@ -515,7 +517,7 @@ ELSE ( FETCH_ONLY )
         URL ${freetype_URL}
         URL_MD5 ${freetype_MD5}
 		LIST_SEPARATOR ^^
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/freetype-2.5.0.1.diff
+#        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/freetype-2.5.0.1.diff
         CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX} 
 		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/docs/LICENSE.TXT ${WINST_PREFIX}/licenses/freetype/
         LOG_DOWNLOAD 1
@@ -723,6 +725,7 @@ ELSE ( FETCH_ONLY )
         SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         GIT_REPOSITORY ${mariadb_URL}
+        GIT_TAG ${mariadb_TAG}
 #        DOWNLOAD_NAME ${mariadb_NAME}
 #        URL_MD5 ${mariadb_MD5}
         LIST_SEPARATOR ^^

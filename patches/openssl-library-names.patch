@@ -114,17 +114,3 @@ diff -rupd openssl-1.0.1e.orig/crypto/cryptlib.c openssl-1.0.1e/crypto/cryptlib.
  #if defined(OPENSSL_SYS_WIN32) || defined(OPENSSL_SYS_WIN16)
  static double SSLeay_MSVC5_hack=0.0; /* and for VC1.5 */
  #endif
-diff -rupd openssl-1.0.1e.orig/crypto/rand/rand_win.c openssl-1.0.1e/crypto/rand/rand_win.c
---- openssl-1.0.1e.orig/crypto/rand/rand_win.c	Mon Feb 11 06:21:20 2013
-+++ openssl-1.0.1e/crypto/rand/rand_win.c	Tue Oct 22 09:57:28 2013
-@@ -121,6 +121,10 @@
- #include <wincrypt.h>
- #include <tlhelp32.h>
- 
-+#if defined(_MSC_VER) && (_MSC_VER >= 1800)
-+#pragma warning (disable:4996)
-+#endif
-+
- /* Limit the time spent walking through the heap, processes, threads and modules to
-    a maximum of 1000 miliseconds each, unless CryptoGenRandom failed */
- #define MAXDELAY 1000
