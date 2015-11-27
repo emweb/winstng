@@ -1231,7 +1231,7 @@ endif(NOT WIN32)
             LOG_BUILD 1
             LOG_TEST 1
             LOG_INSTALL 1
-            #PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/wt-3.3.1-msvc2013.patch
+            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/wt-3.3.5-rc2.patch
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ""
             INSTALL_COMMAND ""
