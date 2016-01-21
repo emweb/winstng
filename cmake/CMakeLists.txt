@@ -129,7 +129,7 @@ set( _PACKAGES ${_PACKAGES} depot_tools )
 # revision ID's become part of filename and filename gets too long with full
 # revision ID, causing problems in jenkins build
 #set( skia_REVISION "@394c7bb04d89667d2164a554f310e8e6f819abc2")
-#set( skia_REVISION "@394c7b")
+set( skia_REVISION "@394c7b")
 set( skia_URL https://skia.googlesource.com/skia.git${skia_REVISION})
 set( _PACKAGES ${_PACKAGES} skia )
 
@@ -565,7 +565,7 @@ ELSE ( FETCH_ONLY )
         DEPENDS skia-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/skia.git${skia_REVISION} ${_WT_ADDRESS_WIDTH} python.bat bin/sync-and-gyp
+        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/skia.git${skia_REVISION} ${_WT_ADDRESS_WIDTH} python.bat gyp_skia
         BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/skia.git${skia_REVISION} ${WINST_BATDIR}/cmake/build-skia.bat Debug
         INSTALL_COMMAND ""
         LOG_DOWNLOAD 1
@@ -580,7 +580,7 @@ ELSE ( FETCH_ONLY )
         DEPENDS skia-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/skia.git${skia_REVISION} ${_WT_ADDRESS_WIDTH} python.bat bin/sync-and-gyp
+        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/skia.git${skia_REVISION} ${_WT_ADDRESS_WIDTH} python.bat gyp_skia
         BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/skia.git${skia_REVISION} ${WINST_BATDIR}/cmake/build-skia.bat Release
         INSTALL_COMMAND ""
         LOG_DOWNLOAD 1
@@ -827,7 +827,6 @@ ELSE ( FETCH_ONLY )
         
 #    endif( WIN32 AND NOT UNIX )
 
-if(NOT MSVC14)
 	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/postgresql)
     ExternalProject_Add( postgresql-fetch
         DEPENDS patch
@@ -949,7 +948,6 @@ endif(NOT WIN32)
         BUILD_COMMAND ""
         INSTALL_COMMAND ${WINST_BATDIR}/cmake/install-postgres-headerfiles.bat <SOURCE_DIR> ${WINST_PREFIX}/include ${CMAKE_COMMAND}
         )
-endif(NOT MSVC14)
 
     # FastCGI - Only Unix, on Windows Wt builds the ISAPI connector
     if(NOT WIN32)
@@ -1233,7 +1231,7 @@ endif(NOT MSVC14)
             LOG_BUILD 1
             LOG_TEST 1
             LOG_INSTALL 1
-            #PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/wt-3.3.5-rc2.patch
+            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/wt-3.3.5-rc2.patch
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ""
             INSTALL_COMMAND ""
@@ -1266,7 +1264,7 @@ endif(NOT MSVC14)
             zlib libpng libharu
             openssl
             ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
-            #postgresql
+            postgresql
             skia
             boost
             ${WT_UNIXONLY_DEPENDENCIES}
@@ -1285,7 +1283,7 @@ endif(NOT MSVC14)
             zlib libpng libharu
             openssl
             ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
-            #postgresql
+            postgresql
             skia
             boost
             ${WT_UNIXONLY_DEPENDENCIES}
