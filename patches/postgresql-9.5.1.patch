@@ -1,0 +1,82 @@
+Only in postgresql-9.5.1/src/include: pg_config.h
+Only in postgresql-9.5.1/src/include: pg_config_ext.h
+Only in postgresql-9.5.1/src/include: pg_config_os.h
+Only in postgresql-9.5.1/src/interfaces/libpq: pg_config_paths.h
+Only in postgresql-9.5.1/src/interfaces/libpq: Release
+diff -ur postgresql-9.5.1.orig/src/interfaces/libpq/win32.mak postgresql-9.5.1/src/interfaces/libpq/win32.mak
+--- postgresql-9.5.1.orig/src/interfaces/libpq/win32.mak	2016-02-08 22:12:28.000000000 +0100
++++ postgresql-9.5.1/src/interfaces/libpq/win32.mak	2016-03-09 11:40:05.825797900 +0100
+@@ -78,7 +78,7 @@
+ !ENDIF
+ 
+ 
+-ALL : config "$(OUTDIR)\$(OUTFILENAME).lib" "$(OUTDIR)\$(OUTFILENAME).dll"
++ALL : config "$(OUTDIR)\$(OUTFILENAME).lib" #"$(OUTDIR)\$(OUTFILENAME).dll"
+ 
+ CLEAN :
+ 	-@erase "$(INTDIR)\getaddrinfo.obj"
+@@ -116,6 +116,7 @@
+ 	-@erase "$(INTDIR)\system.obj"
+ 	-@erase "$(INTDIR)\win32error.obj"
+ 	-@erase "$(INTDIR)\win32setlocale.obj"
++	-@erase "$(INTDIR)\fe_memutils.obj"
+ 	-@erase "$(OUTDIR)\$(OUTFILENAME).lib"
+ 	-@erase "$(OUTDIR)\$(OUTFILENAME)dll.lib"
+ 	-@erase "$(OUTDIR)\libpq.res"
+@@ -166,7 +167,8 @@
+ 	"$(INTDIR)\system.obj" \
+ 	"$(INTDIR)\win32error.obj" \
+ 	"$(INTDIR)\win32setlocale.obj" \
+-	"$(INTDIR)\pthread-win32.obj"
++	"$(INTDIR)\pthread-win32.obj" \
++	"$(INTDIR)\fe_memutils.obj"
+ !IFDEF USE_OPENSSL
+ 	LIB32_OBJS=$(LIB32_OBJS) "$(INTDIR)\fe-secure-openssl.obj"
+ !ENDIF
+@@ -216,7 +218,7 @@
+ LINK32=link.exe
+ LINK32_FLAGS=kernel32.lib user32.lib advapi32.lib shell32.lib ws2_32.lib secur32.lib $(SSL_LIBS)  $(KFW_LIB) $(ADD_SECLIB) \
+  /nologo /subsystem:windows /dll $(LOPT) /incremental:no \
+- /pdb:"$(OUTDIR)\libpqdll.pdb" /machine:$(CPU) \
++ /pdb:"$(OUTDIR)\libpqdll.pdb" \
+  /out:"$(OUTDIR)\$(OUTFILENAME).dll"\
+  /implib:"$(OUTDIR)\$(OUTFILENAME)dll.lib"  \
+  /libpath:"$(SSL_LIB_PATH)" /libpath:"$(KFW_LIB_PATH)" \
+@@ -243,9 +245,11 @@
+ # Inclusion of manifest
+ !IF "$(_NMAKE_VER)" != "6.00.8168.0" && "$(_NMAKE_VER)" != "7.00.9466"
+ !IF "$(_NMAKE_VER)" != "6.00.9782.0" && "$(_NMAKE_VER)" != "7.10.3077"
++!IF EXIST ($(OUTDIR)\$(OUTFILENAME).dll.manifest)
+         mt -manifest $(OUTDIR)\$(OUTFILENAME).dll.manifest -outputresource:$(OUTDIR)\$(OUTFILENAME).dll;2
+ !ENDIF
+ !ENDIF
++!ENDIF
+ 
+ "$(INTDIR)\getaddrinfo.obj" : ..\..\port\getaddrinfo.c
+ 	$(CPP) @<<
+@@ -358,6 +362,11 @@
+ 	$(CPP_PROJ) /I"." ..\..\port\win32setlocale.c
+ <<
+ 
++"$(INTDIR)\fe_memutils.obj" : ..\..\common\fe_memutils.c
++	$(CPP) @<<
++	$(CPP_PROJ) /I"." ..\..\common\fe_memutils.c
++<<
++
+ .c{$(CPP_OBJS)}.obj:
+ 	$(CPP) $(CPP_PROJ) $<
+ 
+Only in postgresql-9.5.1/src/interfaces/libpq: win32.mak.orig
+Only in postgresql-9.5.1/src/interfaces/libpq: win32.mak.rej
+diff -ur postgresql-9.5.1.orig/src/port/chklocale.c postgresql-9.5.1/src/port/chklocale.c
+--- postgresql-9.5.1.orig/src/port/chklocale.c	2016-02-08 22:12:28.000000000 +0100
++++ postgresql-9.5.1/src/port/chklocale.c	2016-03-09 11:36:42.173937400 +0100
+@@ -203,7 +203,7 @@
+ {
+ 	char	   *r = NULL;
+ 
+-#if (_MSC_VER >= 1700)
++#if (_MSC_VER >= 1700) && (_MSC_VER <= 1800)
+ 	_locale_t	loct = NULL;
+ 
+ 	loct = _create_locale(LC_CTYPE, ctype);

@@ -91,8 +91,8 @@ set( freetype_URL http://download.savannah.gnu.org/releases/freetype/freetype-2.
 set( freetype_MD5 2a7a314927011d5030903179cf183be0 )
 set( _PACKAGES ${_PACKAGES} freetype )
 
-set( postgresql_URL https://ftp.postgresql.org/pub/source/v9.4.4/postgresql-9.4.4.tar.bz2 )
-set( postgresql_MD5 1fe952c44ed26d7e6a335cf991a9c1c6 )
+set( postgresql_URL https://ftp.postgresql.org/pub/source/v9.5.1/postgresql-9.5.1.tar.bz2 )
+set( postgresql_MD5 11e037afaa4bd0c90bb3c3d955e2b401)
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 if(WIN32)
@@ -111,8 +111,9 @@ set( _PACKAGES ${_PACKAGES} libharu )
 
 #set( mariadb_URL http://mariadb.cu.be/client-native-2.2.1/src/mariadb_client-2.2.1-src.tar.gz )
 #set( mariadb_URL https://downloads.mariadb.org/interstitial/connector-c-2.2.1/mariadb-connector-c-2.2.1-src.tar.gz )
-set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c.git)
-set( mariadb_TAG v2.2.1 )
+#set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c.git)
+#set( mariadb_TAG v2.2.1 )
+set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v2.2.1.zip )
 #set( mariadb_MD5 a233181e03d3c307668b4c722d881661 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
@@ -129,7 +130,12 @@ set( _PACKAGES ${_PACKAGES} depot_tools )
 # revision ID's become part of filename and filename gets too long with full
 # revision ID, causing problems in jenkins build
 #set( skia_REVISION "@394c7bb04d89667d2164a554f310e8e6f819abc2")
-set( skia_REVISION "@394c7b")
+IF(MSVC_VERSION GREATER 1800)
+  #a2b340f8a8d5f219eb62f5f9b654cf19c988c578
+  set( skia_REVISION "@a2b340")
+ELSE(MSVC_VERSION GREATER 1800)
+  set( skia_REVISION "@394c7b")
+ENDIF(MSVC_VERSION GREATER 1800)
 set( skia_URL https://skia.googlesource.com/skia.git${skia_REVISION})
 set( _PACKAGES ${_PACKAGES} skia )
 
@@ -724,10 +730,11 @@ ELSE ( FETCH_ONLY )
         DEPENDS patch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-        GIT_REPOSITORY ${mariadb_URL}
-        GIT_TAG ${mariadb_TAG}
+#        GIT_REPOSITORY ${mariadb_URL}
+#        GIT_TAG ${mariadb_TAG}
 #        DOWNLOAD_NAME ${mariadb_NAME}
-#        URL_MD5 ${mariadb_MD5}
+        URL ${mariadb_URL}
+        URL_MD5 ${mariadb_MD5}
         LIST_SEPARATOR ^^
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/mariadb-native-client.patch
         CONFIGURE_COMMAND ""
@@ -835,7 +842,7 @@ ELSE ( FETCH_ONLY )
         URL ${postgresql_URL}
         DOWNLOAD_NAME ${postgresql_NAME}
         URL_MD5 ${postgresql_MD5}
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/postgresql-9.3.1.patch
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/postgresql-9.5.1.patch
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
