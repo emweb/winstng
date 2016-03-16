@@ -1135,6 +1135,8 @@ endif(NOT WIN32)
 		set( boost_TOOLSET toolset=msvc-11.0 )
 	  elseif(MSVC12)
 		set( boost_TOOLSET toolset=msvc-12.0 )
+	  elseif(MSVC14)
+		set( boost_TOOLSET toolset=msvc-14.0 )
 	  endif()
 
 	  if( _WT_ARCH STREQUAL "x64" ) # Win 64-bit
