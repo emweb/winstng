@@ -589,7 +589,7 @@ ELSE ( FETCH_ONLY )
         SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/skia.git${skia_REVISION} ${_WT_ADDRESS_WIDTH} python.bat gyp_skia
-        BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/skia.git${skia_REVISION} ${WINST_BATDIR}/cmake/build-skia.bat Release
+        BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/skia.git${skia_REVISION} ${WINST_BATDIR}/cmake/build-skia.bat Release ${DEPOT_TOOLS_PATH}
         INSTALL_COMMAND ""
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
