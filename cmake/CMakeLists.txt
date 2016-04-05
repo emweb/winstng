@@ -552,6 +552,12 @@ ELSE ( FETCH_ONLY )
                 )
         SET(DEPOT_TOOLS_PATH ${WINST_BASEDIR}/build/depot_tools-prefix/src/depot_tools)
 
+IF(_WT_ADDRESS_WIDTH EQUAL 64)
+  SET(SKIA_ARCH_TYPE "x86_64")
+ELSE(_WT_ADDRESS_WIDTH EQUAL 64)
+  SET(SKIA_ARCH_TYPE "x86")
+ENDIF(_WT_ADDRESS_WIDTH EQUAL 64)
+
     ExternalProject_Add( skia-fetch
         DEPENDS depot_tools
         SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
@@ -573,7 +579,7 @@ ELSE ( FETCH_ONLY )
         DEPENDS skia-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/skia.git${skia_REVISION} ${_WT_ADDRESS_WIDTH} python.bat gyp_skia
+        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/skia.git${skia_REVISION} ${_WT_ADDRESS_WIDTH} ${SKIA_ARCH_TYPE} python.bat gyp_skia
         BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/skia.git${skia_REVISION} ${WINST_BATDIR}/cmake/build-skia.bat Debug ${DEPOT_TOOLS_PATH}
         INSTALL_COMMAND ""
         LOG_DOWNLOAD 1
@@ -588,7 +594,7 @@ ELSE ( FETCH_ONLY )
         DEPENDS skia-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/skia.git${skia_REVISION} ${_WT_ADDRESS_WIDTH} python.bat gyp_skia
+        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/skia.git${skia_REVISION} ${_WT_ADDRESS_WIDTH} ${SKIA_ARCH_TYPE} python.bat gyp_skia
         BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/skia.git${skia_REVISION} ${WINST_BATDIR}/cmake/build-skia.bat Release ${DEPOT_TOOLS_PATH}
         INSTALL_COMMAND ""
         LOG_DOWNLOAD 1
