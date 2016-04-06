@@ -124,7 +124,7 @@ set( _PACKAGES ${_PACKAGES} boost )
 
 # required to build skia
 # depot_tools also installs git, svn, and python, required to build skia
-set( depot_tools_URL https://src.chromium.org/svn/trunk/tools/depot_tools.zip)
+set( depot_tools_URL https://storage.googleapis.com/chrome-infra/depot_tools.zip)
 set( _PACKAGES ${_PACKAGES} depot_tools )
 
 # revision ID's become part of filename and filename gets too long with full
