@@ -131,8 +131,8 @@ set( _PACKAGES ${_PACKAGES} depot_tools )
 # revision ID, causing problems in jenkins build
 #set( skia_REVISION "@394c7bb04d89667d2164a554f310e8e6f819abc2")
 IF(MSVC_VERSION GREATER 1800)
-  #a2b340f8a8d5f219eb62f5f9b654cf19c988c578
-  set( skia_REVISION "@a2b340")
+  #23f9a8486cea1af4de8fca84fe5393114c9272a8
+  set( skia_REVISION "@23f9a8")
   set( WT_SKIA_OLD OFF)
 ELSE(MSVC_VERSION GREATER 1800)
   set( skia_REVISION "@394c7b")
