@@ -117,9 +117,9 @@ set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v2.2.1.z
 #set( mariadb_MD5 a233181e03d3c307668b4c722d881661 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
-set( boost_ver "1_59" )
+set( boost_ver "1_60" )
 set( boost_URL http://prdownloads.sourceforge.net/boost/boost_${boost_ver}_0.tar.bz2 )
-set( boost_MD5 6aa9a5c6a4ca1016edd0ed1178e3cb87)
+set( boost_MD5 65a840e1a0b13a558ff19eeb2c4f0cbe)
 set( _PACKAGES ${_PACKAGES} boost )
 
 # required to build skia
@@ -1205,6 +1205,7 @@ endif(NOT WIN32)
         -DHARU_PREFIX=${WINST_PREFIX}
         -DHARU_DYNAMIC:BOOL=1
         -DPOSTGRES_PREFIX=${WINST_PREFIX}
+        -DPNG_PREFIX=${WINST_PREFIX}
         -DZLIB_PREFIX=${WINST_PREFIX}
         -DRUNDIR=${WINST_PREFIX}/var/run/wt
         -DSSL_PREFIX=${WINST_PREFIX}
