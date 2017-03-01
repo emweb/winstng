@@ -1,0 +1,15 @@
+diff -ur postgresql-9.5.1.orig/src/interfaces/libpq/win32.mak postgresql-9.5.1/src/interfaces/libpq/win32.mak
+--- postgresql-9.5.1.orig/src/interfaces/libpq/win32.mak	2016-02-08 22:12:28.000000000 +0100
++++ postgresql-9.5.1/src/interfaces/libpq/win32.mak	2016-03-09 11:40:05.825797900 +0100
+@@ -243,9 +245,11 @@
+ # Inclusion of manifest
+ !IF "$(_NMAKE_VER)" != "6.00.8168.0" && "$(_NMAKE_VER)" != "7.00.9466"
+ !IF "$(_NMAKE_VER)" != "6.00.9782.0" && "$(_NMAKE_VER)" != "7.10.3077"
++!IF EXIST ($(OUTDIR)\$(OUTFILENAME).dll.manifest)
+         mt -manifest $(OUTDIR)\$(OUTFILENAME).dll.manifest -outputresource:$(OUTDIR)\$(OUTFILENAME).dll;2
+ !ENDIF
+ !ENDIF
++!ENDIF
+ 
+ "$(INTDIR)\getaddrinfo.obj" : ..\..\port\getaddrinfo.c
+ 	$(CPP) @<<

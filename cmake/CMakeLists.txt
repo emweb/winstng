@@ -71,36 +71,36 @@ endif(MSVC)
 
 # Files to download
 
-set( zlib_URL http://prdownloads.sourceforge.net/libpng/zlib-1.2.8.tar.gz )
-set( zlib_MD5 44d667c142d7cda120332623eab69f40 )
+set( zlib_URL http://prdownloads.sourceforge.net/libpng/zlib-1.2.11.tar.gz )
+set( zlib_HASH SHA256=c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1)
 set( _PACKAGES ${_PACKAGES} zlib )
 
 set( bzip2_URL http://bzip.org/1.0.6/bzip2-1.0.6.tar.gz )
 set( bzip2_MD5 00b516f4704d4a7cb50a1d97e6e8e15b )
 set( _PACKAGES ${_PACKAGES} bzip2 )
 
-set( libpng_URL http://sourceforge.net/projects/libpng/files/libpng14/1.4.17/libpng-1.4.17.tar.gz )
-set( libpng_MD5 2747b91440c5dd8a1e10b390affaa5fc )
+set( libpng_URL http://sourceforge.net/projects/libpng/files/libpng14/1.4.19/libpng-1.4.19.tar.gz )
+set( libpng_MD5 89bcbc4fc8b31f4a403906cf4f662330 )
 set( _PACKAGES ${_PACKAGES} libpng )
 
-set( libjpeg_URL http://www.ijg.org/files/jpegsrc.v8d.tar.gz )
-set( libjpeg_MD5 52654eb3b2e60c35731ea8fc87f1bd29 )
+set( libjpeg_URL http://www.ijg.org/files/jpegsrc.v9b.tar.gz )
+set( libjpeg_MD5 6a9996ce116ec5c52b4870dbcd6d3ddb)
 set( _PACKAGES ${_PACKAGES} libjpeg )
 
 set( freetype_URL http://download.savannah.gnu.org/releases/freetype/freetype-2.5.5.tar.bz2 )
 set( freetype_MD5 2a7a314927011d5030903179cf183be0 )
 set( _PACKAGES ${_PACKAGES} freetype )
 
-set( postgresql_URL https://ftp.postgresql.org/pub/source/v9.5.1/postgresql-9.5.1.tar.bz2 )
-set( postgresql_MD5 11e037afaa4bd0c90bb3c3d955e2b401)
+set( postgresql_URL https://ftp.postgresql.org/pub/source/v9.6.2/postgresql-9.6.2.tar.bz2 )
+set( postgresql_MD5 ee9cd5dfa24f691275cc65c92b6ff8f7)
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 if(WIN32)
-    set( openssl_URL https://github.com/openssl/openssl/archive/OpenSSL_1_0_2d.zip )
-    set( openssl_MD5 147dcd24de23ef08af7bcc87511728e8 )
+    set( openssl_URL https://github.com/openssl/openssl/archive/OpenSSL_1_0_2k.zip )
+    set( openssl_HASH SHA256=1f08de0f3fea09ea2f465a2ebc8d0ec59ab33e49fc4eb3f0640788c69ae50c8f)
 else(WIN32)
     set( openssl_URL http://openssl.org/source/openssl-1.0.2d.tar.gz )
-    set( openssl_MD5 38dd619b2e77cbac69b99f52a053d25a )
+    set( openssl_HASH MD5=38dd619b2e77cbac69b99f52a053d25a )
 endif(WIN32)
 set( _PACKAGES ${_PACKAGES} openssl )
 
@@ -117,9 +117,9 @@ set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v2.2.1.z
 #set( mariadb_MD5 a233181e03d3c307668b4c722d881661 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
-set( boost_ver "1_60" )
+set( boost_ver "1_63" )
 set( boost_URL http://prdownloads.sourceforge.net/boost/boost_${boost_ver}_0.tar.bz2 )
-set( boost_MD5 65a840e1a0b13a558ff19eeb2c4f0cbe)
+set( boost_HASH SHA256=beae2529f759f6b3bf3f4969a19c2e9d6f0c503edcb2de4a61d1428519fcb3b0)
 set( _PACKAGES ${_PACKAGES} boost )
 
 # required to build skia
@@ -370,7 +370,7 @@ ELSE ( FETCH_ONLY )
         SOURCE_DIR ${CMAKE_BINARY_DIR}/zlib-src
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${zlib_URL}
-        URL_MD5 ${zlib_MD5}
+        URL_HASH ${zlib_HASH}
         LIST_SEPARATOR ^^
         PATCH_COMMAND ${CMAKE_COMMAND} -E remove zconf.h
         CONFIGURE_COMMAND ""
@@ -689,7 +689,7 @@ ENDIF(_WT_ADDRESS_WIDTH EQUAL 64)
         DEPENDS zlib perl patch nasm
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${openssl_URL}
-        URL_MD5 ${openssl_MD5}
+        URL_HASH ${openssl_HASH}
 		LIST_SEPARATOR ^^
         UPDATE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_CONFIGURE_COMMAND:STRING=${OPENSSL_RELEASE_CONFIGURE_COMMAND} -P ${WINST_BATDIR}/cmake/configure-openssl.cmake
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/openssl-library-names.patch
@@ -854,7 +854,7 @@ ENDIF(_WT_ADDRESS_WIDTH EQUAL 64)
         URL ${postgresql_URL}
         DOWNLOAD_NAME ${postgresql_NAME}
         URL_MD5 ${postgresql_MD5}
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/postgresql-9.5.1.patch
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/postgresql-9.6.1.patch
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
@@ -1167,7 +1167,7 @@ endif(NOT WIN32)
 	DEPENDS zlib bzip2
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${boost_URL}
-        URL_MD5 ${boost_MD5}
+        URL_HASH ${boost_HASH}
 #		PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/boost-1.53-vc12.patch
         CONFIGURE_COMMAND ${boost_BOOTSTRAP_COMMAND}
         BUILD_COMMAND ${boost_COMMAND}
