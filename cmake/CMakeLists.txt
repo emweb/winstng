@@ -170,8 +170,8 @@ if( WIN32 AND NOT UNIX )
 #    endif( FETCH_ONLY OR WTGIT )
 
     if( _WT_ARCH STREQUAL "x64" ) # Win 64-bit
-		set( perl_URL http://strawberryperl.com/download/5.16.3.1/strawberry-perl-5.16.3.1-64bit-portable.zip )
-		set( perl_MD5 2f00e848a678c425b9affb593c664537 )
+		set( perl_URL http://strawberryperl.com/download/5.24.1.1/strawberry-perl-5.24.1.1-64bit-portable.zip )
+		set( perl_HASH SHA1=5e7bd4d9eecef30e9cfef95f45d4f94237a4d7a4)
 		set( _PACKAGES ${_PACKAGES} perl )
 
 		set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/graphicsmagick-binaries/1.3.18/GraphicsMagick-1.3.18-Q8-win64-dll.exe )
@@ -184,8 +184,8 @@ if( WIN32 AND NOT UNIX )
 
     elseif( _WT_ARCH STREQUAL "x86" ) # Win 32-bit
     
-        set( perl_URL http://strawberryperl.com/download/5.16.3.1/strawberry-perl-5.16.3.1-32bit-portable.zip )
-        set (perl_MD5 8f3ef667e9a2b7fc402610da29bb8074 )
+        set( perl_URL http://strawberryperl.com/download/5.24.1.1/strawberry-perl-5.24.1.1-32bit-portable.zip )
+        set (perl_HASH SHA1=f1e64debc3b61010fe1885a668eaf2272e67153e )
         set( _PACKAGES ${_PACKAGES} perl )
 
         set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0_Win32.zip )
@@ -335,7 +335,7 @@ ELSE ( FETCH_ONLY )
         ExternalProject_Add( perl
                 DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
                 URL ${perl_URL}
-                URL_MD5 ${perl_MD5}
+                URL_HASH ${perl_HASH}
                 CONFIGURE_COMMAND ""
                 BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/perl ${WINST_PREFIX}/
                 INSTALL_COMMAND ""
@@ -920,13 +920,18 @@ if(NOT WIN32)
         )
 
 else(NOT WIN32)
+    if( _WT_ARCH STREQUAL "x64" ) # Win 64-bit
+      SET(POSTGRES_CPU "AMD64")
+    elseif( _WT_ARCH STREQUAL "x64" ) # Win 64-bit
+      SET(POSTGRES_CPU "i386")
+    endif( _WT_ARCH STREQUAL "x64" ) # Win 64-bit
     ExternalProject_Add( postgresql-debug
         DEPENDS postgresql-fetch zlib openssl
         SOURCE_DIR ${CMAKE_BINARY_DIR}/postgresql-src/src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo
         #for ssl: add SSL_INC="..." SSL_LIB_PATH="..." USE_SSL=1
-        BUILD_COMMAND ${CMAKE_BUILD_TOOL} -f win32.mak DEBUG=1
+        BUILD_COMMAND ${CMAKE_BUILD_TOOL} -f win32.mak DEBUG=1 CPU=${POSTGRES_CPU}
         BUILD_IN_SOURCE 1
         INSTALL_COMMAND ${CMAKE_COMMAND} -E copy interfaces/libpq/Debug/libpqd.lib ${WINST_PREFIX}/lib/
         INSTALL_COMMAND ""
@@ -945,7 +950,7 @@ else(NOT WIN32)
         SOURCE_DIR ${CMAKE_BINARY_DIR}/postgresql-src/src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo
-        BUILD_COMMAND ${CMAKE_BUILD_TOOL} -f win32.mak
+        BUILD_COMMAND ${CMAKE_BUILD_TOOL} -f win32.mak CPU=${POSTGRES_CPU}
         BUILD_IN_SOURCE 1
         INSTALL_COMMAND ${CMAKE_COMMAND} -E copy interfaces/libpq/Release/libpq.lib ${WINST_PREFIX}/lib/
         LOG_DOWNLOAD 1
