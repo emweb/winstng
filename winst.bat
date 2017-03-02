@@ -58,9 +58,6 @@ setlocal
 @IF EXIST downloaddir.txt (SET /p DOWNLOADS=<downloaddir.txt) else (SET DOWNLOADS=%BASEDIR%\downloads)
 @echo Downloading into %DOWNLOADS%
 
-@SET UNZIP_SFX=unz600xn.exe
-@SET UNZIP_FULLURL=http://www.mirrorservice.org/sites/ftp.info-zip.org/pub/infozip/win32/%UNZIP_SFX%
-
 @SET WGET_FTP_PATH=%WGET_FTP_DIRECTORY%/%WGET_FILENAME%
 @SET CMAKE_VERSION=3.3.0
 @SET CMAKE_ZIP=cmake-%CMAKE_VERSION%-win32-x86.zip
@@ -103,11 +100,6 @@ setlocal
 :DOWNLOAD
 @cd %DOWNLOADS%
 
-:DOWNLOADUNZIP
-@echo Downloading unzip...
-@IF EXIST %UNZIP_SFX% GOTO DOWNLOADCMAKE
-@wget -N -c %UNZIP_FULLURL%
-
 :DOWNLOADCMAKE
 @echo Downloading CMake...
 @IF EXIST %CMAKE_ZIP% GOTO INSTALLSTEP
@@ -117,15 +109,10 @@ setlocal
 @echo Setting up prerequisites...
 @cd "%PREFIX%"
 
-:INSTALLUNZIP
-@echo Setting up unzip...
-@IF EXIST unzip.exe GOTO INSTALLCMAKE
-@"%DOWNLOADS%\%UNZIP_SFX%" -o
-
 :INSTALLCMAKE
 @echo Setting up CMake...
 @IF EXIST "%CMAKE_EXE%" GOTO BOOTSTRAP
-@unzip "%DOWNLOADS%\%CMAKE_ZIP%"
+@cscript ..\unzip.vbs "%DOWNLOADS%\%CMAKE_ZIP%"
 @rem xcopy /Y /S "%CMAKE_DIRECTORY%\*.*" "%PREFIX%\"
 @rem rd /q /s "%CMAKE_DIRECTORY%"
 

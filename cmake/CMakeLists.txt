@@ -30,7 +30,7 @@ ENDIF (NOT WT_VERSION)
 set(WT_VERSION ${WT_VERSION} CACHE STRING "Wt version to download (if not WTGIT)" FORCE)
 
 IF(NOT WTGITREPO)
-  set(WTGITREPO "git://github.com/kdeforche/wt.git")
+  set(WTGITREPO "git://github.com/emweb/wt.git")
 ENDIF(NOT WTGITREPO)
 set(WTGITREPO ${WTGITREPO} CACHE BOOL "git repository for wt" FORCE)
 
