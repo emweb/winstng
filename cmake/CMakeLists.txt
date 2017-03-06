@@ -562,61 +562,61 @@ ELSE(_WT_ADDRESS_WIDTH EQUAL 64)
   SET(SKIA_ARCH_TYPE "x86")
 ENDIF(_WT_ADDRESS_WIDTH EQUAL 64)
 
-    ExternalProject_Add( skia-fetch
-        DEPENDS depot_tools
-        SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
-        DOWNLOAD_COMMAND ${WINST_BATDIR}/cmake/execute-with-path.bat ${DEPOT_TOOLS_PATH} ${CMAKE_COMMAND} -E chdir <SOURCE_DIR> gclient.bat config ${skia_URL}
-        UPDATE_COMMAND ${WINST_BATDIR}/cmake/execute-with-path.bat ${DEPOT_TOOLS_PATH} ${CMAKE_COMMAND} -E chdir <SOURCE_DIR> gclient.bat sync
-        CONFIGURE_COMMAND ""
-        BUILD_COMMAND ""
-        INSTALL_COMMAND ""
-        #TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/zlib.h ${WINST_PREFIX}/licenses/zlib/
-        LOG_DOWNLOAD 1
-        LOG_UPDATE 1
-        LOG_CONFIGURE 1
-        LOG_BUILD 1
-        LOG_TEST 1
-        LOG_INSTALL 1
-        )
+#    ExternalProject_Add( skia-fetch
+#        DEPENDS depot_tools
+#        SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
+#        DOWNLOAD_COMMAND ${WINST_BATDIR}/cmake/execute-with-path.bat ${DEPOT_TOOLS_PATH} ${CMAKE_COMMAND} -E chdir <SOURCE_DIR> gclient.bat config ${skia_URL}
+#        UPDATE_COMMAND ${WINST_BATDIR}/cmake/execute-with-path.bat ${DEPOT_TOOLS_PATH} ${CMAKE_COMMAND} -E chdir <SOURCE_DIR> gclient.bat sync
+#        CONFIGURE_COMMAND ""
+#        BUILD_COMMAND ""
+#        INSTALL_COMMAND ""
+#        #TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/zlib.h ${WINST_PREFIX}/licenses/zlib/
+#        LOG_DOWNLOAD 1
+#        LOG_UPDATE 1
+#        LOG_CONFIGURE 1
+#        LOG_BUILD 1
+#        LOG_TEST 1
+#        LOG_INSTALL 1
+#        )
 
-    ExternalProject_Add( skia-debug
-        DEPENDS skia-fetch
-        SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
-        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/skia.git${skia_REVISION} ${_WT_ADDRESS_WIDTH} ${SKIA_ARCH_TYPE} python.bat gyp_skia
-        BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/skia.git${skia_REVISION} ${WINST_BATDIR}/cmake/build-skia.bat Debug ${DEPOT_TOOLS_PATH}
-        INSTALL_COMMAND ""
-        LOG_DOWNLOAD 1
-        LOG_UPDATE 1
-        LOG_CONFIGURE 1
-        LOG_BUILD 1
-        LOG_TEST 1
-        LOG_INSTALL 1
-        )
+#    ExternalProject_Add( skia-debug
+#        DEPENDS skia-fetch
+#        SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
+#        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+#        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/skia.git${skia_REVISION} ${_WT_ADDRESS_WIDTH} ${SKIA_ARCH_TYPE} python.bat gyp_skia
+#        BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/skia.git${skia_REVISION} ${WINST_BATDIR}/cmake/build-skia.bat Debug ${DEPOT_TOOLS_PATH}
+#        INSTALL_COMMAND ""
+#        LOG_DOWNLOAD 1
+#        LOG_UPDATE 1
+#        LOG_CONFIGURE 1
+#        LOG_BUILD 1
+#        LOG_TEST 1
+#        LOG_INSTALL 1
+#        )
 
-    ExternalProject_Add( skia-release
-        DEPENDS skia-fetch
-        SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
-        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/skia.git${skia_REVISION} ${_WT_ADDRESS_WIDTH} ${SKIA_ARCH_TYPE} python.bat gyp_skia
-        BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/skia.git${skia_REVISION} ${WINST_BATDIR}/cmake/build-skia.bat Release ${DEPOT_TOOLS_PATH}
-        INSTALL_COMMAND ""
-        LOG_DOWNLOAD 1
-        LOG_UPDATE 1
-        LOG_CONFIGURE 1
-        LOG_BUILD 1
-        LOG_TEST 1
-        LOG_INSTALL 1
-        )
+#    ExternalProject_Add( skia-release
+#        DEPENDS skia-fetch
+#        SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
+#        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+#        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/skia.git${skia_REVISION} ${_WT_ADDRESS_WIDTH} ${SKIA_ARCH_TYPE} python.bat gyp_skia
+#        BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/skia.git${skia_REVISION} ${WINST_BATDIR}/cmake/build-skia.bat Release ${DEPOT_TOOLS_PATH}
+#        INSTALL_COMMAND ""
+#        LOG_DOWNLOAD 1
+#        LOG_UPDATE 1
+#        LOG_CONFIGURE 1
+#        LOG_BUILD 1
+#        LOG_TEST 1
+#        LOG_INSTALL 1
+#        )
 
-     ExternalProject_Add( skia
-        DEPENDS skia-debug skia-release
-        SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
-        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-        CONFIGURE_COMMAND ""
-        BUILD_COMMAND ""
-        INSTALL_COMMAND ""
-        )
+#     ExternalProject_Add( skia
+#        DEPENDS skia-debug skia-release
+#        SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
+#        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+#        CONFIGURE_COMMAND ""
+#        BUILD_COMMAND ""
+#        INSTALL_COMMAND ""
+#        )
 
     # OpenSSL requires some extra effort
     if( WIN32 AND NOT UNIX ) # Windows compilers but Cygwin
@@ -1206,7 +1206,7 @@ endif(NOT WIN32)
         -DFCGI_PREFIX:PATH=${WINST_PREFIX}
         -DSKIA_PREFIX=${CMAKE_BINARY_DIR}/skia-src/skia.git${skia_REVISION}
 	-DWT_SKIA_OLD=${WT_SKIA_OLD}
-	-DWT_WRASTERIMAGE_IMPLEMENTATION=skia
+#	-DWT_WRASTERIMAGE_IMPLEMENTATION=skia
         -DHARU_PREFIX=${WINST_PREFIX}
         -DHARU_DYNAMIC:BOOL=1
         -DPOSTGRES_PREFIX=${WINST_PREFIX}
@@ -1293,7 +1293,7 @@ endif(NOT WIN32)
             openssl
             ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
             postgresql
-            skia
+#            skia
             boost
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
@@ -1312,7 +1312,7 @@ endif(NOT WIN32)
             openssl
             ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
             postgresql
-            skia
+#            skia
             boost
             ${WT_UNIXONLY_DEPENDENCIES}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
