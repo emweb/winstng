@@ -1221,7 +1221,6 @@ endif(NOT WIN32)
         )
 		
 	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/wt)
-	file(MAKE_DIRECTORY ${WINST_PREFIX}/docs-to-install)
     IF(WIN32)
     set( wt_CMAKE_ARGS
         ${wt_CMAKE_ARGS}
@@ -1320,6 +1319,7 @@ endif(NOT WIN32)
         CMAKE_ARGS
             -DCMAKE_BUILD_TYPE=MinSizeRel
             -DINSTALL_EXAMPLES:BOOL=1
+            -DINSTALL_DOCUMENTATION:BOOL=1
             ${wt_CMAKE_ARGS}            
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -1335,7 +1335,6 @@ endif(NOT WIN32)
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
-	TEST_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/doc ${WINST_PREFIX}/docs-to-install
     )
 	
 # Wt version extraction
@@ -1373,7 +1372,7 @@ ENDIF(EXISTS ${WCONFIG_H})
 
 
    INSTALL(DIRECTORY "${WINST_PREFIX}/licenses" DESTINATION "." COMPONENT binaries)
-   INSTALL(DIRECTORY "${WINST_PREFIX}/docs-to-install/" DESTINATION "doc" COMPONENT documentation)
+   INSTALL(DIRECTORY "${WINST_PREFIX}/share/doc/Wt/" DESTINATION "doc" COMPONENT documentation)
 
 
 # Headers
