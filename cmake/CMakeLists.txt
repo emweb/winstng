@@ -536,22 +536,22 @@ ELSE ( FETCH_ONLY )
         LOG_INSTALL 1
         )
 
-        ExternalProject_Add( depot_tools
-                DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-                URL ${depot_tools_URL}
-                #URL_MD5 ${depot_tools_MD5}
-                CONFIGURE_COMMAND ""
-                BUILD_COMMAND ""
-                INSTALL_COMMAND ""
-                LOG_DOWNLOAD 1
-                LOG_UPDATE 1
-                LOG_CONFIGURE 1
-                LOG_BUILD 1
-                LOG_TEST 1
-                LOG_INSTALL 1
-                )
-        SET(DEPOT_TOOLS_PATH ${WINST_BASEDIR}/build/depot_tools-prefix/src/depot_tools)
-
+#        ExternalProject_Add( depot_tools
+#                DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
+#                URL ${depot_tools_URL}
+#                #URL_MD5 ${depot_tools_MD5}
+#                CONFIGURE_COMMAND ""
+#                BUILD_COMMAND ""
+#                INSTALL_COMMAND ""
+#                LOG_DOWNLOAD 1
+#                LOG_UPDATE 1
+#                LOG_CONFIGURE 1
+#                LOG_BUILD 1
+#                LOG_TEST 1
+#                LOG_INSTALL 1
+#                )
+#        SET(DEPOT_TOOLS_PATH ${WINST_BASEDIR}/build/depot_tools-prefix/src/depot_tools)
+#
 IF(_WT_ADDRESS_WIDTH EQUAL 64)
   IF(WT_SKIA_OLD)
     SET(SKIA_ARCH_TYPE "x86")
