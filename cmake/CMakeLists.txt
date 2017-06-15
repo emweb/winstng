@@ -1397,7 +1397,9 @@ if(WIN32)
    INSTALL(FILES "${CMAKE_BINARY_DIR}/zlib-debug-prefix/src/zlib-debug-build/zlibd.pdb" DESTINATION "bin" COMPONENT symbols)
 
    INSTALL(FILES "${WINST_PREFIX}/bin/ssleay32.dll" "${WINST_PREFIX}/bin/libeay32.dll" DESTINATION "bin" COMPONENT binaries)
+   INSTALL(FILES "${WINST_PREFIX}/lib/ssleay32.lib" "${WINST_PREFIX}/lib/libeay32.lib" DESTINATION "lib" COMPONENT binaries)
    INSTALL(FILES "${WINST_PREFIX}/bin/ssleay32d.dll" "${WINST_PREFIX}/bin/libeay32d.dll" DESTINATION "bin" COMPONENT binaries)
+   INSTALL(FILES "${WINST_PREFIX}/lib/ssleay32d.lib" "${WINST_PREFIX}/lib/libeay32d.lib" DESTINATION "lib" COMPONENT binaries)
    INSTALL(FILES "${CMAKE_BINARY_DIR}/openssl-debug-prefix/src/openssl-debug/out32dll.dbg/libeay32d.pdb" "${CMAKE_BINARY_DIR}/openssl-debug-prefix/src/openssl-debug/out32dll.dbg/ssleay32d.pdb" DESTINATION "bin" COMPONENT symbols)
 
    INSTALL(FILES "${WINST_PREFIX}/bin/libmariadbd.dll" "${WINST_PREFIX}/bin/libmariadb.dll" DESTINATION "bin" COMPONENT binaries)
