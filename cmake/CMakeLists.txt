@@ -119,7 +119,7 @@ set( _PACKAGES ${_PACKAGES} mariadb )
 
 set( boost_ver "1_64" )
 set( boost_URL http://prdownloads.sourceforge.net/boost/boost_${boost_ver}_0.tar.bz2 )
-set( boost_HASH SHA256=beae2529f759f6b3bf3f4969a19c2e9d6f0c503edcb2de4a61d1428519fcb3b0)
+set( boost_HASH SHA256=7bcc5caace97baa948931d712ea5f37038dbb1c5d89b43ad4def4ed7cb683332)
 set( _PACKAGES ${_PACKAGES} boost )
 
 # required to build skia
