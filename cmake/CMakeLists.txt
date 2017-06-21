@@ -96,8 +96,8 @@ set( postgresql_MD5 ee9cd5dfa24f691275cc65c92b6ff8f7)
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 if(WIN32)
-    set( openssl_URL https://github.com/openssl/openssl/archive/OpenSSL_1_0_2k.zip )
-    set( openssl_HASH SHA256=1f08de0f3fea09ea2f465a2ebc8d0ec59ab33e49fc4eb3f0640788c69ae50c8f)
+    set( openssl_URL https://github.com/openssl/openssl/archive/OpenSSL_1_0_2l.zip )
+    set( openssl_HASH SHA256=ce07195b659e75f4e1db43552860070061f156a98bb37b672b101ba6e3ddf30c)
 else(WIN32)
     set( openssl_URL http://openssl.org/source/openssl-1.0.2d.tar.gz )
     set( openssl_HASH MD5=38dd619b2e77cbac69b99f52a053d25a )
@@ -117,7 +117,7 @@ set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v2.2.1.z
 #set( mariadb_MD5 a233181e03d3c307668b4c722d881661 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
-set( boost_ver "1_63" )
+set( boost_ver "1_64" )
 set( boost_URL http://prdownloads.sourceforge.net/boost/boost_${boost_ver}_0.tar.bz2 )
 set( boost_HASH SHA256=beae2529f759f6b3bf3f4969a19c2e9d6f0c503edcb2de4a61d1428519fcb3b0)
 set( _PACKAGES ${_PACKAGES} boost )
@@ -518,23 +518,23 @@ ELSE ( FETCH_ONLY )
         LOG_INSTALL 1
         )
         
-	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/freetype)
-    ExternalProject_Add( freetype
-        DEPENDS zlib libpng patch
-        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-        URL ${freetype_URL}
-        URL_MD5 ${freetype_MD5}
-		LIST_SEPARATOR ^^
-#        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/freetype-2.5.0.1.diff
-        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX} 
-		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/docs/LICENSE.TXT ${WINST_PREFIX}/licenses/freetype/
-        LOG_DOWNLOAD 1
-        LOG_UPDATE 1
-        LOG_CONFIGURE 1
-        LOG_BUILD 1
-        LOG_TEST 1
-        LOG_INSTALL 1
-        )
+#	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/freetype)
+#    ExternalProject_Add( freetype
+#        DEPENDS zlib libpng patch
+#        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
+#        URL ${freetype_URL}
+#        URL_MD5 ${freetype_MD5}
+#		LIST_SEPARATOR ^^
+##        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/freetype-2.5.0.1.diff
+#        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX} 
+#		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/docs/LICENSE.TXT ${WINST_PREFIX}/licenses/freetype/
+#        LOG_DOWNLOAD 1
+#        LOG_UPDATE 1
+#        LOG_CONFIGURE 1
+#        LOG_BUILD 1
+#        LOG_TEST 1
+#        LOG_INSTALL 1
+#        )
 
 #        ExternalProject_Add( depot_tools
 #                DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
