@@ -97,7 +97,7 @@ set( _PACKAGES ${_PACKAGES} postgresql )
 
 if(WIN32)
     set( openssl_URL https://github.com/openssl/openssl/archive/OpenSSL_1_0_2l.zip )
-    set( openssl_HASH SHA256=ce07195b659e75f4e1db43552860070061f156a98bb37b672b101ba6e3ddf30c)
+    set( openssl_HASH SHA256=bf9d8010f9855f8121ed17f05d6950219031ff2b9a41fed861f2549c96109fd9)
 else(WIN32)
     set( openssl_URL http://openssl.org/source/openssl-1.0.2d.tar.gz )
     set( openssl_HASH MD5=38dd619b2e77cbac69b99f52a053d25a )
