@@ -3,7 +3,7 @@ project( winst )
 
 # TODO Missing dependencies:
 # - Firebird
-# - Pango (needs glib)
+# - Pango (needs glib) (replaced with DirectWrite on Windows since Wt 3.3.8)
 # - Replace jpeg with jpeg-turbo
 
 cmake_minimum_required(VERSION 2.8)
@@ -22,10 +22,12 @@ SET(WINST_DOWNLOADS_DIR ${WINST_BASEDIR}/downloads CACHE PATH "path for download
 
 set(CMAKE_INSTALL_PREFIX "${WINST_BASEDIR}/build/installation" CACHE PATH "Installation prefix, required for CPack due to absolute paths" FORCE)
 
+set(STANDALONE_ASIO ${STANDALONE_ASIO} CACHE BOOL "use standalone version of Asio instead of Boost.Asio" FORCE)
+
 set(WTGIT ${WTGIT} CACHE BOOL "build git version instead of release version" FORCE)
 
 IF (NOT WT_VERSION)
-  SET(WT_VERSION "3.3.2-rc1")
+  SET(WT_VERSION "3.3.8-rc1")
 ENDIF (NOT WT_VERSION)
 set(WT_VERSION ${WT_VERSION} CACHE STRING "Wt version to download (if not WTGIT)" FORCE)
 
@@ -33,6 +35,11 @@ IF(NOT WTGITREPO)
   set(WTGITREPO "git://github.com/emweb/wt.git")
 ENDIF(NOT WTGITREPO)
 set(WTGITREPO ${WTGITREPO} CACHE BOOL "git repository for wt" FORCE)
+
+if (NOT WTGITTAG)
+  SET(WTGITTAG "master")
+endif (NOT WTGITTAG)
+set(WTGITTAG ${WTGITTAG} CACHE STRING "the branch name, commit id or tag to use when building git version" FORCE)
 
 #our version of FindXXX.cmake
 set(WINST_MODULE_PATH ${WINST_BATDIR}/cmake/Modules)
@@ -70,6 +77,13 @@ if(MSVC)
 endif(MSVC)
 
 # Files to download
+
+if (STANDALONE_ASIO)
+  set( asio_ver "1.10.6" )
+  set( asio_URL http://prdownloads.sourceforge.net/asio/asio-${asio_ver}.tar.gz )
+  set( asio_HASH SHA256=70345ca9e372a119c361be5e7f846643ee90997da8f88ec73f7491db96e24bbe)
+  set( _PACKAGES ${_PACKAGES} asio )
+endif (STANDALONE_ASIO)
 
 set( zlib_URL http://prdownloads.sourceforge.net/libpng/zlib-1.2.11.tar.gz )
 set( zlib_HASH SHA256=c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1)
@@ -145,7 +159,7 @@ set( tinymce_URL http://download.moxiecode.com/tinymce/tinymce_3.5.9.zip )
 set( tinymce_MD5 f84ee9b528d2cf73c722957a072b1ef1 )
 set( _PACKAGES ${_PACKAGES} tinymce )
 
-set( wt_URL https://github.com/kdeforche/wt/archive/${WT_VERSION}.tar.gz )
+set( wt_URL https://github.com/emweb/wt/archive/${WT_VERSION}.tar.gz )
 set( _PACKAGES ${_PACKAGES} wt )
 
 if( WIN32 AND NOT UNIX )
@@ -1236,6 +1250,7 @@ endif(NOT WIN32)
             SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
             DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
             GIT_REPOSITORY ${WTGITREPO}
+            GIT_TAG ${WTGITTAG}
             LOG_DOWNLOAD 1
             LOG_UPDATE 1
             LOG_CONFIGURE 1
@@ -1285,6 +1300,25 @@ endif(NOT WIN32)
 	LOG_TEST 1
 	LOG_INSTALL 1
 	)
+
+    if (STANDALONE_ASIO)
+        file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/asio)
+        ExternalProject_Add( asio
+        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
+        URL ${asio_URL}
+        URL_HASH ${asio_HASH}
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        CONFIGURE_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/include/asio ${WINST_PREFIX}/include/asio
+        BUILD_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/include/asio.hpp ${WINST_PREFIX}/include/
+        INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE_1_0.txt ${WINST_PREFIX}/licenses/asio/
+        TEST_COMMAND ""
+        )
+    endif (STANDALONE_ASIO)
 
     ExternalProject_Add( wt-debug
         DEPENDS tinymce wt-fetch
