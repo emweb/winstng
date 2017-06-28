@@ -1433,8 +1433,10 @@ ENDIF(EXISTS ${WCONFIG_H})
 
 # Libraries
 
-   FILE(GLOB boost_install_libs "${WINST_PREFIX}/lib/libboost*")
-   INSTALL(FILES ${boost_install_libs} DESTINATION "lib" COMPONENT binaries)
+   IF (NOT STANDALONE_ASIO)
+      FILE(GLOB boost_install_libs "${WINST_PREFIX}/lib/libboost*")
+      INSTALL(FILES ${boost_install_libs} DESTINATION "lib" COMPONENT binaries)
+   ENDIF (NOT STANDALONE_ASIO)
 
 if(WIN32)
 
