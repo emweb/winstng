@@ -1244,6 +1244,13 @@ endif(NOT WIN32)
         -DWTHTTP_CONFIGURATION:PATH=c:/witty/wthttpd
        )
     ENDIF(WIN32)
+    IF(STANDALONE_ASIO)
+    set( wt_CMAKE_ARGS
+        ${wt_CMAKE_ARGS}
+        -DASIO_PREFIX:PATH=${WINST_PREFIX}
+        -DWT_ASIO_IMPLEMENTATION=standalone
+    )
+    ENDIF(STANDALONE_ASIO)
     if( WTGIT )
         ExternalProject_Add( wt-fetch
             # git
@@ -1412,11 +1419,16 @@ ENDIF(EXISTS ${WCONFIG_H})
 # Headers
 
    INSTALL(DIRECTORY "${WINST_PREFIX}/include/Wt" DESTINATION "include" COMPONENT binaries)
-if(WIN32)
-   INSTALL(DIRECTORY "${WINST_PREFIX}/include/boost-${boost_ver}/boost" DESTINATION "include" COMPONENT binaries)
-else(WIN32)
-   INSTALL(DIRECTORY "${WINST_PREFIX}/include/boost" DESTINATION "include" COMPONENT binaries)
-endif(WIN32)
+   if (STANDALONE_ASIO)
+      INSTALL(DIRECTORY "${WINST_PREFIX}/include/asio" DESTINATION "include" COMPONENT binaries)
+      INSTALL(FILES "${WINST_PREFIX}/include/asio.hpp" DESTINATION "include" COMPONENT binaries)
+   else (STANDALONE_ASIO)
+      if(WIN32)
+         INSTALL(DIRECTORY "${WINST_PREFIX}/include/boost-${boost_ver}/boost" DESTINATION "include" COMPONENT binaries)
+      else(WIN32)
+         INSTALL(DIRECTORY "${WINST_PREFIX}/include/boost" DESTINATION "include" COMPONENT binaries)
+      endif(WIN32)
+   endif (STANDALONE_ASIO)
 
 
 # Libraries
