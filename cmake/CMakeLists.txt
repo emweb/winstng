@@ -27,7 +27,7 @@ set(STANDALONE_ASIO ${STANDALONE_ASIO} CACHE BOOL "use standalone version of Asi
 set(WTGIT ${WTGIT} CACHE BOOL "build git version instead of release version" FORCE)
 
 IF (NOT WT_VERSION)
-  SET(WT_VERSION "3.3.8-rc1")
+  SET(WT_VERSION "4.0.0-rc1")
 ENDIF (NOT WT_VERSION)
 set(WT_VERSION ${WT_VERSION} CACHE STRING "Wt version to download (if not WTGIT)" FORCE)
 
