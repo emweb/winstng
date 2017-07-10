@@ -87,7 +87,10 @@ if (STANDALONE_ASIO)
   set( asio_URL http://prdownloads.sourceforge.net/asio/asio-${asio_ver}.tar.gz )
   set( asio_HASH SHA256=70345ca9e372a119c361be5e7f846643ee90997da8f88ec73f7491db96e24bbe)
   set( _PACKAGES ${_PACKAGES} asio )
-endif (STANDALONE_ASIO)
+  set(STANDALONE_ASIO_DEPENDS "asio")
+else()
+  set(STANDALONE_ASIO_DEPENDS "")
+endif()
 
 set( zlib_URL http://prdownloads.sourceforge.net/libpng/zlib-1.2.11.tar.gz )
 set( zlib_HASH SHA256=c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1)
@@ -1344,6 +1347,7 @@ endif(NOT WIN32)
 #            skia
             boost
             ${WT_UNIXONLY_DEPENDENCIES}
+            ${STANDALONE_ASIO_DEPENDS}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CMAKE_ARGS -DCMAKE_BUILD_TYPE=Debug ${wt_CMAKE_ARGS}            
@@ -1363,6 +1367,7 @@ endif(NOT WIN32)
 #            skia
             boost
             ${WT_UNIXONLY_DEPENDENCIES}
+            ${STANDALONE_ASIO_DEPENDS}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CMAKE_ARGS
