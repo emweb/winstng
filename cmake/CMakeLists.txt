@@ -1391,36 +1391,10 @@ endif(NOT WIN32)
         INSTALL_COMMAND ""
     )
 	
-# Wt version extraction
-SET(WCONFIG_H
- ${CMAKE_CURRENT_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/Wt/WConfig.h
-)
-IF(EXISTS ${WCONFIG_H})
-  file(
-    STRINGS ${WCONFIG_H}
-    WT_VERSION_MAJOR
-    REGEX "#define[ ]+WT_SERIES[ ]+[0-9.]+"
-  )
-  string(REGEX MATCH "[0-9]+" WT_VERSION_MAJOR ${WT_VERSION_MAJOR})
-  file(
-    STRINGS ${WCONFIG_H}
-    WT_VERSION_MINOR
-    REGEX "#define[ ]+WT_MAJOR[ ]+[0-9.]+"
-  )
-  string(REGEX MATCH "[0-9]+" WT_VERSION_MINOR ${WT_VERSION_MINOR})
-  file(
-    STRINGS ${WCONFIG_H}
-    WT_VERSION_PATCH
-    REGEX "#define[ ]+WT_MINOR[ ]+[0-9.]+"
-  )
-  string(REGEX MATCH "[0-9]+" WT_VERSION_PATCH ${WT_VERSION_PATCH})
-ELSE(EXISTS ${WCONFIG_H})
-  MESSAGE("Warning: Could not find WConfig.h, could not extract version number")
-  SET(WT_VERSION_MAJOR X)
-  SET(WT_VERSION_MINOR Y)
-  SET(WT_VERSION_PATCH Z)
-ENDIF(EXISTS ${WCONFIG_H})
-
+    string(REGEX MATCHALL "[0-9]+" WT_VERSION_LIST ${WT_VERSION})
+    list(GET WT_VERSION_LIST 0 WT_VERSION_MAJOR)
+    list(GET WT_VERSION_LIST 1 WT_VERSION_MINOR)
+    list(GET WT_VERSION_LIST 2 WT_VERSION_PATCH)
 
 # INSTALLATION
 
