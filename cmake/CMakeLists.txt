@@ -443,25 +443,27 @@ ELSE ( FETCH_ONLY )
         INSTALL_COMMAND ""
         )
 
-	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/bzip2)
-    ExternalProject_Add( bzip2
-        DEPENDS patch
-        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-        URL ${bzip2_URL}
-        URL_MD5 ${bzip2_MD5}
-		LIST_SEPARATOR ^^
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/bzip2.patch
-        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
-		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE ${WINST_PREFIX}/licenses/bzip2/
-        LOG_DOWNLOAD 1
-        LOG_UPDATE 1
-        LOG_CONFIGURE 1
-        LOG_BUILD 1
-        LOG_TEST 1
-        LOG_INSTALL 1
-        )
+    if ( UNIX AND NOT WIN32 )
+      file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/bzip2)
+      ExternalProject_Add( bzip2
+          DEPENDS patch
+          DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
+          URL ${bzip2_URL}
+          URL_MD5 ${bzip2_MD5}
+	  	LIST_SEPARATOR ^^
+          PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/bzip2.patch
+          CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+	  	TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE ${WINST_PREFIX}/licenses/bzip2/
+          LOG_DOWNLOAD 1
+          LOG_UPDATE 1
+          LOG_CONFIGURE 1
+          LOG_BUILD 1
+          LOG_TEST 1
+          LOG_INSTALL 1
+          )
+    endif ( UNIX AND NOT WIN32 )
 
-	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/libpng)
+    file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/libpng)
     ExternalProject_Add( libpng-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libpng-src
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
@@ -521,23 +523,25 @@ ELSE ( FETCH_ONLY )
         INSTALL_COMMAND ""
         )
 
-	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/libjpeg)
-    ExternalProject_Add( libjpeg
-        DEPENDS patch
-        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-        URL ${libjpeg_URL}
-        URL_MD5 ${libjpeg_MD5}
-		LIST_SEPARATOR ^^
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/jpeg8.patch
-        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
-		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/README ${WINST_PREFIX}/licenses/libjpeg/
-        LOG_DOWNLOAD 1
-        LOG_UPDATE 1
-        LOG_CONFIGURE 1
-        LOG_BUILD 1
-        LOG_TEST 1
-        LOG_INSTALL 1
-        )
+    if (UNIX AND NOT WIN32)
+      file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/libjpeg)
+      ExternalProject_Add( libjpeg
+          DEPENDS patch
+          DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
+          URL ${libjpeg_URL}
+          URL_MD5 ${libjpeg_MD5}
+          	LIST_SEPARATOR ^^
+          PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/jpeg8.patch
+          CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+          	TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/README ${WINST_PREFIX}/licenses/libjpeg/
+          LOG_DOWNLOAD 1
+          LOG_UPDATE 1
+          LOG_CONFIGURE 1
+          LOG_BUILD 1
+          LOG_TEST 1
+          LOG_INSTALL 1
+          )
+    endif (UNIX AND NOT WIN32)
         
 #	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/freetype)
 #    ExternalProject_Add( freetype
@@ -1194,7 +1198,7 @@ endif(NOT WIN32)
     endif( WIN32 AND NOT UNIX )
     set( boost_COMMAND ${boost_BJAM} --build-type=minimal ${boost_TOOLSET} ${boost_ADDRESS_MODEL} --variant=release --without-python ${boost_LINKAGE} threading=multi include=${WINST_PREFIX}/include linkflags=-L${WINST_PREFIX}/lib )
     ExternalProject_Add( boost
-	DEPENDS zlib bzip2
+	DEPENDS zlib
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${boost_URL}
         URL_HASH ${boost_HASH}
@@ -1427,7 +1431,6 @@ endif(NOT WIN32)
 
 if(WIN32)
 
-   # bzip2 ?
    INSTALL(FILES "${WINST_PREFIX}/bin/zlibd.dll" "${WINST_PREFIX}/bin/zlib.dll" DESTINATION "bin" COMPONENT binaries)
    INSTALL(FILES "${CMAKE_BINARY_DIR}/zlib-debug-prefix/src/zlib-debug-build/zlibd.pdb" DESTINATION "bin" COMPONENT symbols)
 
