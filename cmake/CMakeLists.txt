@@ -1538,7 +1538,7 @@ endif(WIN32)
 
    INSTALL(DIRECTORY "${WINST_PREFIX}/lib/Wt" DESTINATION "lib" COMPONENT binaries)
    INSTALL(DIRECTORY "${WINST_PREFIX}/share/Wt" DESTINATION "lib/share" COMPONENT binaries)
-   INSTALL(DIRECTORY "${WINST_PREFIX}/lib/cmake/wt" DESTINATION "lib/cmake" COMPONENT binaries)
+   INSTALL(DIRECTORY "${WINST_PREFIX}/lib/cmake/wt" DESTINATION "lib/cmake" COMPONENT binaries OPTIONAL)
 
 
    # Compose a meaningful compiler string
