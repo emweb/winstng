@@ -27,7 +27,7 @@ set(STANDALONE_ASIO ${STANDALONE_ASIO} CACHE BOOL "use standalone version of Asi
 set(WTGIT ${WTGIT} CACHE BOOL "build git version instead of release version" FORCE)
 
 IF (NOT WT_VERSION)
-  SET(WT_VERSION "4.0.0-rc1")
+  SET(WT_VERSION "4.0.0")
 ENDIF (NOT WT_VERSION)
 set(WT_VERSION ${WT_VERSION} CACHE STRING "Wt version to download (if not WTGIT)" FORCE)
 
@@ -112,8 +112,8 @@ set( freetype_URL http://download.savannah.gnu.org/releases/freetype/freetype-2.
 set( freetype_MD5 2a7a314927011d5030903179cf183be0 )
 set( _PACKAGES ${_PACKAGES} freetype )
 
-set( postgresql_URL https://ftp.postgresql.org/pub/source/v9.6.2/postgresql-9.6.2.tar.bz2 )
-set( postgresql_MD5 ee9cd5dfa24f691275cc65c92b6ff8f7)
+set( postgresql_URL https://ftp.postgresql.org/pub/source/v9.6.5/postgresql-9.6.5.tar.bz2 )
+set( postgresql_MD5 7a387fa6a75c84f25e7250007980679e)
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 if(WIN32)
@@ -134,7 +134,7 @@ set( _PACKAGES ${_PACKAGES} libharu )
 #set( mariadb_URL https://downloads.mariadb.org/interstitial/connector-c-2.2.1/mariadb-connector-c-2.2.1-src.tar.gz )
 #set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c.git)
 #set( mariadb_TAG v2.2.1 )
-set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v2.2.1.zip )
+set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.0.2.zip )
 #set( mariadb_MD5 a233181e03d3c307668b4c722d881661 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
@@ -162,8 +162,8 @@ ENDIF(MSVC_VERSION GREATER 1800)
 set( skia_URL https://skia.googlesource.com/skia.git${skia_REVISION})
 set( _PACKAGES ${_PACKAGES} skia )
 
-set( tinymce_URL http://download.moxiecode.com/tinymce/tinymce_3.5.9.zip )
-set( tinymce_MD5 f84ee9b528d2cf73c722957a072b1ef1 )
+set( tinymce_URL http://download.moxiecode.com/tinymce/tinymce_3.5.11.zip )
+set( tinymce_MD5 3018668d128931864c3f38d0b65ea65e)
 set( _PACKAGES ${_PACKAGES} tinymce )
 
 set( wt_URL https://github.com/emweb/wt/archive/${WT_VERSION}.tar.gz )
@@ -199,8 +199,8 @@ if( WIN32 AND NOT UNIX )
 		set( graphicsmagick_MD5 bd25adb9e8218aabcd68a034116396e6 )
 		set( _PACKAGES ${_PACKAGES} graphicsmagick )
 
-		set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0_x64.zip )
-		set( firebirdsql_MD5 069743c3ed3e8f62179dde3d93bb2333 )
+		set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.7.27050-0_x64.zip )
+		set( firebirdsql_MD5 aa0bcb781feb25d303520b94d2c0e0df )
 		set( _PACKAGE ${_PACKAGES} firebirdsql )
 
     elseif( _WT_ARCH STREQUAL "x86" ) # Win 32-bit
@@ -209,8 +209,8 @@ if( WIN32 AND NOT UNIX )
         set (perl_HASH SHA1=f1e64debc3b61010fe1885a668eaf2272e67153e )
         set( _PACKAGES ${_PACKAGES} perl )
 
-        set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0_Win32.zip )
-        set( firebirdsql_MD5 ae81c884896c9c93ca7a55a4f5d86369 )
+        set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.7.27050-0_Win32.zip )
+        set( firebirdsql_MD5 2cb088dd11b14d59ee97fd19f2038e99 )
         set( _PACKAGE ${_PACKAGES} firebirdsql )
 			
 	elseif( _WT_ARCH STREQUAL "ia64" ) # Win Itanium
