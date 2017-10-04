@@ -8,12 +8,12 @@ winstng was originally created by Pau Garcia i Quiles for both Windows and Linux
 
 ### Dependencies
 
-- [NSIS](http://nsis.sourceforge.net/Main_Page). The `nsis.exe` executable must be installed in a location where CMake will find it. If NSIS is not installed in a standard location, you can add it to the path with `set Path=C:\path\to\nsis;%Path%`.
-- For generation of documentation:
--- [Doxygen](http://www.stack.nl/~dimitri/doxygen/)
--- [Graphviz](http://www.graphviz.org/)
--- [Qt](https://info.qt.io/download-qt-for-application-development) (for qhelpgenerator)
-- An installation of Microsoft Visual Studio 2015 or later for Wt 4, or Microsoft Visual Studio 2010 or later for Wt 3.
+* [NSIS](http://nsis.sourceforge.net/Main_Page). The `nsis.exe` executable must be installed in a location where CMake will find it. If NSIS is not installed in a standard location, you can add it to the path with `set Path=C:\path\to\nsis;%Path%`.
+* For generation of documentation:
+  * [Doxygen](http://www.stack.nl/~dimitri/doxygen/)
+  * [Graphviz](http://www.graphviz.org/)
+  * [Qt](https://info.qt.io/download-qt-for-application-development) (for qhelpgenerator)
+* An installation of Microsoft Visual Studio 2015 or later for Wt 4, or Microsoft Visual Studio 2010 or later for Wt 3.
 
 ### Making a Wt build
 
