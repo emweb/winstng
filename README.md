@@ -21,10 +21,10 @@ These are the commands that Emweb uses to generate the Windows builds of Wt 4.
 
 1. Start a command prompt with Visual Studio tools, e,g. "x64 Native Tools Command Prompt for VS 2017".
 2. Navigate to the winstng source directory
-3. - To build a Wt release build:
+3. - To build a Wt release build:  
      `winst.bat wtversion x.y.z -G "NMake Makefiles" "-DSTANDALONE_ASIO=ON"` (substitute x.y.z with the version of the Wt release)
-   - To build a version of Wt from git:
-     `winst.bat git gitrepo https://github.com/emweb/wt.git wtversion x.y.z -G "NMake Makefiles" "-DSTANDALONE_ASIO=ON"`
+   - To build a version of Wt from git:  
+     `winst.bat git gitrepo https://github.com/emweb/wt.git wtversion x.y.z -G "NMake Makefiles" "-DSTANDALONE_ASIO=ON"`  
       Substitute x.y.z with the version of your choice. This has no effect on the used git commit, but changes the version number used in the name of the packages.
       You can also use `"-DWTGITTAG=abcdef..."` to build a specific commit or tag.
 4. `cd build`
