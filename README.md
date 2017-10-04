@@ -4,6 +4,8 @@ winstng is a tool to build binary releases of [Wt](https://www.webtoolkit.eu/wt)
 
 winstng was originally created by Pau Garcia i Quiles for both Windows and Linux, but only the Windows building functionality is currently maintained by Emweb.
 
+You can download the binary builds from the [Wt releases page](https://github.com/emweb/wt/releases).
+
 ## Usage instructions on Windows
 
 ### Dependencies
@@ -19,7 +21,7 @@ winstng was originally created by Pau Garcia i Quiles for both Windows and Linux
 
 These are the commands that Emweb uses to generate the Windows builds of Wt 4.
 
-1. Start a command prompt with Visual Studio tools, e,g. "x64 Native Tools Command Prompt for VS 2017".
+1. Start a command prompt with Visual Studio tools, e.g. "x64 Native Tools Command Prompt for VS 2017".
 2. Navigate to the winstng source directory
 3. - To build a Wt release build:  
      `winst.bat wtversion x.y.z -G "NMake Makefiles" "-DSTANDALONE_ASIO=ON"` (substitute x.y.z with the version of the Wt release)
