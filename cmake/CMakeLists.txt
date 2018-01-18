@@ -1238,7 +1238,7 @@ endif(NOT WIN32)
         -DWT_CMAKE_FINDER_INSTALL_DIR:PATH=/share/cmake-2.8/Modules
         -DBoost_NO_SYSTEM_PATHS:BOOL=1
         -DBOOST_ROOT:PATH=${WINST_PREFIX}
-        -DCONFIGDIR:PATH=${WINST_PREFIX}/etc/wt
+        -DCONFIGDIR:PATH=c:/witty
         -DFCGI_PREFIX:PATH=${WINST_PREFIX}
 #        -DSKIA_PREFIX=${CMAKE_BINARY_DIR}/skia-src/skia.git${skia_REVISION}
 #	-DWT_SKIA_OLD=${WT_SKIA_OLD}
