@@ -879,6 +879,7 @@ ENDIF(_WT_ADDRESS_WIDTH EQUAL 64)
         URL ${postgresql_URL}
         DOWNLOAD_NAME ${postgresql_NAME}
         URL_HASH ${postgresql_HASH}
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/postgresql-9.6.1.patch
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
