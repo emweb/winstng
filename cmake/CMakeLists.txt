@@ -100,8 +100,8 @@ set( bzip2_URL http://bzip.org/1.0.6/bzip2-1.0.6.tar.gz )
 set( bzip2_MD5 00b516f4704d4a7cb50a1d97e6e8e15b )
 set( _PACKAGES ${_PACKAGES} bzip2 )
 
-set( libpng_URL http://sourceforge.net/projects/libpng/files/libpng14/1.4.19/libpng-1.4.19.tar.gz )
-set( libpng_MD5 89bcbc4fc8b31f4a403906cf4f662330 )
+set( libpng_URL https://sourceforge.net/projects/libpng/files/libpng14/1.4.22/libpng-1.4.22.tar.gz )
+set( libpng_HASH SHA256=370babb75f278c39e0c50e8c4e7493bc0f18db6867478341a832a982fd15a8fe)
 set( _PACKAGES ${_PACKAGES} libpng )
 
 set( libjpeg_URL http://www.ijg.org/files/jpegsrc.v9b.tar.gz )
@@ -112,8 +112,8 @@ set( freetype_URL http://download.savannah.gnu.org/releases/freetype/freetype-2.
 set( freetype_MD5 2a7a314927011d5030903179cf183be0 )
 set( _PACKAGES ${_PACKAGES} freetype )
 
-set( postgresql_URL https://ftp.postgresql.org/pub/source/v9.6.5/postgresql-9.6.5.tar.bz2 )
-set( postgresql_MD5 7a387fa6a75c84f25e7250007980679e)
+set( postgresql_URL https://ftp.postgresql.org/pub/source/v10.3/postgresql-10.3.tar.bz2 )
+set( postgresql_HASH SHA256=6ea268780ee35e88c65cdb0af7955ad90b7d0ef34573867f223f14e43467931a)
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 if(WIN32)
@@ -134,8 +134,8 @@ set( _PACKAGES ${_PACKAGES} libharu )
 #set( mariadb_URL https://downloads.mariadb.org/interstitial/connector-c-2.2.1/mariadb-connector-c-2.2.1-src.tar.gz )
 #set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c.git)
 #set( mariadb_TAG v2.2.1 )
-set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v2.2.1.zip )
-#set( mariadb_MD5 a233181e03d3c307668b4c722d881661 )
+set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.0.3.zip )
+set( mariadb_HASH SHA256=0b0a285e3c9307532c6ff95dfba2e19a227737a5f31ffd60a349c16c3549498fc0c97c12c6c5ff49119ce1158a2f26034d37337a6e7ac4c3ba27bbe5ecd0d295)
 set( _PACKAGES ${_PACKAGES} mariadb )
 
 set( boost_ver "1_66" )
@@ -468,7 +468,7 @@ ELSE ( FETCH_ONLY )
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libpng-src
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${libpng_URL}
-        URL_MD5 ${libpng_MD5}
+        URL_HASH ${libpng_HASH}
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
@@ -771,7 +771,7 @@ ENDIF(_WT_ADDRESS_WIDTH EQUAL 64)
 #        GIT_TAG ${mariadb_TAG}
 #        DOWNLOAD_NAME ${mariadb_NAME}
         URL ${mariadb_URL}
-        URL_MD5 ${mariadb_MD5}
+        URL_HASH ${mariadb_HASH}
         LIST_SEPARATOR ^^
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/mariadb-native-client.patch
         CONFIGURE_COMMAND ""
@@ -878,8 +878,7 @@ ENDIF(_WT_ADDRESS_WIDTH EQUAL 64)
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${postgresql_URL}
         DOWNLOAD_NAME ${postgresql_NAME}
-        URL_MD5 ${postgresql_MD5}
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/postgresql-9.6.1.patch
+        URL_HASH ${postgresql_HASH}
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
