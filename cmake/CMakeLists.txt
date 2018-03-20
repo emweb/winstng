@@ -134,8 +134,8 @@ set( _PACKAGES ${_PACKAGES} libharu )
 #set( mariadb_URL https://downloads.mariadb.org/interstitial/connector-c-2.2.1/mariadb-connector-c-2.2.1-src.tar.gz )
 #set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c.git)
 #set( mariadb_TAG v2.2.1 )
-set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v_2.3.5.zip )
-set( mariadb_HASH SHA256=2be71065f615467b8fbb64d5c8b4338380bc4a6de73b693c0c55c4feba2f3683)
+set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v2.2.1.zip )
+#set( mariadb_MD5 a233181e03d3c307668b4c722d881661 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
 set( boost_ver "1_66" )
@@ -771,7 +771,7 @@ ENDIF(_WT_ADDRESS_WIDTH EQUAL 64)
 #        GIT_TAG ${mariadb_TAG}
 #        DOWNLOAD_NAME ${mariadb_NAME}
         URL ${mariadb_URL}
-        URL_HASH ${mariadb_HASH}
+        URL_MD5 ${mariadb_MD5}
         LIST_SEPARATOR ^^
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/mariadb-native-client.patch
         CONFIGURE_COMMAND ""
