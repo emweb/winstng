@@ -101,7 +101,7 @@ set( bzip2_MD5 00b516f4704d4a7cb50a1d97e6e8e15b )
 set( _PACKAGES ${_PACKAGES} bzip2 )
 
 set( libpng_URL https://sourceforge.net/projects/libpng/files/libpng14/1.4.22/libpng-1.4.22.tar.gz )
-set( libpng_HASH SHA256=370babb75f278c39e0c50e8c4e7493bc0f18db6867478341a832a982fd15a8fe)
+set( libpng_HASH SHA256=64b0632f7c528a7afd58c351be416fba3c9348a50a31b465d937e718febe81a7)
 set( _PACKAGES ${_PACKAGES} libpng )
 
 set( libjpeg_URL http://www.ijg.org/files/jpegsrc.v9b.tar.gz )
