@@ -112,8 +112,8 @@ set( freetype_URL http://download.savannah.gnu.org/releases/freetype/freetype-2.
 set( freetype_MD5 2a7a314927011d5030903179cf183be0 )
 set( _PACKAGES ${_PACKAGES} freetype )
 
-set( postgresql_URL https://ftp.postgresql.org/pub/source/v10.3/postgresql-10.3.tar.bz2 )
-set( postgresql_HASH SHA256=6ea268780ee35e88c65cdb0af7955ad90b7d0ef34573867f223f14e43467931a)
+set( postgresql_URL https://ftp.postgresql.org/pub/source/v9.6.8/postgresql-9.6.8.tar.bz2 )
+set( postgresql_HASH SHA256=eafdb3b912e9ec34bdd28b651d00226a6253ba65036cb9a41cad2d9e82e3eb70)
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 if(WIN32)
