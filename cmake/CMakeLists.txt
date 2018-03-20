@@ -135,7 +135,7 @@ set( _PACKAGES ${_PACKAGES} libharu )
 #set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c.git)
 #set( mariadb_TAG v2.2.1 )
 set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.0.3.zip )
-set( mariadb_HASH SHA256=0b0a285e3c9307532c6ff95dfba2e19a227737a5f31ffd60a349c16c3549498fc0c97c12c6c5ff49119ce1158a2f26034d37337a6e7ac4c3ba27bbe5ecd0d295)
+set( mariadb_HASH SHA256=5a493c92542410f309a67ed3416a39e1088593de1af5e2f900cdd30412174fbe)
 set( _PACKAGES ${_PACKAGES} mariadb )
 
 set( boost_ver "1_66" )
