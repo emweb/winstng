@@ -1196,7 +1196,7 @@ endif(NOT WIN32)
       set( boost_BJAM "./bjam" )
       set( boost_LINKAGE link=shared )
     endif( WIN32 AND NOT UNIX )
-    set( boost_COMMAND ${boost_BJAM} --build-type=minimal ${boost_TOOLSET} --variant=release --without-python ${boost_LINKAGE} threading=multi include=${WINST_PREFIX}/include linkflags=-L${WINST_PREFIX}/lib )
+    set( boost_COMMAND ${boost_BJAM} --build-type=minimal ${boost_TOOLSET} ${boost_ADDRESS_MODEL} --variant=release --without-python ${boost_LINKAGE} threading=multi include=${WINST_PREFIX}/include linkflags=-L${WINST_PREFIX}/lib )
     ExternalProject_Add( boost
 	DEPENDS zlib
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
