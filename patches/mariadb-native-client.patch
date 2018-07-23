@@ -113,7 +113,7 @@ index 0273a6b..b2132d0 100644
  extern "C" {
  #endif /* __cplusplus */ 
 diff --git a/libmariadb/CMakeLists.txt b/libmariadb/CMakeLists.txt
-index 430020b..1b43bbc 100644
+index 430020b..2c44b2a 100644
 --- a/libmariadb/CMakeLists.txt
 +++ b/libmariadb/CMakeLists.txt
 @@ -413,7 +413,10 @@ ENDIF()
@@ -128,7 +128,7 @@ index 430020b..1b43bbc 100644
  
  #
  # Installation
-@@ -438,10 +441,14 @@ SET_TARGET_PROPERTIES(libmariadb PROPERTIES VERSION
+@@ -438,12 +441,16 @@ SET_TARGET_PROPERTIES(libmariadb PROPERTIES VERSION
  
  INSTALL(TARGETS mariadbclient
            COMPONENT Development
@@ -143,5 +143,8 @@ index 430020b..1b43bbc 100644
 +          LIBRARY DESTINATION "lib"
 +          ARCHIVE DESTINATION "lib")
  
- IF(WIN32)
+-IF(WIN32)
++IF(WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Debug")
     # On Windows, install PDB
+    GET_TARGET_PROPERTY(location libmariadb LOCATION)
+    STRING(REPLACE ".dll" ".pdb" pdb_location ${location})
