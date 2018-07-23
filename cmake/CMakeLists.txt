@@ -83,16 +83,16 @@ endif(MSVC)
 # Files to download
 
 if (STANDALONE_ASIO)
-  set( asio_ver "1.10.6" )
-  set( asio_URL http://prdownloads.sourceforge.net/asio/asio-${asio_ver}.tar.gz )
-  set( asio_HASH SHA256=70345ca9e372a119c361be5e7f846643ee90997da8f88ec73f7491db96e24bbe)
+  set( asio_ver "1.12.1" )
+  set( asio_URL https://prdownloads.sourceforge.net/asio/asio-${asio_ver}.tar.gz )
+  set( asio_MD5 b6ed864a7047805e3efce7d612f81bd5)
   set( _PACKAGES ${_PACKAGES} asio )
   set(STANDALONE_ASIO_DEPENDS "asio")
 else()
   set(STANDALONE_ASIO_DEPENDS "")
 endif()
 
-set( zlib_URL http://prdownloads.sourceforge.net/libpng/zlib-1.2.11.tar.gz )
+set( zlib_URL https://prdownloads.sourceforge.net/libpng/zlib-1.2.11.tar.gz )
 set( zlib_HASH SHA256=c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1)
 set( _PACKAGES ${_PACKAGES} zlib )
 
@@ -117,11 +117,11 @@ set( postgresql_HASH SHA256=eafdb3b912e9ec34bdd28b651d00226a6253ba65036cb9a41cad
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 if(WIN32)
-    set( openssl_URL https://github.com/openssl/openssl/archive/OpenSSL_1_0_2n.zip )
-    set( openssl_HASH SHA256=2afd08c5347b35d3ea3a8791fa0c22c0951180ed010f5db28a34b06175a9379b)
+    set( openssl_URL https://github.com/openssl/openssl/archive/OpenSSL_1_0_2o.zip )
+    set( openssl_HASH SHA256=3332a93ade98f1bcd97c6e699e3f5b4ac29268aeeb5032fa3e34d9cd2a188086)
 else(WIN32)
-    set( openssl_URL https://openssl.org/source/openssl-1.0.2n.tar.gz )
-    set( openssl_HASH SHA256=370babb75f278c39e0c50e8c4e7493bc0f18db6867478341a832a982fd15a8fe)
+    set( openssl_URL https://openssl.org/source/openssl-1.0.2o.tar.gz )
+    set( openssl_HASH SHA256=ec3f5c9714ba0fd45cb4e087301eb1336c317e0d20b575a125050470e8089e4d)
 endif(WIN32)
 set( _PACKAGES ${_PACKAGES} openssl )
 
@@ -134,8 +134,8 @@ set( _PACKAGES ${_PACKAGES} libharu )
 #set( mariadb_URL https://downloads.mariadb.org/interstitial/connector-c-2.2.1/mariadb-connector-c-2.2.1-src.tar.gz )
 #set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c.git)
 #set( mariadb_TAG v2.2.1 )
-set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v2.2.1.zip )
-#set( mariadb_MD5 a233181e03d3c307668b4c722d881661 )
+set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.0.5.zip )
+set( mariadb_HASH SHA256=c7f4793cf2213493745c50a9fbb3784404cdb08cf89f68560a6c251568d2778d )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
 set( boost_ver "1_67" )
@@ -1328,7 +1328,7 @@ endif(NOT WIN32)
         ExternalProject_Add( asio
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${asio_URL}
-        URL_HASH ${asio_HASH}
+        URL_MD5 ${asio_MD5}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
