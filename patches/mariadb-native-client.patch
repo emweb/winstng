@@ -1,15 +1,14 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 9762018..907a396 100644
+index ac011aa..16227a7 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -101,31 +101,32 @@ IF(WIN32)
-   INCLUDE(${CC_SOURCE_DIR}/cmake/version_info.cmake)
+@@ -36,28 +36,29 @@ IF(WITH_RTC)
+   SET(RTC_OPTIONS "/RTC1 /RTCc")
  ENDIF()
  
--IF(NOT IS_SUBPROJECT)
 -IF(MSVC)
 -  # Speedup system tests
--  INCLUDE(${CC_SOURCE_DIR}/cmake/WindowsCache.cmake)
+-  INCLUDE(${CMAKE_SOURCE_DIR}/cmake/WindowsCache.cmake)
 -  IF (MSVC)
 -    SET(CONFIG_TYPES "DEBUG" "RELEASE" "RELWITHDEBINFO")
 -    FOREACH(BUILD_TYPE ${CONFIG_TYPES})
@@ -20,22 +19,19 @@ index 9762018..907a396 100644
 -          IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
 -            SET(COMPILER_FLAGS "${COMPILER_FLAGS} ${RTC_OPTIONS}")
 -            STRING(REPLACE "/Zi" "/ZI" COMPILER_FLAGS ${COMPILER_FLAGS})
--          ELSE()
--            STRING(REPLACE "/Zi" "/Z7" COMPILER_FLAGS ${COMPILER_FLAGS})
 -          ENDIF()
--          MESSAGE (STATUS "CMAKE_${COMPILER}_FLAGS_${BUILD_TYPE}= ${COMPILER_FLAGS}")
--          SET(CMAKE_${COMPILER}_FLAGS_${BUILD_TYPE} ${COMPILER_FLAGS})
+-          MESSAGE (STATUS "CMAKE_${COMPILER}_FLAGS_${BUILD_TYPE}= ${COMPILER_FLAGS}") 
+-          SET(CMAKE_${COMPILER}_FLAGS_${BUILD_TYPE} ${COMPILER_FLAGS} CACHE 
+-               STRING "overwritten by libmariadb" FORCE)
 -        ENDIF()
 -      ENDFOREACH()
 -    ENDFOREACH()
 -  ENDIF()
 -ENDIF()
--ENDIF(NOT IS_SUBPROJECT)
 +SET(DEBUG_LIB_POSTFIX "d" CACHE STRING "String appended to debug libraries")
-+#IF(NOT IS_SUBPROJECT)
 +#IF(MSVC)
 +#  # Speedup system tests
-+#  INCLUDE(${CC_SOURCE_DIR}/cmake/WindowsCache.cmake)
++#  INCLUDE(${CMAKE_SOURCE_DIR}/cmake/WindowsCache.cmake)
 +#  IF (MSVC)
 +#    SET(CONFIG_TYPES "DEBUG" "RELEASE" "RELWITHDEBINFO")
 +#    FOREACH(BUILD_TYPE ${CONFIG_TYPES})
@@ -46,27 +42,38 @@ index 9762018..907a396 100644
 +#          IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
 +#            SET(COMPILER_FLAGS "${COMPILER_FLAGS} ${RTC_OPTIONS}")
 +#            STRING(REPLACE "/Zi" "/ZI" COMPILER_FLAGS ${COMPILER_FLAGS})
-+#          ELSE()
-+#            STRING(REPLACE "/Zi" "/Z7" COMPILER_FLAGS ${COMPILER_FLAGS})
 +#          ENDIF()
-+#          MESSAGE (STATUS "CMAKE_${COMPILER}_FLAGS_${BUILD_TYPE}= ${COMPILER_FLAGS}")
-+#          SET(CMAKE_${COMPILER}_FLAGS_${BUILD_TYPE} ${COMPILER_FLAGS})
++#          MESSAGE (STATUS "CMAKE_${COMPILER}_FLAGS_${BUILD_TYPE}= ${COMPILER_FLAGS}") 
++#          SET(CMAKE_${COMPILER}_FLAGS_${BUILD_TYPE} ${COMPILER_FLAGS} CACHE 
++#               STRING "overwritten by libmariadb" FORCE)
 +#        ENDIF()
 +#      ENDFOREACH()
 +#    ENDFOREACH()
 +#  ENDIF()
 +#ENDIF()
-+#ENDIF(NOT IS_SUBPROJECT)
  
- # Disable dbug information for release builds
+ # Disable dbug information for release builds 
  SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -DDBUG_OFF")
+@@ -220,9 +221,9 @@ IF(CLIENT_DOCS)
+           DESTINATION ${DOCS_INSTALL_DIR_${INSTALL_LAYOUT}})
+ ENDIF()
+ 
+-IF(MSVC)
+- SET(CMAKE_INSTALL_PREFIX "")
+-ENDIF()
++#IF(MSVC)
++# SET(CMAKE_INSTALL_PREFIX "")
++#ENDIF()
+ 
+ IF(WIN32 AND CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+   ADD_SUBDIRECTORY(win/packaging)
 diff --git a/cmake/CheckFunctions.cmake b/cmake/CheckFunctions.cmake
-index 58a6db3..9aa3a13 100644
+index 8a2208f..69d2b74 100644
 --- a/cmake/CheckFunctions.cmake
 +++ b/cmake/CheckFunctions.cmake
-@@ -11,6 +11,8 @@
- # You will find the appropriate defines in 
+@@ -3,6 +3,8 @@
  # include/my_config.h.in
+ # You will find the appropiate defines in 
  
 +SET(CMAKE_REQUIRED_INCLUDES "stdlib.h")
 +
@@ -74,36 +81,36 @@ index 58a6db3..9aa3a13 100644
  
  CHECK_FUNCTION_EXISTS (access HAVE_ACCESS)
 diff --git a/cmake/version_info.cmake b/cmake/version_info.cmake
-index 4b2324a..f9251c7 100644
+index 264e380..61ec5c4 100644
 --- a/cmake/version_info.cmake
 +++ b/cmake/version_info.cmake
-@@ -9,14 +9,14 @@ FUNCTION(GET_FILE_VERSION FILE_NAME FILE_VERSION)
+@@ -2,14 +2,14 @@ FUNCTION(GET_FILE_VERSION FILE_NAME FILE_VERSION)
  
    # if we build from a git repository, we calculate the file version:
    #  Patch number is numer of commits for given file
--  IF(EXISTS ${CC_SOURCE_DIR}/.git)
--    EXECUTE_PROCESS(COMMAND git --git-dir=${CC_SOURCE_DIR}/.git --work-tree=${CC_SOURCE_DIR} rev-list HEAD --count -- ${FILE_NAME} 
+-  IF(EXISTS ${CMAKE_SOURCE_DIR}/.git)
+-    EXECUTE_PROCESS(COMMAND git --git-dir=${CMAKE_SOURCE_DIR}/.git --work-tree=${CMAKE_SOURCE_DIR} rev-list HEAD --count -- ${FILE_NAME} 
 -      OUTPUT_VARIABLE FV)
 -    STRING(REPLACE "\n" "" FV ${FV})
 -    SET(${FILE_VERSION} ${FV} PARENT_SCOPE)
 -  ELSE()
-+  #  IF(EXISTS ${CC_SOURCE_DIR}/.git)
-+  #    EXECUTE_PROCESS(COMMAND git --git-dir=${CC_SOURCE_DIR}/.git --work-tree=${CC_SOURCE_DIR} rev-list HEAD --count -- ${FILE_NAME} 
-+  #      OUTPUT_VARIABLE FV)
-+  #    STRING(REPLACE "\n" "" FV ${FV})
-+  #    SET(${FILE_VERSION} ${FV} PARENT_SCOPE)
-+  #  ELSE()
++#  IF(EXISTS ${CMAKE_SOURCE_DIR}/.git)
++#    EXECUTE_PROCESS(COMMAND git --git-dir=${CMAKE_SOURCE_DIR}/.git --work-tree=${CMAKE_SOURCE_DIR} rev-list HEAD --count -- ${FILE_NAME} 
++#      OUTPUT_VARIABLE FV)
++#    STRING(REPLACE "\n" "" FV ${FV})
++#    SET(${FILE_VERSION} ${FV} PARENT_SCOPE)
++#  ELSE()
      SET(${FILE_VERSION} 0)
 -  ENDIF()
-+  #  ENDIF()
++#  ENDIF()
  ENDFUNCTION()
  
  MACRO(SET_VERSION_INFO)
-diff --git a/include/ma_pthread.h b/include/ma_pthread.h
-index 0273a6b..b2132d0 100644
---- a/include/ma_pthread.h
-+++ b/include/ma_pthread.h
-@@ -28,6 +28,8 @@
+diff --git a/include/my_pthread.h b/include/my_pthread.h
+index 1d4f894..d4f7e08 100644
+--- a/include/my_pthread.h
++++ b/include/my_pthread.h
+@@ -25,6 +25,8 @@
  #define ETIME ETIMEDOUT				/* For FreeBSD */
  #endif
  
@@ -113,12 +120,12 @@ index 0273a6b..b2132d0 100644
  extern "C" {
  #endif /* __cplusplus */ 
 diff --git a/libmariadb/CMakeLists.txt b/libmariadb/CMakeLists.txt
-index 995dc28..1f21292 100644
+index ecc4b28..08d7e4a 100644
 --- a/libmariadb/CMakeLists.txt
 +++ b/libmariadb/CMakeLists.txt
-@@ -413,7 +413,10 @@ ENDIF()
- SET_TARGET_PROPERTIES(mariadbclient PROPERTIES IMPORTED_INTERFACE_LINK_LIBRARIES "${SYSTEM_LIBS}")
- SET_TARGET_PROPERTIES(libmariadb PROPERTIES IMPORTED_INTERFACE_LINK_LIBRARIES "${SYSTEM_LIBS}")
+@@ -398,7 +398,10 @@ IF(CMAKE_SYSTEM_NAME MATCHES "Linux")
+   TARGET_LINK_LIBRARIES (mariadbclient "-Wl,--version-script=${EXPORT_FILE}")
+ ENDIF()
  
 -SET_TARGET_PROPERTIES(libmariadb PROPERTIES PREFIX "")
 +SET_TARGET_PROPERTIES(libmariadb PROPERTIES
@@ -126,23 +133,18 @@ index 995dc28..1f21292 100644
 +  DEBUG_POSTFIX ${DEBUG_LIB_POSTFIX}
 +)
  
- #
- # Installation
-@@ -438,11 +441,14 @@ SET_TARGET_PROPERTIES(libmariadb PROPERTIES VERSION
+ SET_TARGET_PROPERTIES(libmariadb PROPERTIES VERSION 
+    ${CPACK_PACKAGE_VERSION_MAJOR}
+@@ -424,9 +427,9 @@ ENDIF()
  
- INSTALL(TARGETS mariadbclient
-           COMPONENT Development
--          DESTINATION ${INSTALL_LIBDIR})
-+          RUNTIME DESTINATION "bin"
-+          LIBRARY DESTINATION "lib"
-+          ARCHIVE DESTINATION "lib")
- INSTALL(TARGETS libmariadb
-           COMPONENT SharedLibraries
--        DESTINATION ${INSTALL_LIBDIR})
--
+ INSTALL(TARGETS
+           libmariadb mariadbclient
+-          RUNTIME DESTINATION "${LIB_INSTALL_DIR}/${SUFFIX_INSTALL_DIR}"
+-          LIBRARY DESTINATION "${LIB_INSTALL_DIR}/${SUFFIX_INSTALL_DIR}"
+-          ARCHIVE DESTINATION "${LIB_INSTALL_DIR}/${SUFFIX_INSTALL_DIR}")
 +          RUNTIME DESTINATION "bin"
 +          LIBRARY DESTINATION "lib"
 +          ARCHIVE DESTINATION "lib")
  
- IF(WIN32)
-   IF(${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
+ INSTALL(DIRECTORY ${CMAKE_SOURCE_DIR}/include/
+         DESTINATION ${INCLUDE_INSTALL_DIR}/${SUFFIX_INSTALL_DIR})
