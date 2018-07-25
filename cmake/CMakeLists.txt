@@ -134,7 +134,7 @@ set( _PACKAGES ${_PACKAGES} libharu )
 #set( mariadb_URL https://downloads.mariadb.org/interstitial/connector-c-2.2.1/mariadb-connector-c-2.2.1-src.tar.gz )
 #set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c.git)
 #set( mariadb_TAG v2.2.1 )
-set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v2.3.6.zip )
+set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v_2.3.6.zip )
 #set( mariadb_MD5 a233181e03d3c307668b4c722d881661 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
