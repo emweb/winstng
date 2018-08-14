@@ -138,9 +138,9 @@ set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v_2.3.6.
 #set( mariadb_MD5 a233181e03d3c307668b4c722d881661 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
-set( boost_ver "1_67" )
-set( boost_URL https://dl.bintray.com/boostorg/release/1.67.0/source/boost_${boost_ver}_0.tar.bz2 )
-set( boost_HASH SHA256=2684c972994ee57fc5632e03bf044746f6eb45d4920c343937a465fd67a5adba)
+set( boost_ver "1_68" )
+set( boost_URL https://dl.bintray.com/boostorg/release/1.68.0/source/boost_${boost_ver}_0.tar.bz2 )
+set( boost_HASH SHA256=7f6130bc3cf65f56a618888ce9d5ea704fa10b462be126ad053e80e553d6d8b7 )
 set( _PACKAGES ${_PACKAGES} boost )
 
 # required to build skia
