@@ -112,8 +112,8 @@ set( freetype_URL http://download.savannah.gnu.org/releases/freetype/freetype-2.
 set( freetype_MD5 2a7a314927011d5030903179cf183be0 )
 set( _PACKAGES ${_PACKAGES} freetype )
 
-set( postgresql_URL https://ftp.postgresql.org/pub/source/v9.6.11/postgresql-9.6.11.tar.bz2 )
-set( postgresql_HASH SHA256=38250adc69a1e8613fb926c894cda1d01031391a03648894b9a6e13ff354a530 )
+set( postgresql_URL https://ftp.postgresql.org/pub/source/v11.1/postgresql-11.1.tar.bz2 )
+set( postgresql_HASH SHA256=90815e812874831e9a4bf6e1136bf73bc2c5a0464ef142e2dfea40cda206db08)
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 if(WIN32)
@@ -879,7 +879,7 @@ ENDIF(_WT_ADDRESS_WIDTH EQUAL 64)
         URL ${postgresql_URL}
         DOWNLOAD_NAME ${postgresql_NAME}
         URL_HASH ${postgresql_HASH}
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/postgresql-9.6.1.patch
+        PATCH_COMMAND ""
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
