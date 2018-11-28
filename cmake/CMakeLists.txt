@@ -957,7 +957,7 @@ else(NOT WIN32)
         #for ssl: add SSL_INC="..." SSL_LIB_PATH="..." USE_SSL=1
         BUILD_COMMAND ${postgresql_BUILD_COMMAND} DEBUG libpq
         BUILD_IN_SOURCE 1
-        INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/Debug/libpq/libpq.lib ${WINST_PREFIX}/lib/libpqd.lib
+        INSTALL_COMMAND lib /OUT:${WINST_PREFIX}/lib/libpqd.lib <SOURCE_DIR>/Debug/libpq/libpq.lib <SOURCE_DIR>/Debug/libpgport/libpgport.lib
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -975,7 +975,7 @@ else(NOT WIN32)
         CONFIGURE_COMMAND ${postgresql_CONFIGURE_COMMAND}
         BUILD_COMMAND ${postgresql_BUILD_COMMAND} libpq
         BUILD_IN_SOURCE 1
-        INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/Release/libpq/libpq.lib ${WINST_PREFIX}/lib/libpq.lib
+        INSTALL_COMMAND lib /OUT:${WINST_PREFIX}/lib/libpq.lib <SOURCE_DIR>/Release/libpq/libpq.lib <SOURCE_DIR>/Release/libpgport/libpgport.lib
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
