@@ -897,7 +897,7 @@ ENDIF(_WT_ADDRESS_WIDTH EQUAL 64)
         configure_file( ${winst_SOURCE_DIR}/postgresql-11.1-config_default.pl.cmake ${source_dir}/tools/msvc/config.pl @ONLY )
         
         set(postgresql_CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo)
-        set(postgresql_BUILD_COMMAND ${WINST_BATDIR}/cmake/execute-with-path.bat ${WINST_PREFIX}/bin ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/tools/msvc build.bat)
+        set(postgresql_BUILD_COMMAND ${WINST_BATDIR}/cmake/execute-with-path.bat ${WINST_PREFIX}/bin ${CMAKE_COMMAND} -E env MSBFLAGS=-property:ConfigurationType=StaticLibrary ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/tools/msvc build.bat)
         set(postgresql_INSTALL_COMMAND ${WINST_BATDIR}/cmake/execute-with-path.bat ${WINST_PREFIX}/bin ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/tools/msvc install.bat ${WINST_PREFIX})
         set(postgresql_TEST_COMMAND ${WINST_BATDIR}/cmake/execute-with-path.bat ${WINST_PREFIX}/bin ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/tools/msvc clean.bat)
     else(WIN32)
@@ -956,7 +956,7 @@ else(NOT WIN32)
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CONFIGURE_COMMAND ${postgresql_CONFIGURE_COMMAND}
         #for ssl: add SSL_INC="..." SSL_LIB_PATH="..." USE_SSL=1
-        BUILD_COMMAND ${postgresql_BUILD_COMMAND} DEBUG
+        BUILD_COMMAND ${postgresql_BUILD_COMMAND} DEBUG libpq
         BUILD_IN_SOURCE 1
         INSTALL_COMMAND ${postgresql_INSTALL_COMMAND}
         LOG_DOWNLOAD 1
@@ -974,7 +974,7 @@ else(NOT WIN32)
         SOURCE_DIR ${CMAKE_BINARY_DIR}/postgresql-src/src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CONFIGURE_COMMAND ${postgresql_CONFIGURE_COMMAND}
-        BUILD_COMMAND ${postgresql_BUILD_COMMAND}
+        BUILD_COMMAND ${postgresql_BUILD_COMMAND} libpq
         BUILD_IN_SOURCE 1
         INSTALL_COMMAND ${postgresql_INSTALL_COMMAND}
         LOG_DOWNLOAD 1
