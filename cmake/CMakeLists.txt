@@ -954,12 +954,11 @@ else(NOT WIN32)
         DEPENDS postgresql-fetch zlib openssl
         SOURCE_DIR ${CMAKE_BINARY_DIR}/postgresql-src/src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-        CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo
+        CONFIGURE_COMMAND ${postgresql_CONFIGURE_COMMAND}
         #for ssl: add SSL_INC="..." SSL_LIB_PATH="..." USE_SSL=1
-        BUILD_COMMAND ${CMAKE_BUILD_TOOL} -f win32.mak DEBUG=1 CPU=${POSTGRES_CPU}
+        BUILD_COMMAND ${postgresql_BUILD_COMMAND} DEBUG
         BUILD_IN_SOURCE 1
-        INSTALL_COMMAND ${CMAKE_COMMAND} -E copy interfaces/libpq/Debug/libpqd.lib ${WINST_PREFIX}/lib/
-        INSTALL_COMMAND ""
+        INSTALL_COMMAND ${postgresql_INSTALL_COMMAND}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -967,17 +966,17 @@ else(NOT WIN32)
         LOG_TEST 1
         LOG_INSTALL 1
         TEST_AFTER_INSTALL 1
-        TEST_COMMAND ${CMAKE_COMMAND} -E echo
+        TEST_COMMAND ${postgresql_TEST_COMMAND}
         )
 
     ExternalProject_Add( postgresql-release
         DEPENDS postgresql-fetch zlib openssl
         SOURCE_DIR ${CMAKE_BINARY_DIR}/postgresql-src/src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-        CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo
-        BUILD_COMMAND ${CMAKE_BUILD_TOOL} -f win32.mak CPU=${POSTGRES_CPU}
+        CONFIGURE_COMMAND ${postgresql_CONFIGURE_COMMAND}
+        BUILD_COMMAND ${postgresql_BUILD_COMMAND}
         BUILD_IN_SOURCE 1
-        INSTALL_COMMAND ${CMAKE_COMMAND} -E copy interfaces/libpq/Release/libpq.lib ${WINST_PREFIX}/lib/
+        INSTALL_COMMAND ${postgresql_INSTALL_COMMAND}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -985,7 +984,7 @@ else(NOT WIN32)
         LOG_TEST 1
         LOG_INSTALL 1
         TEST_AFTER_INSTALL 1
-        TEST_COMMAND ${CMAKE_COMMAND} -E echo
+        TEST_COMMAND ${postgresql_TEST_COMMAND}
         )
 endif(NOT WIN32)
 
