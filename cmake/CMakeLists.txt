@@ -894,7 +894,7 @@ ENDIF(_WT_ADDRESS_WIDTH EQUAL 64)
 
     if(WIN32)
         ExternalProject_Get_Property( postgresql-fetch source_dir )
-        configure_file( ${winst_SOURCE_DIR}/postgresql-9.3.1-config_default.pl.cmake ${source_dir}/src/tools/msvc/config.pl @ONLY )
+        configure_file( ${winst_SOURCE_DIR}/postgresql-11.1-config_default.pl.cmake ${source_dir}/src/tools/msvc/config.pl @ONLY )
         
         set(postgresql_CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo)
         set(postgresql_BUILD_COMMAND ${WINST_BATDIR}/cmake/execute-with-path.bat ${WINST_PREFIX}/bin ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/src/tools/msvc build.bat)
