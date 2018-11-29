@@ -893,10 +893,9 @@ ENDIF(_WT_ADDRESS_WIDTH EQUAL 64)
         )
 
     if(WIN32)
-        file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/postgresql-src/src/tools/msvc)
-        configure_file( ${winst_SOURCE_DIR}/postgresql-11.1-config_default.pl.cmake ${CMAKE_BINARY_DIR}/postgresql-src/src/tools/msvc/config.pl @ONLY )
+        configure_file( ${winst_SOURCE_DIR}/postgresql-11.1-config_default.pl.cmake ${CMAKE_BINARY_DIR}/postgres_config.pl @ONLY )
         
-        set(postgresql_CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo)
+        set(postgresql_CONFIGURE_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/postgres_config.pl <SOURCE_DIR>/src/tools/msvc/config.pl)
         set(postgresql_BUILD_COMMAND ${CMAKE_COMMAND} -E env MSBFLAGS=-property:ConfigurationType=StaticLibrary ${WINST_BATDIR}/cmake/execute-with-path.bat ${WINST_PREFIX}/bin ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/src/tools/msvc build.bat)
         set(postgresql_INSTALL_COMMAND ${WINST_BATDIR}/cmake/execute-with-path.bat ${WINST_PREFIX}/bin ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/src/tools/msvc install.bat ${WINST_PREFIX})
         set(postgresql_TEST_COMMAND ${CMAKE_COMMAND} -E echo)
