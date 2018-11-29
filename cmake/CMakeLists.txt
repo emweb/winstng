@@ -893,6 +893,7 @@ ENDIF(_WT_ADDRESS_WIDTH EQUAL 64)
         )
 
     if(WIN32)
+        file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/postgresql-src/src/tools/msvc)
         configure_file( ${winst_SOURCE_DIR}/postgresql-11.1-config_default.pl.cmake ${CMAKE_BINARY_DIR}/postgresql-src/src/tools/msvc/config.pl @ONLY )
         
         set(postgresql_CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo)
