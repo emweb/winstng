@@ -1255,6 +1255,7 @@ endif(NOT WIN32)
         -DSSL_LIB_TOO_NAMES=libeay32
         -DENABLE_QT4:BOOL=0
         -DWTHTTP_CONFIGURATION:PATH=c:/witty/wthttpd
+        -DCMAKE_SHARED_LINKER_FLAGS="/DEFAULTLIB:ssleay32.lib /DEFAULTLIB:libeay32.lib"
        )
     ENDIF(WIN32)
     IF(STANDALONE_ASIO)
