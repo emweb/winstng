@@ -1446,14 +1446,14 @@ if(WIN32)
 
 #   INSTALL(FILES "${WINST_PREFIX}/bin/libpq.dll" "${WINST_PREFIX}/bin/libintl.dll" DESTINATION "bin" COMPONENT binaries)
 
-   INSTALL(DIRECTORY "${WINST_PREFIX}/include/" FILES_MATCHING PATTERN "hpdf*" DESTINATION "include" COMPONENT binaries)
+   INSTALL(DIRECTORY "${WINST_PREFIX}/include/" DESTINATION "include" COMPONENT binaries FILES_MATCHING PATTERN "hpdf*")
    INSTALL(FILES "${WINST_PREFIX}/lib/libhpdf.lib" "${WINST_PREFIX}/lib/libhpdfd.lib" DESTINATION "lib" COMPONENT binaries)
    INSTALL(FILES "${WINST_PREFIX}/bin/libhpdf.dll" "${WINST_PREFIX}/bin/libhpdfd.dll" DESTINATION "bin" COMPONENT binaries)
    INSTALL(FILES "${CMAKE_BINARY_DIR}/libharu-debug-prefix/src/libharu-debug-build/src/libhpdfd.pdb" DESTINATION "bin" COMPONENT symbols)
 
 
-   INSTALL(DIRECTORY "${WINST_PREFIX}/lib/" FILES_MATCHING PATTERN "wt*lib" DESTINATION "lib" COMPONENT binaries)
-   INSTALL(DIRECTORY "${WINST_PREFIX}/bin/" FILES_MATCHING PATTERN "wt*dll" DESTINATION "bin" COMPONENT binaries)
+   INSTALL(DIRECTORY "${WINST_PREFIX}/lib/" DESTINATION "lib" COMPONENT binaries FILES_MATCHING PATTERN "wt*lib")
+   INSTALL(DIRECTORY "${WINST_PREFIX}/bin/" DESTINATION "bin" COMPONENT binaries FILES_MATCHING PATTERN "wt*dll")
    INSTALL(FILES
      "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/wtd.pdb"
      "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/wtdbod.pdb"
