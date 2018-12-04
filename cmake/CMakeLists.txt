@@ -1446,14 +1446,28 @@ if(WIN32)
 
 #   INSTALL(FILES "${WINST_PREFIX}/bin/libpq.dll" "${WINST_PREFIX}/bin/libintl.dll" DESTINATION "bin" COMPONENT binaries)
 
-   INSTALL(DIRECTORY "${WINST_PREFIX}/include/" DESTINATION "include" COMPONENT binaries FILES_MATCHING PATTERN "hpdf*")
+   INSTALL(DIRECTORY "${WINST_PREFIX}/include/" DESTINATION "include" COMPONENT binaries
+     FILES_MATCHING
+       PATTERN "boost-1_68" EXCLUDE
+       PATTERN "libpng" EXCLUDE
+       PATTERN "mariadb" EXCLUDE
+       PATTERN "openssl" EXCLUDE
+       PATTERN "postgresql" EXCLUDE
+       PATTERN "hpdf*")
    INSTALL(FILES "${WINST_PREFIX}/lib/libhpdf.lib" "${WINST_PREFIX}/lib/libhpdfd.lib" DESTINATION "lib" COMPONENT binaries)
    INSTALL(FILES "${WINST_PREFIX}/bin/libhpdf.dll" "${WINST_PREFIX}/bin/libhpdfd.dll" DESTINATION "bin" COMPONENT binaries)
    INSTALL(FILES "${CMAKE_BINARY_DIR}/libharu-debug-prefix/src/libharu-debug-build/src/libhpdfd.pdb" DESTINATION "bin" COMPONENT symbols)
 
 
-   INSTALL(DIRECTORY "${WINST_PREFIX}/lib/" DESTINATION "lib" COMPONENT binaries FILES_MATCHING PATTERN "wt*lib")
-   INSTALL(DIRECTORY "${WINST_PREFIX}/bin/" DESTINATION "bin" COMPONENT binaries FILES_MATCHING PATTERN "wt*dll")
+   set(ALL_DYN_WT_LIBS wt wtdbo wtdbofirebird wtdbomssqlserver wtdbomysql wtdbopostgres wtdbosqlite3 wthttp wttest)
+   set(ALL_WT_LIBS ${ALL_DYN_WT_LIBS} wtisapi)
+   FOREACH(lib ${ALL_DYN_WT_LIBS})
+     INSTALL(FILES "${WINST_PREFIX}/bin/${lib}.dll" "${WINST_PREFIX}/bin/${lib}d.dll" DESTINATION "bin" COMPONENT binaries)
+   ENDFOREACH(lib)
+   FOREACH(lib ${ALL_WT_LIBS})
+     INSTALL(FILES "${WINST_PREFIX}/lib/${lib}.lib" "${WINST_PREFIX}/lib/${lib}d.lib" DESTINATION "lib" COMPONENT binaries)
+   ENDFOREACH(lib)
+
    INSTALL(FILES
      "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/wtd.pdb"
      "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/wtdbod.pdb"
@@ -1466,7 +1480,6 @@ if(WIN32)
      "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/wttestd.pdb"
      DESTINATION "bin" COMPONENT symbols
    )
-
 
    SET(EXAMPLE_EXES "")
    SET(EXAMPLE_BATS "")
