@@ -1449,7 +1449,7 @@ if(WIN32)
    INSTALL(DIRECTORY "${WINST_PREFIX}/include/" DESTINATION "include" COMPONENT binaries
      FILES_MATCHING
        PATTERN "boost-1_68" EXCLUDE
-       PATTERN "libpng" EXCLUDE
+       PATTERN "libpng14" EXCLUDE
        PATTERN "mariadb" EXCLUDE
        PATTERN "openssl" EXCLUDE
        PATTERN "postgresql" EXCLUDE
