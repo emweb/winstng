@@ -1423,8 +1423,8 @@ endif(NOT WIN32)
 # Libraries
 
    IF (NOT STANDALONE_ASIO)
-      FILE(GLOB boost_install_libs "${WINST_PREFIX}/lib/libboost*")
-      INSTALL(FILES ${boost_install_libs} DESTINATION "lib" COMPONENT binaries)
+      INSTALL(DIRECTORY "${WINST_PREFIX}/lib/" DESTINATION "lib" COMPONENT binaries
+        FILES_MATCHING PATTERN "libboost*")
    ENDIF (NOT STANDALONE_ASIO)
 
 if(WIN32)
