@@ -1241,8 +1241,8 @@ endif(NOT WIN32)
         -DZLIB_PREFIX=${WINST_PREFIX}
         -DRUNDIR=${WINST_PREFIX}/var/run/wt
         -DSSL_PREFIX=${WINST_PREFIX}
-        #-DMYSQL_PREFIX=${WINST_PREFIX}
-        #-DMYSQL_LIBRARY=libmariadb
+        -DMYSQL_PREFIX=${WINST_PREFIX}
+        -DMYSQL_LIBRARY=libmariadb
         -DEXAMPLES_DESTINATION=lib/Wt/examples
         -DENABLE_OPENGL:BOOL=1
         )
@@ -1344,7 +1344,7 @@ endif(NOT WIN32)
         DEPENDS tinymce wt-fetch
             zlib libpng libharu
             openssl
-            ${WT_WINDOWSONLY_DEPENDENCIES}
+            ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
             postgresql
 #            skia
             boost
@@ -1364,7 +1364,7 @@ endif(NOT WIN32)
         DEPENDS tinymce wt-fetch
             zlib libpng libharu
             openssl
-            ${WT_WINDOWSONLY_DEPENDENCIES}
+            ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
             postgresql
 #            skia
             boost
@@ -1438,8 +1438,8 @@ if(WIN32)
    INSTALL(FILES "${WINST_PREFIX}/lib/ssleay32d.lib" "${WINST_PREFIX}/lib/libeay32d.lib" DESTINATION "lib" COMPONENT binaries)
    INSTALL(FILES "${CMAKE_BINARY_DIR}/openssl-debug-prefix/src/openssl-debug/out32dll.dbg/libeay32d.pdb" "${CMAKE_BINARY_DIR}/openssl-debug-prefix/src/openssl-debug/out32dll.dbg/ssleay32d.pdb" DESTINATION "bin" COMPONENT symbols)
 
-   #   INSTALL(FILES "${WINST_PREFIX}/bin/libmariadbd.dll" "${WINST_PREFIX}/bin/libmariadb.dll" DESTINATION "bin" COMPONENT binaries)
-   #   INSTALL(FILES "${CMAKE_BINARY_DIR}/mariadb-debug-prefix/src/mariadb-debug-build/libmariadb/libmariadbd.pdb" DESTINATION "bin" COMPONENT symbols)
+   INSTALL(FILES "${WINST_PREFIX}/bin/libmariadbd.dll" "${WINST_PREFIX}/bin/libmariadb.dll" DESTINATION "bin" COMPONENT binaries)
+   INSTALL(FILES "${CMAKE_BINARY_DIR}/mariadb-debug-prefix/src/mariadb-debug-build/libmariadb/libmariadbd.pdb" DESTINATION "bin" COMPONENT symbols)
 
    INSTALL(FILES "${WINST_PREFIX}/bin/libpng14.dll" "${WINST_PREFIX}/bin/libpng14d.dll" DESTINATION "bin" COMPONENT binaries)
    INSTALL(FILES "${CMAKE_BINARY_DIR}/libpng-debug-prefix/src/libpng-debug-build/libpng14d.pdb" DESTINATION "bin" COMPONENT symbols)
