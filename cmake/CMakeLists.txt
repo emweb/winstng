@@ -1385,7 +1385,7 @@ if(WIN32)
    INSTALL(FILES "${CMAKE_BINARY_DIR}/libharu-debug-prefix/src/libharu-debug-build/src/libhpdfd.pdb" DESTINATION "bin" COMPONENT symbols)
 
 
-   set(ALL_DYN_WT_LIBS wt wtdbo wtdbofirebird wtdbomssqlserver wtdbopostgres wtdbosqlite3 wthttp wttest)
+   set(ALL_DYN_WT_LIBS wt wtdbo wtdbofirebird wtdbomssqlserver wtdbomysql wtdbopostgres wtdbosqlite3 wthttp wttest)
    set(ALL_WT_LIBS ${ALL_DYN_WT_LIBS} wtisapi)
    FOREACH(lib ${ALL_DYN_WT_LIBS})
      INSTALL(FILES "${WINST_PREFIX}/bin/${lib}.dll" "${WINST_PREFIX}/bin/${lib}d.dll" DESTINATION "bin" COMPONENT binaries)
@@ -1398,6 +1398,7 @@ if(WIN32)
      "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/wtd.pdb"
      "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/wtdbod.pdb"
      "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbofirebirdd.pdb"
+     "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbomysqld.pdb"
      "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbosqlite3d.pdb"
      "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbomssqlserverd.pdb"
      "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbopostgresd.pdb"
@@ -1499,8 +1500,8 @@ else(WIN32)
    FILE(GLOB openssl_crypto_libs "${WINST_PREFIX}/lib/libcrypto*")
    INSTALL(FILES ${openssl_ssl_libs} ${openssl_crypto_libs} DESTINATION "lib" COMPONENT binaries)
 
-   #   FILE(GLOB mariadb_libs "${WINST_PREFIX}/lib/libmaria*")
-   #   INSTALL(FILES ${mariadb_libs} DESTINATION "lib" COMPONENT binaries)
+   FILE(GLOB mariadb_libs "${WINST_PREFIX}/lib/libmaria*")
+   INSTALL(FILES ${mariadb_libs} DESTINATION "lib" COMPONENT binaries)
 
    FILE(GLOB png_libs "${WINST_PREFIX}/lib/libpng*")
    INSTALL(FILES ${png_libs} DESTINATION "lib" COMPONENT binaries)
