@@ -134,9 +134,9 @@ set( _PACKAGES ${_PACKAGES} libharu )
 #set( mariadb_URL https://downloads.mariadb.org/interstitial/connector-c-2.2.1/mariadb-connector-c-2.2.1-src.tar.gz )
 #set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c.git)
 #set( mariadb_TAG v2.2.1 )
-#set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v_2.3.7.zip )
+set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v_2.3.7.zip )
 #set( mariadb_MD5 a233181e03d3c307668b4c722d881661 )
-#set( _PACKAGES ${_PACKAGES} mariadb )
+set( _PACKAGES ${_PACKAGES} mariadb )
 
 set( boost_ver "1_69" )
 set( boost_URL https://dl.bintray.com/boostorg/release/1.69.0/source/boost_${boost_ver}_0.tar.bz2 )
@@ -761,6 +761,80 @@ ENDIF(_WT_ADDRESS_WIDTH EQUAL 64)
         INSTALL_COMMAND ""
 		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE ${WINST_PREFIX}/licenses/openssl/
         )
+
+	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/mariadb)
+    ExternalProject_Add( mariadb-fetch
+        DEPENDS patch
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
+        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
+#        GIT_REPOSITORY ${mariadb_URL}
+#        GIT_TAG ${mariadb_TAG}
+#        DOWNLOAD_NAME ${mariadb_NAME}
+        URL ${mariadb_URL}
+        URL_MD5 ${mariadb_MD5}
+        LIST_SEPARATOR ^^
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/mariadb-native-client.patch
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
+		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/COPYING.LIB ${WINST_PREFIX}/licenses/mariadb/
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        )
+
+    ExternalProject_Add( mariadb-debug
+        DEPENDS mariadb-fetch zlib openssl
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+        LIST_SEPARATOR ^^
+        CMAKE_ARGS
+          -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include
+          -DCMAKE_BUILD_TYPE=Debug
+          -DCMAKE_MODULE_PATH:STRING=${WINST_MODULE_PATH}
+          -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
+          -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+          -DSSL_PREFIX:STRING=${WINST_PREFIX}
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        )
+
+    ExternalProject_Add( mariadb-release
+        DEPENDS mariadb-fetch zlib openssl
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+        LIST_SEPARATOR ^^
+        CMAKE_ARGS
+          -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include
+          -DCMAKE_BUILD_TYPE=MinSizeRel
+          -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
+          -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+          -DCMAKE_MODULE_PATH:STRING=${WINST_MODULE_PATH}
+          -DSSL_PREFIX:STRING=${WINST_PREFIX}
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        )
+
+    ExternalProject_Add( mariadb
+        DEPENDS mariadb-release mariadb-debug
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
+        )
+
 
 #    if( WIN32 AND NOT UNIX )
             # ExternalProject_Add( 7zip
