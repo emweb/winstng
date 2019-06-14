@@ -1,116 +1,20 @@
-diff -rupd openssl-OpenSSL_1_0_1e.orig/ms/do_nasm.bat openssl-OpenSSL_1_0_1e/ms/do_nasm.bat
---- openssl-OpenSSL_1_0_1e.orig/ms/do_nasm.bat	Mon Feb 11 16:21:21 2013
-+++ openssl-OpenSSL_1_0_1e/ms/do_nasm.bat	Sat Oct  5 14:03:14 2013
-@@ -1,8 +1,12 @@
+diff --git a/build.info b/build.info
+index 3dda4e89bf..72d8e86915 100644
+--- a/build.info
++++ b/build.info
+@@ -86,8 +86,13 @@ ELSIF[{- $config{target} =~ /^mingw/ -}]
+  SHARED_NAME[libcrypto]=libcrypto-{- $sover_filename -}{- $config{target} eq "mingw64" ? "-x64" : "" -}
+  SHARED_NAME[libssl]=libssl-{- $sover_filename -}{- $config{target} eq "mingw64" ? "-x64" : "" -}
+ ELSIF[{- $config{target} =~ /^VC-/ -}]
+- SHARED_NAME[libcrypto]=libcrypto-{- $sover_filename -}{- $target{multilib} -}
+- SHARED_NAME[libssl]=libssl-{- $sover_filename -}{- $target{multilib} -}
++ IF[{- $config{build_type} eq "debug" -}]
++  SHARED_NAME[libcrypto]=libcryptod
++  SHARED_NAME[libssl]=libssld
++ ELSE
++  SHARED_NAME[libcrypto]=libcrypto
++  SHARED_NAME[libssl]=libssl
++ ENDIF
+ ENDIF
  
- perl util\mkfiles.pl >MINFO
- perl util\mk1mf.pl nasm VC-WIN32 >ms\nt.mak
-+perl util\mk1mf.pl debug nasm VC-WIN32 >ms\ntd.mak
- perl util\mk1mf.pl dll nasm VC-WIN32 >ms\ntdll.mak
-+perl util\mk1mf.pl dll debug nasm VC-WIN32 >ms\ntdlld.mak
- perl util\mk1mf.pl nasm BC-NT >ms\bcb.mak
- 
- perl util\mkdef.pl 32 libeay > ms\libeay32.def
-+perl util\mkdef.pl D 32 libeay > ms\libeay32d.def
- perl util\mkdef.pl 32 ssleay > ms\ssleay32.def
-+perl util\mkdef.pl D 32 ssleay > ms\ssleay32d.def
-diff -rupd openssl-OpenSSL_1_0_1e.orig/ms/do_win64a.bat openssl-OpenSSL_1_0_1e/ms/do_win64a.bat
---- openssl-OpenSSL_1_0_1e.orig/ms/do_win64a.bat	Mon Feb 11 16:21:21 2013
-+++ openssl-OpenSSL_1_0_1e/ms/do_win64a.bat	Sat Oct  5 14:06:40 2013
-@@ -13,7 +13,11 @@ ml64 -c -Foms\uptable.obj ms\uptable.asm
- 
- :proceed
- perl util\mk1mf.pl VC-WIN64A >ms\nt.mak
-+perl util\mk1mf.pl debug VC-WIN64A >ms\ntd.mak
- perl util\mk1mf.pl dll VC-WIN64A >ms\ntdll.mak
-+perl util\mk1mf.pl dll debug VC-WIN64A >ms\ntdlld.mak
- 
- perl util\mkdef.pl 32 libeay > ms\libeay32.def
-+perl util\mkdef.pl D 32 libeay > ms\libeay32d.def
- perl util\mkdef.pl 32 ssleay > ms\ssleay32.def
-+perl util\mkdef.pl D 32 ssleay > ms\ssleay32d.def
-diff -rupd openssl-OpenSSL_1_0_1e.orig/ms/do_win64i.bat openssl-OpenSSL_1_0_1e/ms/do_win64i.bat
---- openssl-OpenSSL_1_0_1e.orig/ms/do_win64i.bat	Mon Feb 11 16:21:21 2013
-+++ openssl-OpenSSL_1_0_1e/ms/do_win64i.bat	Sat Oct  5 14:06:45 2013
-@@ -3,7 +3,11 @@ perl util\mkfiles.pl >MINFO
- perl ms\uplink-ia64.pl > ms\uptable.asm
- ias -o ms\uptable.obj ms\uptable.asm
- perl util\mk1mf.pl VC-WIN64I >ms\nt.mak
-+perl util\mk1mf.pl debug VC-WIN64I >ms\ntd.mak
- perl util\mk1mf.pl dll VC-WIN64I >ms\ntdll.mak
-+perl util\mk1mf.pl dll debug VC-WIN64I >ms\ntdlld.mak
- 
- perl util\mkdef.pl 32 libeay > ms\libeay32.def
-+perl util\mkdef.pl D 32 libeay > ms\libeay32d.def
- perl util\mkdef.pl 32 ssleay > ms\ssleay32.def
-+perl util\mkdef.pl D 32 ssleay > ms\ssleay32d.def
-diff -rupd openssl-OpenSSL_1_0_1e.orig/util/mkdef.pl openssl-OpenSSL_1_0_1e/util/mkdef.pl
---- openssl-OpenSSL_1_0_1e.orig/util/mkdef.pl	Mon Feb 11 16:21:21 2013
-+++ openssl-OpenSSL_1_0_1e/util/mkdef.pl	Sat Oct  5 14:03:14 2013
-@@ -59,6 +59,7 @@ my $debug=0;
- my $crypto_num= "util/libeay.num";
- my $ssl_num=    "util/ssleay.num";
- my $libname;
-+my $SUFFIX = "";
- 
- my $do_update = 0;
- my $do_rewrite = 1;
-@@ -146,6 +147,7 @@ my $zlib;
- foreach (@ARGV, split(/ /, $options))
- 	{
- 	$debug=1 if $_ eq "debug";
-+        $SUFFIX="D" if $_ eq "D";
- 	$W32=1 if $_ eq "32";
- 	$W16=1 if $_ eq "16";
- 	if($_ eq "NT") {
-@@ -1283,7 +1285,7 @@ sub print_def_file
- 	my $description = "$what $version, $name - http://$http_vendor";
- 
- 	if ($W32)
--		{ $libname.="32"; }
-+		{ $libname.="32"; $libname.=$SUFFIX; }
- 	elsif ($W16)
- 		{ $libname.="16"; }
- 	elsif ($OS2)
-diff -rupd openssl-OpenSSL_1_0_1e.orig/util/pl/VC-32.pl openssl-OpenSSL_1_0_1e/util/pl/VC-32.pl
---- openssl-OpenSSL_1_0_1e.orig/util/pl/VC-32.pl	Mon Feb 11 16:21:21 2013
-+++ openssl-OpenSSL_1_0_1e/util/pl/VC-32.pl	Sat Oct  5 14:03:14 2013
-@@ -15,6 +15,10 @@ else
- 	{
- 	$crypto="libeay32";
- 	}
-+if ($debug) {
-+  $ssl.="d";
-+  $crypto.="d";
-+}
- 
- $o='\\';
- $cp='$(PERL) util/copy.pl';
-diff -rupd openssl-1.0.1e.orig/apps/apps.c openssl-1.0.1e/apps/apps.c
---- openssl-1.0.1e.orig/apps/apps.c	Mon Feb 11 06:21:20 2013
-+++ openssl-1.0.1e/apps/apps.c	Tue Oct 22 10:00:48 2013
-@@ -152,6 +152,10 @@ static int WIN32_rename(const char *from
- #define rename(from,to) WIN32_rename((from),(to))
- #endif
- 
-+#if defined(_MSC_VER) && (_MSC_VER >= 1800)
-+#pragma warning (disable:4996)
-+#endif
-+
- typedef struct {
- 	const char *name;
- 	unsigned long flag;
-diff -rupd openssl-1.0.1e.orig/crypto/cryptlib.c openssl-1.0.1e/crypto/cryptlib.c
---- openssl-1.0.1e.orig/crypto/cryptlib.c	Mon Feb 11 06:21:20 2013
-+++ openssl-1.0.1e/crypto/cryptlib.c	Tue Oct 22 09:55:28 2013
-@@ -117,6 +117,10 @@
- #include "cryptlib.h"
- #include <openssl/safestack.h>
- 
-+#if defined(_MSC_VER) && (_MSC_VER >= 1800)
-+#pragma warning (disable:4996)
-+#endif
-+
- #if defined(OPENSSL_SYS_WIN32) || defined(OPENSSL_SYS_WIN16)
- static double SSLeay_MSVC5_hack=0.0; /* and for VC1.5 */
- #endif
+ # VMS has a cultural standard where all libraries are prefixed.

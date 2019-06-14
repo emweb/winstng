@@ -1,12 +1,5 @@
-
+cmake_minimum_required(VERSION 3.14)
 project( winst )
-
-# TODO Missing dependencies:
-# - Firebird
-# - Pango (needs glib) (replaced with DirectWrite on Windows since Wt 3.3.8)
-# - Replace jpeg with jpeg-turbo
-
-cmake_minimum_required(VERSION 2.8)
 
 include (ExternalProject)
 
@@ -27,17 +20,17 @@ set(STANDALONE_ASIO ${STANDALONE_ASIO} CACHE BOOL "use standalone version of Asi
 set(WTGIT ${WTGIT} CACHE BOOL "build git version instead of release version" FORCE)
 
 IF (NOT WT_VERSION)
-  SET(WT_VERSION "4.0.0")
+    SET(WT_VERSION "4.0.0")
 ENDIF (NOT WT_VERSION)
 set(WT_VERSION ${WT_VERSION} CACHE STRING "Wt version to download (if not WTGIT)" FORCE)
 
 IF(NOT WTGITREPO)
-  set(WTGITREPO "git://github.com/emweb/wt.git")
+    set(WTGITREPO "git://github.com/emweb/wt.git")
 ENDIF(NOT WTGITREPO)
 set(WTGITREPO ${WTGITREPO} CACHE BOOL "git repository for wt" FORCE)
 
 if (NOT WTGITTAG)
-  SET(WTGITTAG "master")
+    SET(WTGITTAG "master")
 endif (NOT WTGITTAG)
 set(WTGITTAG ${WTGITTAG} CACHE STRING "the branch name, commit id or tag to use when building git version" FORCE)
 
@@ -48,345 +41,176 @@ set(WINST_MODULE_PATH ${WINST_BATDIR}/cmake/Modules)
 set(CMAKE_PREFIX_PATH ${WINST_PREFIX} )
 
 # Are we building for 32-bit or 64-bit?
-# TODO Support ARM, MIPS and others
 if( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # 64-bit
-	set(_WT_ADDRESS_WIDTH 64)
-	if( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
-		set(_WT_ARCH x64)
-	else( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
-		set(_WT_ARCH ia64)
-		message( ERROR "${CMAKE_SYSTEM_PROCESSOR} architecture is not supported by the Wt bootstrapper, please build manually." )
-	endif( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
+    set(_WT_ADDRESS_WIDTH 64)
+    if( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
+        set(_WT_ARCH x64)
+    else( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
+        set(_WT_ARCH ia64)
+        message( ERROR "${CMAKE_SYSTEM_PROCESSOR} architecture is not supported by the Wt bootstrapper, please build manually." )
+    endif( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
 else( CMAKE_SIZEOF_VOID_P EQUAL 8 ) # 32-bit
-	set(_WT_ADDRESS_WIDTH 32)
-	set(_WT_ARCH x86)		 
+    set(_WT_ADDRESS_WIDTH 32)
+    set(_WT_ARCH x86)
 endif( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
-if(MSVC)
-     if(MSVC10)
-             set(FANCY_MSVC_VERSION "2010")
-     elseif(MSVC11)
-             set(FANCY_MSVC_VERSION "2012")
-     elseif(MSVC12)
-             set(FANCY_MSVC_VERSION "2013")
-     elseif(MSVC14)
-             if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.10)
-                     set(FANCY_MSVC_VERSION "2015")
-             else()
-                     set(FANCY_MSVC_VERSION "2017")
-             endif()
-     else()
-             set(FANCY_MSVC_VERSION "${MSVC_VERSION}")
-     endif()
-endif(MSVC)
+if(MSVC10)
+    set(FANCY_MSVC_VERSION "2010")
+elseif(MSVC11)
+    set(FANCY_MSVC_VERSION "2012")
+elseif(MSVC12)
+    set(FANCY_MSVC_VERSION "2013")
+elseif(MSVC14)
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.10)
+        set(FANCY_MSVC_VERSION "2015")
+    else()
+        set(FANCY_MSVC_VERSION "2017")
+    endif()
+else()
+    set(FANCY_MSVC_VERSION "${MSVC_VERSION}")
+endif()
 
 # Files to download
 
 if (STANDALONE_ASIO)
-  set( asio_ver "1.12.1" )
-  set( asio_URL https://prdownloads.sourceforge.net/asio/asio-${asio_ver}.tar.gz )
-  set( asio_MD5 b6ed864a7047805e3efce7d612f81bd5)
-  set( _PACKAGES ${_PACKAGES} asio )
-  set(STANDALONE_ASIO_DEPENDS "asio")
+    set( asio_ver "1.12.2" )
+    set( asio_URL https://prdownloads.sourceforge.net/asio/asio-${asio_ver}.tar.gz )
+    set( asio_HASH SHA1=9fb618d489f9b695c52477660984d9a3e21d8fc3 )
+    set( _PACKAGES ${_PACKAGES} asio )
+    set(STANDALONE_ASIO_DEPENDS "asio")
 else()
-  set(STANDALONE_ASIO_DEPENDS "")
+    set(STANDALONE_ASIO_DEPENDS "")
 endif()
 
 set( zlib_URL https://prdownloads.sourceforge.net/libpng/zlib-1.2.11.tar.gz )
 set( zlib_HASH SHA256=c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1)
 set( _PACKAGES ${_PACKAGES} zlib )
 
-set( bzip2_URL http://bzip.org/1.0.6/bzip2-1.0.6.tar.gz )
-set( bzip2_MD5 00b516f4704d4a7cb50a1d97e6e8e15b )
-set( _PACKAGES ${_PACKAGES} bzip2 )
-
 set( libpng_URL https://sourceforge.net/projects/libpng/files/libpng14/1.4.22/libpng-1.4.22.tar.gz )
 set( libpng_HASH SHA256=64b0632f7c528a7afd58c351be416fba3c9348a50a31b465d937e718febe81a7)
 set( _PACKAGES ${_PACKAGES} libpng )
-
-set( libjpeg_URL http://www.ijg.org/files/jpegsrc.v9b.tar.gz )
-set( libjpeg_MD5 6a9996ce116ec5c52b4870dbcd6d3ddb)
-set( _PACKAGES ${_PACKAGES} libjpeg )
-
-set( freetype_URL http://download.savannah.gnu.org/releases/freetype/freetype-2.5.5.tar.bz2 )
-set( freetype_MD5 2a7a314927011d5030903179cf183be0 )
-set( _PACKAGES ${_PACKAGES} freetype )
 
 set( postgresql_URL https://ftp.postgresql.org/pub/source/v11.1/postgresql-11.1.tar.bz2 )
 set( postgresql_HASH SHA256=90815e812874831e9a4bf6e1136bf73bc2c5a0464ef142e2dfea40cda206db08)
 set( _PACKAGES ${_PACKAGES} postgresql )
 
-if(WIN32)
-    set( openssl_URL https://github.com/openssl/openssl/archive/OpenSSL_1_0_2q.zip )
-    set( openssl_HASH SHA256=8165e0b480555e55387b9901f540999015227948894e397e474f90a83dd89751)
-else(WIN32)
-    set( openssl_URL https://openssl.org/source/openssl-1.0.2q.tar.gz )
-    set( openssl_HASH SHA256=5744cfcbcec2b1b48629f7354203bc1e5e9b5466998bbccc5b5fcde3b18eb684)
-endif(WIN32)
+set( openssl_URL https://www.openssl.org/source/openssl-1.1.1c.tar.gz )
+set( openssl_HASH SHA256=f6fb3079ad15076154eda9413fed42877d668e7069d9b87396d0804fdb3f4c90 )
 set( _PACKAGES ${_PACKAGES} openssl )
 
 set( libharu_URL http://github.com/libharu/libharu/archive/RELEASE_2_3_0.tar.gz )
 set( libharu_MD5 4f916aa49c3069b3a10850013c507460 )
-#set( libharu_URL https://github.com/libharu/libharu.git )
 set( _PACKAGES ${_PACKAGES} libharu )
 
-#set( mariadb_URL http://mariadb.cu.be/client-native-2.2.1/src/mariadb_client-2.2.1-src.tar.gz )
-#set( mariadb_URL https://downloads.mariadb.org/interstitial/connector-c-2.2.1/mariadb-connector-c-2.2.1-src.tar.gz )
-#set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c.git)
-#set( mariadb_TAG v2.2.1 )
-set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v_2.3.7.zip )
-#set( mariadb_MD5 a233181e03d3c307668b4c722d881661 )
+set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.1.1.zip )
+set( mariadb_HASH SHA256=1b891cfb8c3e8a03a498a203751f728fe8f97e4242d5163e05c3a9c2f2ea8c2c )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
-set( boost_ver "1_69" )
-set( boost_URL https://dl.bintray.com/boostorg/release/1.69.0/source/boost_${boost_ver}_0.tar.bz2 )
-set( boost_HASH SHA256=8f32d4617390d1c2d16f26a27ab60d97807b35440d45891fa340fc2648b04406)
+set( boost_ver "1_70" )
+set( boost_URL https://dl.bintray.com/boostorg/release/1.70.0/source/boost_${boost_ver}_0.tar.bz2 )
+set( boost_HASH SHA256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 )
 set( _PACKAGES ${_PACKAGES} boost )
 
-# required to build skia
-# depot_tools also installs git, svn, and python, required to build skia
-set( depot_tools_URL https://storage.googleapis.com/chrome-infra/depot_tools.zip)
-set( _PACKAGES ${_PACKAGES} depot_tools )
-
-# revision ID's become part of filename and filename gets too long with full
-# revision ID, causing problems in jenkins build
-#set( skia_REVISION "@394c7bb04d89667d2164a554f310e8e6f819abc2")
-IF(MSVC_VERSION GREATER 1800)
-  #834d9e109298ae704043128005f8c1bc622350f4
-  set( skia_REVISION "@834d9e")
-  set( WT_SKIA_OLD OFF)
-ELSE(MSVC_VERSION GREATER 1800)
-  set( skia_REVISION "@394c7b")
-  set( WT_SKIA_OLD ON)
-ENDIF(MSVC_VERSION GREATER 1800)
-set( skia_URL https://skia.googlesource.com/skia.git${skia_REVISION})
-set( _PACKAGES ${_PACKAGES} skia )
-
-set( tinymce_URL http://download.moxiecode.com/tinymce/tinymce_3.5.11.zip )
-set( tinymce_MD5 3018668d128931864c3f38d0b65ea65e)
+set( tinymce_URL http://download.tiny.cloud/tinymce/community/tinymce_3.5.12.zip )
+set( tinymce_HASH SHA256=030d133dd3f4c2b092f28d8645a6fa058e8ac0e7e92d552fb8d4e29bdd0020c5 )
 set( _PACKAGES ${_PACKAGES} tinymce )
 
 set( wt_URL https://github.com/emweb/wt/archive/${WT_VERSION}.tar.gz )
 set( _PACKAGES ${_PACKAGES} wt )
 
-if( WIN32 AND NOT UNIX )
+set( patch_URL http://prdownloads.sourceforge.net/gnuwin32/patch-2.5.9-7-bin.zip )
+set( patch_MD5 b9c8b31d62f4b2e4f1887bbb63e8a905)
+set( _PACKAGES ${_PACKAGES} patch )
 
-    set( patch_URL http://prdownloads.sourceforge.net/gnuwin32/patch-2.5.9-7-bin.zip )
-    set( patch_MD5 b9c8b31d62f4b2e4f1887bbb63e8a905)
-    set( _PACKAGES ${_PACKAGES} patch )
+set( nasm_URL https://www.nasm.us/pub/nasm/releasebuilds/2.14.02/win32/nasm-2.14.02-win32.zip )
+set( nasm_HASH SHA256=250f9b5eeb2111e8c7b494a977490985b8604fe7518a6f5041cde37cc727a067 )
+set( _PACKAGES ${_PACKAGES} nasm )
 
-    set( nasm_URL http://www.nasm.us/pub/nasm/releasebuilds/2.10.07/win32/nasm-2.10.07-win32.zip )
-    set( nasm_MD5 1dafe433d8c83854188934617eec3032 )
-    set( _PACKAGES ${_PACKAGES} nasm )
-	
-#    if( FETCH_ONLY OR WTGIT )
-        # set( 7zip_URL http://prdownloads.sourceforge.net/sevenzip/7za920.zip )
-        # set( 7zip_MD5 2fac454a90ae96021f4ffc607d4c00f8 )
-        # set( _PACKAGES ${_PACKAGES} 7zip )
-        
-        #set( git_ZIPFILE PortableGit-1.7.3.1-preview20101002.7z )
-#        set( git_URL http://msysgit.googlecode.com/files/${git_ZIPFILE} )
-#        SET( git_MD5 36c26ebc6b6e58d995efd994b8dd85f2 )
-#        set( _PACKAGES ${_PACKAGES} git )
-#    endif( FETCH_ONLY OR WTGIT )
-
-    if( _WT_ARCH STREQUAL "x64" ) # Win 64-bit
-		set( perl_URL http://strawberryperl.com/download/5.24.1.1/strawberry-perl-5.24.1.1-64bit-portable.zip )
-		set( perl_HASH SHA1=5e7bd4d9eecef30e9cfef95f45d4f94237a4d7a4)
-		set( _PACKAGES ${_PACKAGES} perl )
-
-		set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/graphicsmagick-binaries/1.3.18/GraphicsMagick-1.3.18-Q8-win64-dll.exe )
-		set( graphicsmagick_MD5 bd25adb9e8218aabcd68a034116396e6 )
-		set( _PACKAGES ${_PACKAGES} graphicsmagick )
-
-		set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.7.27050-0_x64.zip )
-		set( firebirdsql_MD5 aa0bcb781feb25d303520b94d2c0e0df )
-		set( _PACKAGE ${_PACKAGES} firebirdsql )
-
-    elseif( _WT_ARCH STREQUAL "x86" ) # Win 32-bit
-    
-        set( perl_URL http://strawberryperl.com/download/5.24.1.1/strawberry-perl-5.24.1.1-32bit-portable.zip )
-        set (perl_HASH SHA1=f1e64debc3b61010fe1885a668eaf2272e67153e )
-        set( _PACKAGES ${_PACKAGES} perl )
-
-        set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.7.27050-0_Win32.zip )
-        set( firebirdsql_MD5 2cb088dd11b14d59ee97fd19f2038e99 )
-        set( _PACKAGE ${_PACKAGES} firebirdsql )
-			
-	elseif( _WT_ARCH STREQUAL "ia64" ) # Win Itanium
-            message( ERROR "${_WT_ARCH} architecture is not supported by the Wt bootstrapper, please build manually." )
-	else() #ARM	
-            message( ERROR "${CMAKE_SYSTEM_PROCESSOR} architecture is not supported by the Wt bootstrapper, please build manually." )
-    endif()
-
-else( WIN32 AND NOT UNIX )
-
-    set( patch_URL http://ftp.gnu.org/gnu/patch/patch-2.7.tar.bz2 )
-    set( patch_MD5 1f3a075ea06705f194a2a4ce7045f072 )
-    set( _PACKAGES ${_PACKAGES} patch )
-
-    set( nasm_URL http://www.nasm.us/pub/nasm/releasebuilds/2.10.07/nasm-2.10.07.tar.bz2 )
-    set( nasm_MD5 af1cd6669f5e98148cd5ec42dee90f19 )
-    set( _PACKAGES ${_PACKAGES} nasm )
-
-    if( FETCH_ONLY OR WTGIT )
-        set( git_URL https://git-core.googlecode.com/files/git-1.8.2.2.tar.gz )
-        set( git_MD5 f7407df37facf579dcaa979266cc3c59 )
-        set( _PACKAGES ${_PACKAGES} git )
-    endif( FETCH_ONLY OR WTGIT )
-    
-    set( perl_URL http://www.cpan.org/src/5.0/perl-5.16.3.tar.gz )
-    set( perl_MD5 eb5c40f2575df6c155bc99e3fe0a9d82 )
+if( _WT_ARCH STREQUAL "x64" ) # Win 64-bit
+    set( perl_URL http://strawberryperl.com/download/5.24.1.1/strawberry-perl-5.24.1.1-64bit-portable.zip )
+    set( perl_HASH SHA1=5e7bd4d9eecef30e9cfef95f45d4f94237a4d7a4)
     set( _PACKAGES ${_PACKAGES} perl )
 
-    set( graphicsmagick_URL http://prdownloads.sourceforge.net/graphicsmagick/GraphicsMagick-1.3.18.tar.bz2 )
-    set( graphicsmagick_MD5 b2c7f2fbfc0862525b047655953efd62 )
-    set( _PACKAGES ${_PACKAGES} graphicsmagick )
+    set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.7.27050-0_x64.zip )
+    set( firebirdsql_MD5 aa0bcb781feb25d303520b94d2c0e0df )
+    set( _PACKAGE ${_PACKAGES} firebirdsql )
+elseif( _WT_ARCH STREQUAL "x86" ) # Win 32-bit
+    set( perl_URL http://strawberryperl.com/download/5.24.1.1/strawberry-perl-5.24.1.1-32bit-portable.zip )
+    set (perl_HASH SHA1=f1e64debc3b61010fe1885a668eaf2272e67153e )
+    set( _PACKAGES ${_PACKAGES} perl )
 
-    set( fcgi_URL http://www.fastcgi.com/dist/fcgi-2.4.0.tar.gz )
-    set( fcgi_MD5 d15060a813b91383a9f3c66faf84867e )
-    set( _PACKAGES ${_PACKAGES} fcgi )
-
-    # TODO Move to pdcurses? (it's buildable on Win32 with nmake and others, might need win32a - http://www.projectpluto.com/win32a.htm )
-    set( ncurses_URL http://ftp.gnu.org/pub/gnu/ncurses/ncurses-5.9.tar.gz )
-    set( ncurses_MD5 8cb9c412e5f2d96bc6f459aa8c6282a1 )
-    set( _PACKAGES ${_PACKAGES} ncurses )
-#    set( ncurses_URL http://prdownloads.sourceforge.net/pdcurses/PDCurses-3.4.tar.gz )
-#    set( ncurses_MD5 4e04e4412d1b1392a7f9a489b95b331a )
-#    set( _PACKAGES ${_PACKAGES} ncurses )
-
-    set( fakerootng_URL http://prdownloads.sourceforge.net/fakerootng/fakeroot-ng-0.17.tar.gz )
-    set( fakerootng_MD5 972b022a10cdeb0f61052982002f42b4 )
-    set( _PACKAGES ${_PACKAGES} fakerootng )
-
-    # TODO Build FirebirdSQL on Unix - On Windows, too?
-    set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.2.26540-0.tar.bz2 )
-    set( firebirdsql_MD5 21154d2004e025c8a3666625b0357bb5 )
-    set( _PACKAGES ${_PACKAGES} firebirdsql )
-
-endif( WIN32 AND NOT UNIX )
+    set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.7.27050-0_Win32.zip )
+    set( firebirdsql_MD5 2cb088dd11b14d59ee97fd19f2038e99 )
+    set( _PACKAGE ${_PACKAGES} firebirdsql )
+elseif( _WT_ARCH STREQUAL "ia64" ) # Win Itanium
+    message( ERROR "${_WT_ARCH} architecture is not supported by the Wt bootstrapper, please build manually." )
+else() #ARM
+    message( ERROR "${CMAKE_SYSTEM_PROCESSOR} architecture is not supported by the Wt bootstrapper, please build manually." )
+endif()
 
 # If in fetch mode, only download and set a "fetch-only" indicator
 if (FETCH_ONLY )
     foreach( pkg ${_PACKAGES} )
-	message( STATUS "Downloading ${pkg}" )
+        message( STATUS "Downloading ${pkg}" )
         get_filename_component( fn ${${pkg}_URL} NAME )
         file( DOWNLOAD ${${pkg}_URL} ${WINST_DOWNLOADS_DIR}/${fn} EXPECTED_MD5 ${${pkg}_MD5} SHOW_PROGRESS )
     endforeach(pkg)
-    
-    file( WRITE ${PROJECT_BINARY_DIR}/fetch-only "" )
-    
-ELSE ( FETCH_ONLY )
 
+    file( WRITE ${PROJECT_BINARY_DIR}/fetch-only "" )
+ELSE ( FETCH_ONLY )
     # GNU patch
-    if( WIN32 AND NOT UNIX )
-        ExternalProject_Add( patch
-            DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-            URL ${patch_URL}
-            URL_MD5 ${patch_MD5}
-            CONFIGURE_COMMAND ""
-            BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${WINST_PREFIX}/
-            INSTALL_COMMAND ${CMAKE_COMMAND} -E copy ${WINST_BATDIR}/patches/patch.exe.manifest ${WINST_PREFIX}/bin/
-            LOG_DOWNLOAD 1
-            LOG_UPDATE 1
-            LOG_CONFIGURE 1
-            LOG_BUILD 1
-            LOG_TEST 1
-            LOG_INSTALL 1
-            )
-        set( PATCH_EXECUTABLE ${WINST_PREFIX}\\bin\\patch.exe )
-    else( WIN32 AND NOT UNIX )
-        ExternalProject_Add( patch
-            DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-            URL ${patch_URL}
-            URL_MD5 ${patch_MD5}
-            CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX}
-            BUILD_COMMAND ${CMAKE_BUILD_TOOL}
-            BUILD_IN_SOURCE 1
-            INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
-            LOG_DOWNLOAD 1
-            LOG_UPDATE 1
-            LOG_CONFIGURE 1
-            LOG_BUILD 1
-            LOG_TEST 1
-            LOG_INSTALL 1
-            )
-	set( PATCH_EXECUTABLE ${WINST_PREFIX}/bin/patch )
-    endif( WIN32 AND NOT UNIX )
+    ExternalProject_Add( patch
+        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
+        URL ${patch_URL}
+        URL_MD5 ${patch_MD5}
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${WINST_PREFIX}/
+        INSTALL_COMMAND ${CMAKE_COMMAND} -E copy ${WINST_BATDIR}/patches/patch.exe.manifest ${WINST_PREFIX}/bin/
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        )
+    set( PATCH_EXECUTABLE ${WINST_PREFIX}\\bin\\patch.exe )
 
     # Make sure autotools-based 3rd-parties use the bootstrapped libraries
     file( WRITE ${WINST_PREFIX}/share/config.site "CPPFLAGS='-I${WINST_PREFIX}/include'\nLDFLAGS='-L${WINST_PREFIX}/lib'\n" )
 
     # Netwide Assembler
-    if( WIN32 AND NOT UNIX )
-        ExternalProject_Add( nasm
-            DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-            URL ${nasm_URL}
-            URL_MD5 ${nasm_MD5}
-            CONFIGURE_COMMAND ""
-            BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${WINST_PREFIX}/bin
-            INSTALL_COMMAND ""
-            LOG_DOWNLOAD 1
-            LOG_UPDATE 1
-            LOG_CONFIGURE 1
-            LOG_BUILD 1
-            LOG_TEST 1
-            LOG_INSTALL 1
-            )
-    else( WIN32 AND NOT UNIX )
-        ExternalProject_Add( nasm
-            DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-            URL ${nasm_URL}
-            URL_MD5 ${nasm_MD5}
-            CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX}
-            BUILD_COMMAND ${CMAKE_BUILD_TOOL}
-            BUILD_IN_SOURCE 1
-            INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
-            LOG_DOWNLOAD 1
-            LOG_UPDATE 1
-            LOG_CONFIGURE 1
-            LOG_BUILD 1
-            LOG_TEST 1
-            LOG_INSTALL 1
-            )
-    endif( WIN32 AND NOT UNIX )
+    ExternalProject_Add( nasm
+        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
+        URL ${nasm_URL}
+        URL_HASH ${nasm_HASH}
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${WINST_PREFIX}/bin
+        INSTALL_COMMAND ""
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        )
 
     # Perl - required for OpenSSL
-    if( WIN32 AND NOT UNIX )
-        ExternalProject_Add( perl
-                DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-                URL ${perl_URL}
-                URL_HASH ${perl_HASH}
-                CONFIGURE_COMMAND ""
-                BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/perl ${WINST_PREFIX}/
-                INSTALL_COMMAND ""
-                LOG_DOWNLOAD 1
-                LOG_UPDATE 1
-                LOG_CONFIGURE 1
-                LOG_BUILD 1
-                LOG_TEST 1
-                LOG_INSTALL 1
-                )
-    else( WIN32 AND NOT UNIX )
-        ExternalProject_Add( perl
-            DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-            URL ${perl_URL}
-            URL_MD5 ${perl_MD5}
-            CONFIGURE_COMMAND ./Configure -de -Dprefix=${WINST_PREFIX}
-            BUILD_COMMAND ${CMAKE_BUILD_TOOL}
-            BUILD_IN_SOURCE 1
-            INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
-            LOG_DOWNLOAD 1
-            LOG_UPDATE 1
-            LOG_CONFIGURE 1
-            LOG_BUILD 1
-            LOG_TEST 1
-            LOG_INSTALL 1
-            )
-        set( PERL_EXECUTABLE ${WINST_PREFIX}/bin/perl )
-    endif( WIN32 AND NOT UNIX )
-	
-	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/zlib)
+    ExternalProject_Add( perl
+        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
+        URL ${perl_URL}
+        URL_HASH ${perl_HASH}
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/perl ${WINST_PREFIX}/
+        INSTALL_COMMAND ""
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        )
+
+    file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/zlib)
     ExternalProject_Add( zlib-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/zlib-src
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
@@ -396,7 +220,7 @@ ELSE ( FETCH_ONLY )
         PATCH_COMMAND ${CMAKE_COMMAND} -E remove zconf.h
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
-		INSTALL_COMMAND ""
+        INSTALL_COMMAND ""
         TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/zlib.h ${WINST_PREFIX}/licenses/zlib/
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -443,26 +267,6 @@ ELSE ( FETCH_ONLY )
         INSTALL_COMMAND ""
         )
 
-    if ( UNIX AND NOT WIN32 )
-      file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/bzip2)
-      ExternalProject_Add( bzip2
-          DEPENDS patch
-          DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-          URL ${bzip2_URL}
-          URL_MD5 ${bzip2_MD5}
-	  	LIST_SEPARATOR ^^
-          PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/bzip2.patch
-          CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
-	  	TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE ${WINST_PREFIX}/licenses/bzip2/
-          LOG_DOWNLOAD 1
-          LOG_UPDATE 1
-          LOG_CONFIGURE 1
-          LOG_BUILD 1
-          LOG_TEST 1
-          LOG_INSTALL 1
-          )
-    endif ( UNIX AND NOT WIN32 )
-
     file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/libpng)
     ExternalProject_Add( libpng-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libpng-src
@@ -472,7 +276,7 @@ ELSE ( FETCH_ONLY )
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
-		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE ${WINST_PREFIX}/licenses/libpng
+        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE ${WINST_PREFIX}/licenses/libpng
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -485,11 +289,8 @@ ELSE ( FETCH_ONLY )
         DEPENDS zlib libpng-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libpng-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-#	LIST_SEPARATOR ^^
-#	PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libpng-export.patch
         CMAKE_ARGS 
-	# -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include 
-		-DCMAKE_BUILD_TYPE=Debug -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+            -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -501,10 +302,7 @@ ELSE ( FETCH_ONLY )
         DEPENDS zlib libpng-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libpng-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-#	LIST_SEPARATOR ^^
-#	PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libpng-export.patch
         CMAKE_ARGS 
-	# -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include 
             -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -523,225 +321,31 @@ ELSE ( FETCH_ONLY )
         INSTALL_COMMAND ""
         )
 
-    if (UNIX AND NOT WIN32)
-      file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/libjpeg)
-      ExternalProject_Add( libjpeg
-          DEPENDS patch
-          DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-          URL ${libjpeg_URL}
-          URL_MD5 ${libjpeg_MD5}
-          	LIST_SEPARATOR ^^
-          PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/jpeg8.patch
-          CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
-          	TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/README ${WINST_PREFIX}/licenses/libjpeg/
-          LOG_DOWNLOAD 1
-          LOG_UPDATE 1
-          LOG_CONFIGURE 1
-          LOG_BUILD 1
-          LOG_TEST 1
-          LOG_INSTALL 1
-          )
-    endif (UNIX AND NOT WIN32)
-        
-#	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/freetype)
-#    ExternalProject_Add( freetype
-#        DEPENDS zlib libpng patch
-#        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-#        URL ${freetype_URL}
-#        URL_MD5 ${freetype_MD5}
-#		LIST_SEPARATOR ^^
-##        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/freetype-2.5.0.1.diff
-#        CMAKE_ARGS -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX} 
-#		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/docs/LICENSE.TXT ${WINST_PREFIX}/licenses/freetype/
-#        LOG_DOWNLOAD 1
-#        LOG_UPDATE 1
-#        LOG_CONFIGURE 1
-#        LOG_BUILD 1
-#        LOG_TEST 1
-#        LOG_INSTALL 1
-#        )
-
-#        ExternalProject_Add( depot_tools
-#                DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-#                URL ${depot_tools_URL}
-#                #URL_MD5 ${depot_tools_MD5}
-#                CONFIGURE_COMMAND ""
-#                BUILD_COMMAND ""
-#                INSTALL_COMMAND ""
-#                LOG_DOWNLOAD 1
-#                LOG_UPDATE 1
-#                LOG_CONFIGURE 1
-#                LOG_BUILD 1
-#                LOG_TEST 1
-#                LOG_INSTALL 1
-#                )
-#        SET(DEPOT_TOOLS_PATH ${WINST_BASEDIR}/build/depot_tools-prefix/src/depot_tools)
-#
-IF(_WT_ADDRESS_WIDTH EQUAL 64)
-  IF(WT_SKIA_OLD)
-    SET(SKIA_ARCH_TYPE "x86")
-  ELSE(WT_SKIA_OLD)
-    SET(SKIA_ARCH_TYPE "x86_64")
-  ENDIF(WT_SKIA_OLD)
-ELSE(_WT_ADDRESS_WIDTH EQUAL 64)
-  SET(SKIA_ARCH_TYPE "x86")
-ENDIF(_WT_ADDRESS_WIDTH EQUAL 64)
-
-#    ExternalProject_Add( skia-fetch
-#        DEPENDS depot_tools
-#        SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
-#        DOWNLOAD_COMMAND ${WINST_BATDIR}/cmake/execute-with-path.bat ${DEPOT_TOOLS_PATH} ${CMAKE_COMMAND} -E chdir <SOURCE_DIR> gclient.bat config ${skia_URL}
-#        UPDATE_COMMAND ${WINST_BATDIR}/cmake/execute-with-path.bat ${DEPOT_TOOLS_PATH} ${CMAKE_COMMAND} -E chdir <SOURCE_DIR> gclient.bat sync
-#        CONFIGURE_COMMAND ""
-#        BUILD_COMMAND ""
-#        INSTALL_COMMAND ""
-#        #TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/zlib.h ${WINST_PREFIX}/licenses/zlib/
-#        LOG_DOWNLOAD 1
-#        LOG_UPDATE 1
-#        LOG_CONFIGURE 1
-#        LOG_BUILD 1
-#        LOG_TEST 1
-#        LOG_INSTALL 1
-#        )
-
-#    ExternalProject_Add( skia-debug
-#        DEPENDS skia-fetch
-#        SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
-#        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-#        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/skia.git${skia_REVISION} ${_WT_ADDRESS_WIDTH} ${SKIA_ARCH_TYPE} python.bat gyp_skia
-#        BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/skia.git${skia_REVISION} ${WINST_BATDIR}/cmake/build-skia.bat Debug ${DEPOT_TOOLS_PATH}
-#        INSTALL_COMMAND ""
-#        LOG_DOWNLOAD 1
-#        LOG_UPDATE 1
-#        LOG_CONFIGURE 1
-#        LOG_BUILD 1
-#        LOG_TEST 1
-#        LOG_INSTALL 1
-#        )
-
-#    ExternalProject_Add( skia-release
-#        DEPENDS skia-fetch
-#        SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
-#        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-#        CONFIGURE_COMMAND ${WINST_BATDIR}/cmake/configure-skia.bat ${DEPOT_TOOLS_PATH} ${FANCY_MSVC_VERSION} <SOURCE_DIR>/skia.git${skia_REVISION} ${_WT_ADDRESS_WIDTH} ${SKIA_ARCH_TYPE} python.bat gyp_skia
-#        BUILD_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/skia.git${skia_REVISION} ${WINST_BATDIR}/cmake/build-skia.bat Release ${DEPOT_TOOLS_PATH}
-#        INSTALL_COMMAND ""
-#        LOG_DOWNLOAD 1
-#        LOG_UPDATE 1
-#        LOG_CONFIGURE 1
-#        LOG_BUILD 1
-#        LOG_TEST 1
-#        LOG_INSTALL 1
-#        )
-
-#     ExternalProject_Add( skia
-#        DEPENDS skia-debug skia-release
-#        SOURCE_DIR ${CMAKE_BINARY_DIR}/skia-src
-#        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-#        CONFIGURE_COMMAND ""
-#        BUILD_COMMAND ""
-#        INSTALL_COMMAND ""
-#        )
-
     # OpenSSL requires some extra effort
-    if( WIN32 AND NOT UNIX ) # Windows compilers but Cygwin
-        if( _WT_ARCH STREQUAL "x64" ) # Windows 64-bit
-        
-            set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_win64a.bat" )
-            if( MSVC ) # Visual C++
-                if( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
-					set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_win64a.bat" )
-                    set( OPENSSL_DEBUG_CONFIGURE_COMMAND "${WINST_PREFIX}/bin/perl Configure debug-VC-WIN64A --prefix=${WINST_PREFIX}" )
-                    set( OPENSSL_RELEASE_CONFIGURE_COMMAND "${WINST_PREFIX}/bin/perl Configure VC-WIN64A --prefix=${WINST_PREFIX}" )
-                    set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak" )
-                    set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak install" )
-                elseif( CMAKE_SYSTEM_PROCESSOR STREQUAL IA64 )
-					set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_win64i.bat" )
-                    set( OPENSSL_DEBUG_CONFIGURE_COMMAND "${WINST_PREFIX}/bin/perl Configure debug-VC-WIN64I --prefix=${WINST_PREFIX}" )
-                    set( OPENSSL_RELEASE_CONFIGURE_COMMAND "${WINST_PREFIX}/bin/perl Configure VC-WIN64I --prefix=${WINST_PREFIX}" )
-                    set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak" )
-                    set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak install" )
-                endif( CMAKE_SYSTEM_PROCESSOR STREQUAL AMD64 )
-            else(MSVC) # Watcom? Borland 64-bit (not sure it exists) ? - This configuration won't work, probably
-                set( OPENSSL_DEBUG_CONFIGURE_COMMAND "./config shared --prefix=${WINST_PREFIX}" )
-                set( OPENSSL_RELEASE_CONFIGURE_COMMAND "./config shared --prefix=${WINST_PREFIX}" )
-                set( OPENSSL_BUILD_COMMAND ${CMAKE_BUILD_TOOL} )
-                set( OPENSSL_INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install )
-            endif( MSVC )
-
-        else( _WT_ARCH STREQUAL "x86" ) # Windows 32-bit
-        
-            if( MSVC )
-                set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_nasm.bat" )
-                set( OPENSSL_DEBUG_CONFIGURE_COMMAND "perl Configure debug-VC-WIN32 --prefix=${WINST_PREFIX}" )
-                set( OPENSSL_RELEASE_CONFIGURE_COMMAND "perl Configure VC-WIN32 --prefix=${WINST_PREFIX}" )
-                set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak" )
-                set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} -f ms/ntdll.mak install" )
-            elseif( BORLAND )
-                set( OPENSSL_GENASM_COMMAND "ms\\\\\\\\do_nasm.bat" )
-                set( OPENSSL_DEBUG_CONFIGURE_COMMAND "perl Configure debug-BC-32 no-asm --prefix=${WINST_PREFIX}" )
-                set( OPENSSL_RELEASE_CONFIGURE_COMMAND "perl Configure BC-32 no-asm --prefix=${WINST_PREFIX}" )
-                set( OPENSSL_BUILD_COMMAND "${CMAKE_BUILD_TOOL} -f ms\\\\\\\\bcb.mak" )
-                set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} -f ms\\\\\\\\bcb.mak install" )
-            else(MSVC)
-                set( OPENSSL_GENASM_COMMAND )
-                set( OPENSSL_DEBUG_CONFIGURE_COMMAND ./config shared --prefix=${WINST_PREFIX} )
-                set( OPENSSL_RELEASE_CONFIGURE_COMMAND ./config shared --prefix=${WINST_PREFIX} )
-                set( OPENSSL_BUILD_COMMAND ${CMAKE_BUILD_TOOL} )
-                set( OPENSSL_INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install )
-            endif( MSVC )
-            
-        endif()
-    else( WIN32 AND NOT UNIX ) # Unix, Cygwin and MSYS
-        set( OPENSSL_GENASM_COMMAND )
-
-        if( APPLE AND CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Mac OS X 64-bit
-          set( OPENSSL_DEBUG_CONFIGURE_COMMAND ./Configure^^shared^^darwin64-x86_64-cc^^--prefix=${WINST_PREFIX} )
-          set( OPENSSL_RELEASE_CONFIGURE_COMMAND ./Configure^^shared^^darwin64-x86_64-cc^^--prefix=${WINST_PREFIX} )
-        else( APPLE AND CMAKE_SIZEOF_VOID_P EQUAL 8 ) # Mac OS X 32-bit and all other Unix platforms
-          set( OPENSSL_DEBUG_CONFIGURE_COMMAND "./config -d shared threads zlib --prefix=${WINST_PREFIX}" )
-          set( OPENSSL_RELEASE_CONFIGURE_COMMAND "./config shared threads zlib --prefix=${WINST_PREFIX}" )
-        endif( APPLE AND CMAKE_SIZEOF_VOID_P EQUAL 8 )
-
-        set( OPENSSL_BUILD_COMMAND ${CMAKE_BUILD_TOOL} )
-        set( OPENSSL_INSTALL_COMMAND "${CMAKE_BUILD_TOOL} install" )
-    endif( WIN32 AND NOT UNIX )
+    if( _WT_ARCH STREQUAL "x64" ) # Windows 64-bit
+        set( OPENSSL_DEBUG_CONFIGURE_COMMAND "${WINST_PREFIX}/bin/perl Configure VC-WIN64A --debug --openssldir=${WINST_PREFIX} --prefix=${WINST_PREFIX}" )
+        set( OPENSSL_RELEASE_CONFIGURE_COMMAND "${WINST_PREFIX}/bin/perl Configure VC-WIN64A --release --openssldir=${WINST_PREFIX} --prefix=${WINST_PREFIX}" )
+    else( _WT_ARCH STREQUAL "x86" ) # Windows 32-bit
+        set( OPENSSL_DEBUG_CONFIGURE_COMMAND "${WINST_PREFIX}/bin/perl Configure VC-WIN32 --debug --openssldir=${WINST_PREFIX} --prefix=${WINST_PREFIX}" )
+        set( OPENSSL_RELEASE_CONFIGURE_COMMAND "${WINST_PREFIX}/bin/perl Configure VC-WIN32 --release --openssldir=${WINST_PREFIX} --prefix=${WINST_PREFIX}" )
+    endif()
 
     set( _OLDPATH $ENV{PATH} )
     set( _NEWPATH ${WINST_PREFIX}\\bin ${_OLDPATH} )
     set( ENV{PATH} "${_NEWPATH}" )
-    ExternalProject_Add( openssl-release
-        DEPENDS zlib perl patch nasm
-        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-        URL ${openssl_URL}
-        URL_HASH ${openssl_HASH}
-		LIST_SEPARATOR ^^
-        UPDATE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_CONFIGURE_COMMAND:STRING=${OPENSSL_RELEASE_CONFIGURE_COMMAND} -P ${WINST_BATDIR}/cmake/configure-openssl.cmake
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/openssl-library-names.patch
-        CONFIGURE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_GENASM_COMMAND=${OPENSSL_GENASM_COMMAND} -P ${WINST_BATDIR}/cmake/genasm-openssl.cmake
-        BUILD_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_BUILD_COMMAND=${OPENSSL_BUILD_COMMAND} -P ${WINST_BATDIR}/cmake/build-openssl.cmake
-        BUILD_IN_SOURCE 1
-        INSTALL_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_INSTALL_COMMAND=${OPENSSL_INSTALL_COMMAND} -P ${WINST_BATDIR}/cmake/install-openssl.cmake
-        LOG_DOWNLOAD 1
-        LOG_UPDATE 1
-        LOG_CONFIGURE 1
-        LOG_BUILD 1
-        LOG_TEST 1
-        LOG_INSTALL 1
-        )
 
     ExternalProject_Add( openssl-debug
         DEPENDS zlib perl patch nasm
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${openssl_URL}
-        URL_MD5 ${openssl_MD5}
-		LIST_SEPARATOR ^^
+        URL_HASH ${openssl_HASH}
+        LIST_SEPARATOR ^^
+        UPDATE_COMMAND ""
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/openssl-library-names.patch
-        UPDATE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_CONFIGURE_COMMAND:STRING=${OPENSSL_DEBUG_CONFIGURE_COMMAND} -P ${WINST_BATDIR}/cmake/configure-openssl.cmake
-        CONFIGURE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_GENASM_COMMAND=${OPENSSL_GENASM_COMMAND} -P ${WINST_BATDIR}/cmake/genasm-openssl.cmake
-        BUILD_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_BUILD_COMMAND=${OPENSSL_BUILD_COMMAND} -P ${WINST_BATDIR}/cmake/build-openssl.cmake
+        CONFIGURE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_CONFIGURE_COMMAND:STRING=${OPENSSL_DEBUG_CONFIGURE_COMMAND} -P ${WINST_BATDIR}/cmake/configure-openssl.cmake
+        TEST_COMMAND ${CMAKE_COMMAND} -E rename ${WINST_PREFIX}/lib/libcrypto.lib ${WINST_PREFIX}/lib/libcryptod.lib
+        COMMAND ${CMAKE_COMMAND} -E rename ${WINST_PREFIX}/lib/libssl.lib ${WINST_PREFIX}/lib/libssld.lib
         BUILD_IN_SOURCE 1
-        INSTALL_COMMAND ${CMAKE_COMMAND} -DWINST_DIR=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR=<SOURCE_DIR> -DOPENSSL_INSTALL_COMMAND=${OPENSSL_INSTALL_COMMAND} -P ${WINST_BATDIR}/cmake/install-openssl.cmake
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -750,34 +354,50 @@ ENDIF(_WT_ADDRESS_WIDTH EQUAL 64)
         LOG_INSTALL 1
         )
 
-	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/openssl)
+    ExternalProject_Add( openssl-release
+        DEPENDS zlib perl patch nasm openssl-debug
+        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
+        URL ${openssl_URL}
+        URL_HASH ${openssl_HASH}
+        LIST_SEPARATOR ^^
+        UPDATE_COMMAND ""
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/openssl-library-names.patch
+        CONFIGURE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_CONFIGURE_COMMAND:STRING=${OPENSSL_RELEASE_CONFIGURE_COMMAND} -P ${WINST_BATDIR}/cmake/configure-openssl.cmake
+        TEST_COMMAND ""
+        BUILD_IN_SOURCE 1
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        )
+
+    file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/openssl)
     ExternalProject_Add( openssl
         DEPENDS openssl-release openssl-debug
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${openssl_URL}
-        URL_MD5 ${openssl_MD5}
+        URL_HASH ${openssl_HASH}
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
-		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE ${WINST_PREFIX}/licenses/openssl/
+        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE ${WINST_PREFIX}/licenses/openssl/
         )
 
-	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/mariadb)
+    file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/mariadb)
     ExternalProject_Add( mariadb-fetch
         DEPENDS patch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-#        GIT_REPOSITORY ${mariadb_URL}
-#        GIT_TAG ${mariadb_TAG}
-#        DOWNLOAD_NAME ${mariadb_NAME}
         URL ${mariadb_URL}
-        URL_MD5 ${mariadb_MD5}
+        URL_HASH ${mariadb_HASH}
         LIST_SEPARATOR ^^
         PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/mariadb-native-client.patch
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
-		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/COPYING.LIB ${WINST_PREFIX}/licenses/mariadb/
+        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/COPYING.LIB ${WINST_PREFIX}/licenses/mariadb/
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -792,12 +412,11 @@ ENDIF(_WT_ADDRESS_WIDTH EQUAL 64)
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         LIST_SEPARATOR ^^
         CMAKE_ARGS
-          -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include
-          -DCMAKE_BUILD_TYPE=Debug
-          -DCMAKE_MODULE_PATH:STRING=${WINST_MODULE_PATH}
-          -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
-          -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
-          -DSSL_PREFIX:STRING=${WINST_PREFIX}
+            -DINSTALL_LIBDIR=lib
+            -DCMAKE_BUILD_TYPE=Debug
+            -DCMAKE_MODULE_PATH:STRING=${WINST_MODULE_PATH}
+            -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
+            -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -812,12 +431,11 @@ ENDIF(_WT_ADDRESS_WIDTH EQUAL 64)
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         LIST_SEPARATOR ^^
         CMAKE_ARGS
-          -DCMAKE_SYSTEM_IGNORE_PATH=/lib^^/usr/lib^^/usr/local/lib^^/usr/include^^/usr/local/include
-          -DCMAKE_BUILD_TYPE=MinSizeRel
-          -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
-          -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
-          -DCMAKE_MODULE_PATH:STRING=${WINST_MODULE_PATH}
-          -DSSL_PREFIX:STRING=${WINST_PREFIX}
+            -DINSTALL_LIBDIR=lib
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo
+            -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
+            -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+            -DCMAKE_MODULE_PATH:STRING=${WINST_MODULE_PATH}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -836,42 +454,7 @@ ENDIF(_WT_ADDRESS_WIDTH EQUAL 64)
         )
 
 
-#    if( WIN32 AND NOT UNIX )
-            # ExternalProject_Add( 7zip
-            # DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-            # URL ${7zip_URL}
-            # URL_MD5 ${7zip_MD5}
-            # CONFIGURE_COMMAND ""
-            # BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/7za.exe ${WINST_PREFIX}/bin/
-            # INSTALL_COMMAND ""
-            # LOG_DOWNLOAD 1
-            # LOG_UPDATE 1
-            # LOG_CONFIGURE 1
-            # LOG_BUILD 1
-            # LOG_TEST 1
-            # LOG_INSTALL 1
-	    # )
-
-#        ExternalProject_Add( git
-#            DEPENDS 7zip
-#            DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-#            URL ${git_URL}
-#            URL_MD5 ${git_MD5}
-#            BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${WINST_PREFIX}/git
-#            INSTALL_COMMAND ""
-#            LOG_DOWNLOAD 1
-#            LOG_UPDATE 1
-#            LOG_CONFIGURE 1
-#            LOG_BUILD 1
-#            LOG_TEST 1
-#            LOG_INSTALL 1
-#	    )
-#        set( git_EXECUTABLE ${WINST_PREFIX}/git/bin/git.exe )
-#    else( WIN32 AND NOT UNIX )
-        
-#    endif( WIN32 AND NOT UNIX )
-
-	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/postgresql)
+    file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/postgresql)
     ExternalProject_Add( postgresql-fetch
         DEPENDS patch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/postgresql-src
@@ -883,7 +466,7 @@ ENDIF(_WT_ADDRESS_WIDTH EQUAL 64)
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
-	TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/COPYRIGHT ${WINST_PREFIX}/licenses/postgresql/
+        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/COPYRIGHT ${WINST_PREFIX}/licenses/postgresql/
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -892,62 +475,17 @@ ENDIF(_WT_ADDRESS_WIDTH EQUAL 64)
         LOG_INSTALL 1
         )
 
-    if(WIN32)
-        configure_file( ${winst_SOURCE_DIR}/postgresql-11.1-config_default.pl.cmake ${CMAKE_BINARY_DIR}/postgres_config.pl @ONLY )
-        
-        set(postgresql_CONFIGURE_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/postgres_config.pl <SOURCE_DIR>/src/tools/msvc/config.pl)
-        set(postgresql_BUILD_COMMAND ${CMAKE_COMMAND} -E env MSBFLAGS=-property:ConfigurationType=StaticLibrary ${WINST_BATDIR}/cmake/execute-with-path.bat ${WINST_PREFIX}/bin ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/src/tools/msvc build.bat)
-        set(postgresql_INSTALL_COMMAND ${WINST_BATDIR}/cmake/execute-with-path.bat ${WINST_PREFIX}/bin ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/src/tools/msvc install.bat ${WINST_PREFIX})
-        set(postgresql_TEST_COMMAND ${CMAKE_COMMAND} -E echo)
-    else(WIN32)
-        set(postgresql_CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX} --without-readline)
-        set(postgresql_BUILD_COMMAND ${CMAKE_BUILD_TOOL})
-        set(postgresql_INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install)
-        set(postgresql_TEST_COMMAND ${CMAKE_BUILD_TOOL} distclean)
-    endif(WIN32)
+    configure_file( ${winst_SOURCE_DIR}/postgresql-11.1-config_default.pl.cmake ${CMAKE_BINARY_DIR}/postgres_config.pl @ONLY )
 
-if(NOT WIN32)
-    ExternalProject_Add( postgresql-debug
-        DEPENDS postgresql-fetch zlib openssl perl
-        SOURCE_DIR ${CMAKE_BINARY_DIR}/postgresql-src
-        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-        CONFIGURE_COMMAND ${postgresql_CONFIGURE_COMMAND}
-        BUILD_COMMAND ${postgresql_BUILD_COMMAND} DEBUG
-        BUILD_IN_SOURCE 1
-        INSTALL_COMMAND ${postgresql_INSTALL_COMMAND}
-        LOG_DOWNLOAD 1
-        LOG_UPDATE 1
-        LOG_CONFIGURE 1
-        LOG_BUILD 1
-        LOG_TEST 1
-        LOG_INSTALL 1
-        TEST_AFTER_INSTALL 1
-        TEST_COMMAND ${postgresql_TEST_COMMAND}
-        )
+    set(postgresql_CONFIGURE_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/postgres_config.pl <SOURCE_DIR>/src/tools/msvc/config.pl)
+    set(postgresql_BUILD_COMMAND ${CMAKE_COMMAND} -E env MSBFLAGS=-property:ConfigurationType=StaticLibrary ${WINST_BATDIR}/cmake/execute-with-path.bat ${WINST_PREFIX}/bin ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/src/tools/msvc build.bat)
+    set(postgresql_INSTALL_COMMAND ${WINST_BATDIR}/cmake/execute-with-path.bat ${WINST_PREFIX}/bin ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/src/tools/msvc install.bat ${WINST_PREFIX})
+    set(postgresql_TEST_COMMAND ${CMAKE_COMMAND} -E echo)
 
-    ExternalProject_Add( postgresql-release
-        DEPENDS postgresql-fetch zlib openssl perl
-        SOURCE_DIR ${CMAKE_BINARY_DIR}/postgresql-src
-        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-        CONFIGURE_COMMAND ${postgresql_CONFIGURE_COMMAND}
-        BUILD_COMMAND ${postgresql_BUILD_COMMAND}
-        BUILD_IN_SOURCE 1
-        INSTALL_COMMAND ${postgresql_INSTALL_COMMAND}
-        LOG_DOWNLOAD 1
-        LOG_UPDATE 1
-        LOG_CONFIGURE 1
-        LOG_BUILD 1
-        LOG_TEST 1
-        LOG_INSTALL 1
-        TEST_AFTER_INSTALL 1
-        TEST_COMMAND ${postgresql_TEST_COMMAND}
-        )
-
-else(NOT WIN32)
     if( _WT_ARCH STREQUAL "x64" ) # Win 64-bit
-      SET(POSTGRES_CPU "AMD64")
+        SET(POSTGRES_CPU "AMD64")
     elseif( _WT_ARCH STREQUAL "x64" ) # Win 64-bit
-      SET(POSTGRES_CPU "i386")
+        SET(POSTGRES_CPU "i386")
     endif( _WT_ARCH STREQUAL "x64" ) # Win 64-bit
     ExternalProject_Add( postgresql-debug
         DEPENDS postgresql-fetch zlib openssl
@@ -985,7 +523,6 @@ else(NOT WIN32)
         TEST_AFTER_INSTALL 1
         TEST_COMMAND ${postgresql_TEST_COMMAND}
         )
-endif(NOT WIN32)
 
     ExternalProject_Add( postgresql
         DEPENDS postgresql-release postgresql-debug
@@ -996,40 +533,16 @@ endif(NOT WIN32)
         INSTALL_COMMAND ${WINST_BATDIR}/cmake/install-postgres-headerfiles.bat <SOURCE_DIR> ${WINST_PREFIX}/include ${CMAKE_COMMAND}
         )
 
-    # FastCGI - Only Unix, on Windows Wt builds the ISAPI connector
-    if(NOT WIN32)
-        ExternalProject_Add( fcgi
-            DEPENDS patch
-            DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-            URL ${fcgi_URL}
-            URL_MD5 ${fcgi_MD5}
-            PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/fcgi-2.4.0-cstdiofix.patch
-            CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX}
-            BUILD_COMMAND ${CMAKE_BUILD_TOOL}
-            BUILD_IN_SOURCE 1
-            INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
-            LOG_DOWNLOAD 1
-            LOG_UPDATE 1
-            LOG_CONFIGURE 1
-            LOG_BUILD 1
-            LOG_TEST 1
-            LOG_INSTALL 1
-            )
-    endif(NOT WIN32)
-
-    if( UNIX )
-		if(APPLE)
-		  # http://stackoverflow.com/questions/3801011/ld-library-not-found-for-lcrt0-o-on-osx-10-6-with-gcc-clang-static-flag
-		  set( PLATFORM_SPECIFIC_FLAGS -with-shared )
-		endif(APPLE)
-        ExternalProject_Add( ncurses
+    file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/firebirdsql)
+    # Download and extract firebird binaries. Or build it?
+    ExternalProject_Add( firebirdsql
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-        URL ${ncurses_URL}
-        URL_MD5 ${ncurses_MD5}
-        CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX} ${PLATFORM_SPECIFIC_FLAGS} --with-shared --disable-rpath --without-progs --without-debug --without-ada
-        BUILD_COMMAND ${CMAKE_BUILD_TOOL}
-        BUILD_IN_SOURCE 1
-        INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
+        URL ${firebirdsql_URL}
+        URL_MD5 ${firebirdsql_MD5}
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${WINST_PREFIX}/
+        INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/IPLicense.txt ${WINST_PREFIX}/licenses/firebirdsql/
+        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/IDPLicense.txt ${WINST_PREFIX}/licenses/firebirdsql/
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -1037,84 +550,28 @@ endif(NOT WIN32)
         LOG_TEST 1
         LOG_INSTALL 1
         )
-    endif(UNIX)
-    
-    if( UNIX )
-        ExternalProject_Add( fakerootng
-            DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-            URL ${fakerootng_URL}
-            URL_MD5 ${fakerootng_MD5}
-            #PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/fakerootng-0.18-fixBroken32Bit.patch
-            CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX}
-            BUILD_IN_SOURCE 1
-            INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
-            LOG_DOWNLOAD 1
-            LOG_UPDATE 1
-            LOG_CONFIGURE 1
-            LOG_BUILD 1
-            LOG_TEST 1
-            LOG_INSTALL 1
-            )      
-    endif( UNIX )
 
-	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/firebirdsql)
-    if( WIN32 )
-	# Download and extract firebird binaries. Or build it?
-        ExternalProject_Add( firebirdsql
-            DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-            URL ${firebirdsql_URL}
-            URL_MD5 ${firebirdsql_MD5}
-            CONFIGURE_COMMAND ""
-            BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${WINST_PREFIX}/
-            INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/IPLicense.txt ${WINST_PREFIX}/licenses/firebirdsql/
-			TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/IDPLicense.txt ${WINST_PREFIX}/licenses/firebirdsql/
-            LOG_DOWNLOAD 1
-            LOG_UPDATE 1
-            LOG_CONFIGURE 1
-            LOG_BUILD 1
-            LOG_TEST 1
-            LOG_INSTALL 1
-	    )
-    else( WIN32 )
-        #ExternalProject_Add( firebirdsql
-	#    DEPENDS fakerootng
-        #    DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-        #    URL ${firebirdsql_URL}
-        #    URL_MD5 ${firebirdsql_MD5}
-        #    CONFIGURE_COMMAND ./configure --prefix=${WINST_PREFIX} --without-editline --enable-superserver --enable-shared
-        #    BUILD_IN_SOURCE 1
-        #    INSTALL_COMMAND ${WINST_PREFIX}/bin/fakeroot-ng ${CMAKE_BUILD_TOOL} -C gen install -f Makefile.install buildRoot && mv ./gen/buildRoot/* ${WINST_PREFIX}/
-        #    LOG_DOWNLOAD 1
-        #    LOG_UPDATE 1
-        #    LOG_CONFIGURE 1
-        #    LOG_BUILD 1
-        #    LOG_TEST 1
-        #    LOG_INSTALL 1
-        #    )
-    endif( WIN32 )
-
-	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/libharu)
+    file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/libharu)
     ExternalProject_Add( libharu-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libharu-src
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${libharu_URL}
         URL_MD5 ${libharu_MD5}
-	PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libharu-2.3.0RC3.patch
-#        GIT_REPOSITORY ${libharu_URL}
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libharu-2.3.0RC3.patch
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
-	TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/README ${WINST_PREFIX}/licenses/libharu/
+        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/README ${WINST_PREFIX}/licenses/libharu/
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
-    )
+        )
 
     ExternalProject_Add( libharu-debug
         DEPENDS libharu-fetch zlib libpng patch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libharu-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CMAKE_ARGS 
-	    -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+            -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
         LOG_CONFIGURE 1
         LOG_BUILD 1
         LOG_TEST 1
@@ -1142,70 +599,43 @@ endif(NOT WIN32)
         INSTALL_COMMAND ""
         )
 
-    # TODO GM seems impossible to build silently with Visual C++ :-/
-    if( UNIX AND NOT WIN32 )
-        ExternalProject_Add( graphicsmagick
-            DEPENDS libpng zlib bzip2 libjpeg
-            DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-            URL ${graphicsmagick_URL}
-            URL_MD5 ${graphicsmagick_MD5}
-            CONFIGURE_COMMAND ./configure --enable-shared --prefix=${WINST_PREFIX}
-            BUILD_COMMAND ${CMAKE_BUILD_TOOL}
-            BUILD_IN_SOURCE 1
-            INSTALL_COMMAND ${CMAKE_BUILD_TOOL} install
-            LOG_DOWNLOAD 1
-            LOG_UPDATE 1
-            LOG_CONFIGURE 1
-            LOG_BUILD 1
-            LOG_TEST 1
-            LOG_INSTALL 1
-            )
-    endif( UNIX AND NOT WIN32 )
+    file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/boost)
+    set( boost_BOOTSTRAP_COMMAND "bootstrap.bat" )
+    set( boost_B2 "b2" )
+    set( boost_LINKAGE link=static )
+    if(MSVC10)
+        set( boost_TOOLSET toolset=msvc-10.0 )
+    elseif(MSVC11)
+        set( boost_TOOLSET toolset=msvc-11.0 )
+    elseif(MSVC12)
+        set( boost_TOOLSET toolset=msvc-12.0 )
+    elseif(MSVC14)
+        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.10)
+            set( boost_TOOLSET toolset=msvc-14.0 )
+        else()
+            set( boost_TOOLSET toolset=msvc-14.1 )
+        endif()
+    endif()
 
-	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/boost)
-    if( WIN32 AND NOT UNIX )
-      set( boost_BOOTSTRAP_COMMAND "bootstrap.bat" )
-      set( boost_BJAM "bjam" )
-      set( boost_LINKAGE link=static )
-	  if(MSVC10)
-		set( boost_TOOLSET toolset=msvc-10.0 )
-	  elseif(MSVC11)
-		set( boost_TOOLSET toolset=msvc-11.0 )
-	  elseif(MSVC12)
-		set( boost_TOOLSET toolset=msvc-12.0 )
-	  elseif(MSVC14)
-                if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.10)
-		      set( boost_TOOLSET toolset=msvc-14.0 )
-                else()
-		      set( boost_TOOLSET toolset=msvc-14.1 )
-                endif()
-	  endif()
+    if( _WT_ARCH STREQUAL "x64" ) # Win 64-bit
+        set( boost_ADDRESS_MODEL address-model=64)
+    elseif( _WT_ARCH STREQUAL "x86" ) # Win 32-bit
+        set( boost_ADDRESS_MODEL address-model=32)
+    elseif( _WT_ARCH STREQUAL "ia64" )
+        message( ERROR "${CMAKE_SYSTEM_PROCESSOR} architecture is not supported by the Wt bootstrapper, please build manually." )
+    endif( )
 
-	  if( _WT_ARCH STREQUAL "x64" ) # Win 64-bit
-		set( boost_ADDRESS_MODEL address-model=64)
-	  elseif( _WT_ARCH STREQUAL "x86" ) # Win 32-bit
-		set( boost_ADDRESS_MODEL address-model=32)
-      elseif( _WT_ARCH STREQUAL "ia64" )
-		message( ERROR "${CMAKE_SYSTEM_PROCESSOR} architecture is not supported by the Wt bootstrapper, please build manually." )
-	  endif( )
-	  
-    else( WIN32 AND NOT UNIX )
-      set( boost_BOOTSTRAP_COMMAND "./bootstrap.sh" )
-      set( boost_BJAM "./bjam" )
-      set( boost_LINKAGE link=shared )
-    endif( WIN32 AND NOT UNIX )
-    set( boost_COMMAND ${boost_BJAM} --build-type=minimal ${boost_TOOLSET} ${boost_ADDRESS_MODEL} --variant=release --without-python ${boost_LINKAGE} threading=multi include=${WINST_PREFIX}/include linkflags=-L${WINST_PREFIX}/lib )
+    set( boost_COMMAND ${boost_B2} --build-type=minimal ${boost_TOOLSET} ${boost_ADDRESS_MODEL} --variant=release --without-python ${boost_LINKAGE} threading=multi include=${WINST_PREFIX}/include linkflags=-L${WINST_PREFIX}/lib )
     ExternalProject_Add( boost
-	DEPENDS zlib
+        DEPENDS zlib
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${boost_URL}
         URL_HASH ${boost_HASH}
-#		PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/boost-1.53-vc12.patch
         CONFIGURE_COMMAND ${boost_BOOTSTRAP_COMMAND}
         BUILD_COMMAND ${boost_COMMAND}
         BUILD_IN_SOURCE 1
         INSTALL_COMMAND ${boost_COMMAND} --prefix=${WINST_PREFIX} install
-		TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE_1_0.txt ${WINST_PREFIX}/licenses/boost/
+        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE_1_0.txt ${WINST_PREFIX}/licenses/boost/
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -1213,27 +643,15 @@ endif(NOT WIN32)
         LOG_TEST 1
         LOG_INSTALL 1
         )
-    
-    if(WIN32)
-	set( WT_WINDOWSONLY_DEPENDENCIES firebirdsql )
-    endif(WIN32)
 
-    if(UNIX)
-        set( WT_UNIXONLY_DEPENDENCIES fcgi graphicsmagick )
-    endif(UNIX)
-    
     set( wt_CMAKE_ARGS
         -DSHARED_LIBS:BOOL=1
         -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
         -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
-        -DWT_CMAKE_FINDER_INSTALL_DIR:PATH=/share/cmake-2.8/Modules
         -DBoost_NO_SYSTEM_PATHS:BOOL=1
         -DBOOST_ROOT:PATH=${WINST_PREFIX}
         -DCONFIGDIR:PATH=c:/witty
-        -DFCGI_PREFIX:PATH=${WINST_PREFIX}
-#        -DSKIA_PREFIX=${CMAKE_BINARY_DIR}/skia-src/skia.git${skia_REVISION}
-#	-DWT_SKIA_OLD=${WT_SKIA_OLD}
-	-DWT_WRASTERIMAGE_IMPLEMENTATION=Direct2D
+        -DWT_WRASTERIMAGE_IMPLEMENTATION=Direct2D
         -DHARU_PREFIX=${WINST_PREFIX}
         -DHARU_DYNAMIC:BOOL=1
         -DPOSTGRES_PREFIX=${WINST_PREFIX}
@@ -1245,18 +663,14 @@ endif(NOT WIN32)
         -DMYSQL_LIBRARY=libmariadb
         -DEXAMPLES_DESTINATION=lib/Wt/examples
         -DENABLE_OPENGL:BOOL=1
-        )
-		
-	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/wt)
-    IF(WIN32)
-    set( wt_CMAKE_ARGS
-        ${wt_CMAKE_ARGS}
-        -DSSL_LIB_NAMES=ssleay32
-        -DSSL_LIB_TOO_NAMES=libeay32
+        -DSSL_LIB_NAMES=libssl
+        -DSSL_LIB_TOO_NAMES=libcrypto
         -DENABLE_QT4:BOOL=0
         -DWTHTTP_CONFIGURATION:PATH=c:/witty/wthttpd
-       )
-    ENDIF(WIN32)
+        )
+
+    file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/wt)
+
     IF(STANDALONE_ASIO)
     set( wt_CMAKE_ARGS
         ${wt_CMAKE_ARGS}
@@ -1264,6 +678,7 @@ endif(NOT WIN32)
         -DWT_ASIO_IMPLEMENTATION=standalone
     )
     ENDIF(STANDALONE_ASIO)
+
     if( WTGIT )
         ExternalProject_Add( wt-fetch
             # git
@@ -1280,7 +695,7 @@ endif(NOT WIN32)
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ""
             INSTALL_COMMAND ""
-			TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE ${WINST_PREFIX}/licenses/wt/
+            TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE ${WINST_PREFIX}/licenses/wt/
         )
     else( WTGIT )
         ExternalProject_Add( wt-fetch
@@ -1293,7 +708,6 @@ endif(NOT WIN32)
             LOG_BUILD 1
             LOG_TEST 1
             LOG_INSTALL 1
-            #PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/wt-3.3.5-rc2.patch
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ""
             INSTALL_COMMAND ""
@@ -1301,32 +715,32 @@ endif(NOT WIN32)
         )
     endif( WTGIT )
 
-	ExternalProject_Get_Property( wt-fetch source_dir )
-	
-	file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/tinymce)
-	ExternalProject_Add( tinymce
-	DEPENDS wt-fetch
-	DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-	URL ${tinymce_URL}
-	URL_MD5 ${tinymce_MD5}
-	CONFIGURE_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/jscripts/ ${source_dir}/resources/
-	BUILD_COMMAND ${CMAKE_COMMAND} -E remove ${source_dir}/resources/tiny_mce/tiny_mce_src.js
-	INSTALL_COMMAND ${CMAKE_COMMAND} -E remove ${source_dir}/resources/tiny_mce/license.txt
-	TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/jscripts/tiny_mce/license.txt ${WINST_PREFIX}/licenses/tinymce/
-	LOG_DOWNLOAD 1
-	LOG_UPDATE 1
-	LOG_CONFIGURE 1
-	LOG_BUILD 1
-	LOG_TEST 1
-	LOG_INSTALL 1
-	)
+    ExternalProject_Get_Property( wt-fetch source_dir )
+
+    file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/tinymce)
+    ExternalProject_Add( tinymce
+        DEPENDS wt-fetch
+        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
+        URL ${tinymce_URL}
+        URL_HASH ${tinymce_HASH}
+        CONFIGURE_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/jscripts/ ${source_dir}/resources/
+        BUILD_COMMAND ${CMAKE_COMMAND} -E remove ${source_dir}/resources/tiny_mce/tiny_mce_src.js
+        INSTALL_COMMAND ${CMAKE_COMMAND} -E remove ${source_dir}/resources/tiny_mce/license.txt
+        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/jscripts/tiny_mce/license.txt ${WINST_PREFIX}/licenses/tinymce/
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+        LOG_CONFIGURE 1
+        LOG_BUILD 1
+        LOG_TEST 1
+        LOG_INSTALL 1
+        )
 
     if (STANDALONE_ASIO)
         file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/asio)
         ExternalProject_Add( asio
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${asio_URL}
-        URL_MD5 ${asio_MD5}
+        URL_HASH ${asio_HASH}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -1344,11 +758,10 @@ endif(NOT WIN32)
         DEPENDS tinymce wt-fetch
             zlib libpng libharu
             openssl
-            ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
+            firebirdsql
+            mariadb
             postgresql
-#            skia
             boost
-            ${WT_UNIXONLY_DEPENDENCIES}
             ${STANDALONE_ASIO_DEPENDS}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
@@ -1364,11 +777,10 @@ endif(NOT WIN32)
         DEPENDS tinymce wt-fetch
             zlib libpng libharu
             openssl
-            ${WT_WINDOWSONLY_DEPENDENCIES} mariadb
+            firebirdsql
+            mariadb
             postgresql
-#            skia
             boost
-            ${WT_UNIXONLY_DEPENDENCIES}
             ${STANDALONE_ASIO_DEPENDS}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
@@ -1392,288 +804,235 @@ endif(NOT WIN32)
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
     )
-	
+
     string(REGEX MATCHALL "[0-9]+" WT_VERSION_LIST ${WT_VERSION})
     list(GET WT_VERSION_LIST 0 WT_VERSION_MAJOR)
     list(GET WT_VERSION_LIST 1 WT_VERSION_MINOR)
     list(GET WT_VERSION_LIST 2 WT_VERSION_PATCH)
 
-# INSTALLATION
+    # INSTALLATION
+
+    INSTALL(DIRECTORY "${WINST_PREFIX}/licenses" DESTINATION "." COMPONENT binaries)
+    INSTALL(DIRECTORY "${WINST_PREFIX}/share/doc/Wt/" DESTINATION "doc" COMPONENT documentation)
 
 
-   INSTALL(DIRECTORY "${WINST_PREFIX}/licenses" DESTINATION "." COMPONENT binaries)
-   INSTALL(DIRECTORY "${WINST_PREFIX}/share/doc/Wt/" DESTINATION "doc" COMPONENT documentation)
+    # Headers
+
+    INSTALL(DIRECTORY "${WINST_PREFIX}/include/Wt" DESTINATION "include" COMPONENT binaries)
+    if (STANDALONE_ASIO)
+        INSTALL(DIRECTORY "${WINST_PREFIX}/include/asio" DESTINATION "include" COMPONENT binaries)
+        INSTALL(FILES "${WINST_PREFIX}/include/asio.hpp" DESTINATION "include" COMPONENT binaries)
+    else (STANDALONE_ASIO)
+        INSTALL(DIRECTORY "${WINST_PREFIX}/include/boost-${boost_ver}/boost" DESTINATION "include" COMPONENT binaries)
+    endif (STANDALONE_ASIO)
 
 
-# Headers
+    # Libraries
 
-   INSTALL(DIRECTORY "${WINST_PREFIX}/include/Wt" DESTINATION "include" COMPONENT binaries)
-   if (STANDALONE_ASIO)
-      INSTALL(DIRECTORY "${WINST_PREFIX}/include/asio" DESTINATION "include" COMPONENT binaries)
-      INSTALL(FILES "${WINST_PREFIX}/include/asio.hpp" DESTINATION "include" COMPONENT binaries)
-   else (STANDALONE_ASIO)
-      if(WIN32)
-         INSTALL(DIRECTORY "${WINST_PREFIX}/include/boost-${boost_ver}/boost" DESTINATION "include" COMPONENT binaries)
-      else(WIN32)
-         INSTALL(DIRECTORY "${WINST_PREFIX}/include/boost" DESTINATION "include" COMPONENT binaries)
-      endif(WIN32)
-   endif (STANDALONE_ASIO)
+    IF (NOT STANDALONE_ASIO)
+       INSTALL(DIRECTORY "${WINST_PREFIX}/lib/" DESTINATION "lib" COMPONENT binaries
+         FILES_MATCHING PATTERN "libboost*")
+    ENDIF (NOT STANDALONE_ASIO)
 
+    INSTALL(FILES "${WINST_PREFIX}/bin/zlibd.dll" "${WINST_PREFIX}/bin/zlib.dll" DESTINATION "bin" COMPONENT binaries)
+    INSTALL(FILES "${CMAKE_BINARY_DIR}/zlib-debug-prefix/src/zlib-debug-build/zlibd.pdb" DESTINATION "bin" COMPONENT symbols)
 
-# Libraries
+    INSTALL(
+        FILES
+            "${WINST_PREFIX}/bin/libcrypto.dll"
+            "${WINST_PREFIX}/bin/libcryptod.dll"
+            "${WINST_PREFIX}/bin/libssl.dll"
+            "${WINST_PREFIX}/bin/libssld.dll"
+        DESTINATION "bin"
+        COMPONENT binaries)
+    INSTALL(
+        FILES
+            "${WINST_PREFIX}/lib/libcrypto.lib"
+            "${WINST_PREFIX}/lib/libcryptod.lib"
+            "${WINST_PREFIX}/lib/libssl.lib"
+            "${WINST_PREFIX}/lib/libssld.lib"
+        DESTINATION "lib"
+        COMPONENT binaries)
+    INSTALL(
+        FILES
+            "${WINST_PREFIX}/bin/libcrypto.pdb"
+            "${WINST_PREFIX}/bin/libcryptod.pdb"
+            "${WINST_PREFIX}/bin/libssl.pdb"
+            "${WINST_PREFIX}/bin/libssld.pdb"
+        DESTINATION "bin"
+        COMPONENT symbols)
 
-   IF (NOT STANDALONE_ASIO)
-      INSTALL(DIRECTORY "${WINST_PREFIX}/lib/" DESTINATION "lib" COMPONENT binaries
-        FILES_MATCHING PATTERN "libboost*")
-   ENDIF (NOT STANDALONE_ASIO)
+    INSTALL(FILES "${WINST_PREFIX}/lib/libmariadbd.dll" "${WINST_PREFIX}/lib/libmariadb.dll" DESTINATION "bin" COMPONENT binaries)
+    INSTALL(FILES "${WINST_PREFIX}/lib/libmariadbd.pdb" DESTINATION "bin" COMPONENT symbols)
 
-if(WIN32)
+    INSTALL(FILES "${WINST_PREFIX}/bin/libpng14.dll" "${WINST_PREFIX}/bin/libpng14d.dll" DESTINATION "bin" COMPONENT binaries)
+    INSTALL(FILES "${CMAKE_BINARY_DIR}/libpng-debug-prefix/src/libpng-debug-build/libpng14d.pdb" DESTINATION "bin" COMPONENT symbols)
 
-   INSTALL(FILES "${WINST_PREFIX}/bin/zlibd.dll" "${WINST_PREFIX}/bin/zlib.dll" DESTINATION "bin" COMPONENT binaries)
-   INSTALL(FILES "${CMAKE_BINARY_DIR}/zlib-debug-prefix/src/zlib-debug-build/zlibd.pdb" DESTINATION "bin" COMPONENT symbols)
-
-   INSTALL(FILES "${WINST_PREFIX}/bin/ssleay32.dll" "${WINST_PREFIX}/bin/libeay32.dll" DESTINATION "bin" COMPONENT binaries)
-   INSTALL(FILES "${WINST_PREFIX}/lib/ssleay32.lib" "${WINST_PREFIX}/lib/libeay32.lib" DESTINATION "lib" COMPONENT binaries)
-   INSTALL(FILES "${WINST_PREFIX}/bin/ssleay32d.dll" "${WINST_PREFIX}/bin/libeay32d.dll" DESTINATION "bin" COMPONENT binaries)
-   INSTALL(FILES "${WINST_PREFIX}/lib/ssleay32d.lib" "${WINST_PREFIX}/lib/libeay32d.lib" DESTINATION "lib" COMPONENT binaries)
-   INSTALL(FILES "${CMAKE_BINARY_DIR}/openssl-debug-prefix/src/openssl-debug/out32dll.dbg/libeay32d.pdb" "${CMAKE_BINARY_DIR}/openssl-debug-prefix/src/openssl-debug/out32dll.dbg/ssleay32d.pdb" DESTINATION "bin" COMPONENT symbols)
-
-   INSTALL(FILES "${WINST_PREFIX}/bin/libmariadbd.dll" "${WINST_PREFIX}/bin/libmariadb.dll" DESTINATION "bin" COMPONENT binaries)
-   INSTALL(FILES "${CMAKE_BINARY_DIR}/mariadb-debug-prefix/src/mariadb-debug-build/libmariadb/libmariadbd.pdb" DESTINATION "bin" COMPONENT symbols)
-
-   INSTALL(FILES "${WINST_PREFIX}/bin/libpng14.dll" "${WINST_PREFIX}/bin/libpng14d.dll" DESTINATION "bin" COMPONENT binaries)
-   INSTALL(FILES "${CMAKE_BINARY_DIR}/libpng-debug-prefix/src/libpng-debug-build/libpng14d.pdb" DESTINATION "bin" COMPONENT symbols)
-
-#   INSTALL(FILES "${WINST_PREFIX}/bin/libpq.dll" "${WINST_PREFIX}/bin/libintl.dll" DESTINATION "bin" COMPONENT binaries)
-
-   INSTALL(DIRECTORY "${WINST_PREFIX}/include/" DESTINATION "include" COMPONENT binaries
-     FILES_MATCHING
-       PATTERN "boost-*" EXCLUDE
-       PATTERN "libpng*" EXCLUDE
-       PATTERN "mariadb" EXCLUDE
-       PATTERN "openssl" EXCLUDE
-       PATTERN "postgresql" EXCLUDE
-       PATTERN "hpdf*")
-   INSTALL(FILES "${WINST_PREFIX}/lib/libhpdf.lib" "${WINST_PREFIX}/lib/libhpdfd.lib" DESTINATION "lib" COMPONENT binaries)
-   INSTALL(FILES "${WINST_PREFIX}/bin/libhpdf.dll" "${WINST_PREFIX}/bin/libhpdfd.dll" DESTINATION "bin" COMPONENT binaries)
-   INSTALL(FILES "${CMAKE_BINARY_DIR}/libharu-debug-prefix/src/libharu-debug-build/src/libhpdfd.pdb" DESTINATION "bin" COMPONENT symbols)
-
-
-   set(ALL_DYN_WT_LIBS wt wtdbo wtdbofirebird wtdbomssqlserver wtdbomysql wtdbopostgres wtdbosqlite3 wthttp wttest)
-   set(ALL_WT_LIBS ${ALL_DYN_WT_LIBS} wtisapi)
-   FOREACH(lib ${ALL_DYN_WT_LIBS})
-     INSTALL(FILES "${WINST_PREFIX}/bin/${lib}.dll" "${WINST_PREFIX}/bin/${lib}d.dll" DESTINATION "bin" COMPONENT binaries)
-   ENDFOREACH(lib)
-   FOREACH(lib ${ALL_WT_LIBS})
-     INSTALL(FILES "${WINST_PREFIX}/lib/${lib}.lib" "${WINST_PREFIX}/lib/${lib}d.lib" DESTINATION "lib" COMPONENT binaries)
-   ENDFOREACH(lib)
-
-   INSTALL(FILES
-     "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/wtd.pdb"
-     "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/wtdbod.pdb"
-     "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbofirebirdd.pdb"
-     "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbomysqld.pdb"
-     "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbosqlite3d.pdb"
-     "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbomssqlserverd.pdb"
-     "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbopostgresd.pdb"
-     "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/http/wthttpd.pdb"
-     "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/wttestd.pdb"
-     DESTINATION "bin" COMPONENT symbols
-   )
-
-   SET(EXAMPLE_EXES "")
-   SET(EXAMPLE_BATS "")
-   MACRO(ADD_EXAMPLE path name)
-     LIST(APPEND EXAMPLE_EXES "${WINST_PREFIX}/lib/Wt/examples/${path}/${name}.wt.exe")
-     LIST(APPEND EXAMPLE_BATS "${WINST_PREFIX}/bin/${name}.bat")
-   ENDMACRO(ADD_EXAMPLE)
-   MACRO(ADD_DBO_EXAMPLE path name)
-     LIST(APPEND EXAMPLE_EXES "${WINST_PREFIX}/lib/Wt/examples/${path}/${name}.exe")
-   ENDMACRO(ADD_DBO_EXAMPLE)
-
-   ADD_EXAMPLE(blog blog)
-   IF(NOT MSVC10)
-     ADD_EXAMPLE(chart3D chart3D)
-   ENDIF()
-   ADD_EXAMPLE(charts charts)
-   ADD_EXAMPLE(codeview codingview)
-   ADD_EXAMPLE(composer composer)
-   ADD_EXAMPLE(dialog dialog)
-   ADD_EXAMPLE(dragdrop dragdrop)
-   ADD_EXAMPLE(filedrop filedrop)
-   ADD_EXAMPLE(filetreetable filetreetable)
-   ADD_EXAMPLE(form formexample)
-   ADD_EXAMPLE(hangman hangman)
-   ADD_EXAMPLE(hello hello)
-   ADD_EXAMPLE(javascript javascript)
-   ADD_EXAMPLE(mandelbrot mandelbrot)
-   ADD_EXAMPLE(mission impossible)
-   ADD_EXAMPLE(onethread hello1thread)
-   ADD_EXAMPLE(painting paintexample)
-   ADD_EXAMPLE(planner planner)
-   ADD_EXAMPLE(qrlogin qrlogin)
-   ADD_EXAMPLE(simplechat simplechat)
-   ADD_EXAMPLE(style styleexample)
-   ADD_EXAMPLE(te-benchmark te-benchmark)
-   ADD_EXAMPLE(te-benchmark te-benchmark-pg)
-   ADD_EXAMPLE(treelist demotreelist)
-   ADD_EXAMPLE(treeview treeviewexample)
-   ADD_EXAMPLE(treeview-dragdrop treeviewdragdrop)
-   ADD_EXAMPLE(webgl webgl)
-   IF(NOT MSVC10)
-     ADD_EXAMPLE(widgetgallery widgetgallery)
-   ENDIF()
-   ADD_EXAMPLE(wt-homepage Home)
-
-   ADD_EXAMPLE(feature/auth1 auth1)
-   ADD_EXAMPLE(feature/auth2 auth2)
-   ADD_EXAMPLE(feature/broadcast broadcast)
-   ADD_EXAMPLE(feature/client-ssl-auth client-ssl-auth)
-   ADD_EXAMPLE(feature/locale locale)
-   ADD_EXAMPLE(feature/mediaplayer mediaplayer)
-   ADD_EXAMPLE(feature/miniwebgl miniwebgl)
-   ADD_EXAMPLE(feature/multiple_servers multiple)
-   ADD_EXAMPLE(feature/oauth oauth)
-   ADD_EXAMPLE(feature/oidc oidc)
-   ADD_EXAMPLE(feature/paypal paypal)
-   IF (NOT ${WT_VERSION_MAJOR} STREQUAL "3")
-     ADD_EXAMPLE(feature/postall postall)
-   ENDIF()
-   ADD_EXAMPLE(feature/scrollvisibility scrollvisibility)
-   ADD_EXAMPLE(feature/serverpush serverpush)
-   ADD_EXAMPLE(feature/socketnotifier socketnotifier)
-   ADD_EXAMPLE(feature/suggestionpopup suggestionpopup)
-   ADD_EXAMPLE(feature/template-fun widgetfunction)
-   IF (NOT ${WT_VERSION_MAJOR} STREQUAL "3")
-     ADD_EXAMPLE(feature/urlparams urlparams)
-   ENDIF()
-   ADD_EXAMPLE(feature/video video)
-   ADD_EXAMPLE(feature/widgetset hellowidgetset)
-
-   ADD_DBO_EXAMPLE(feature/dbo dbo-tutorial1)
-   ADD_DBO_EXAMPLE(feature/dbo dbo-tutorial2)
-   ADD_DBO_EXAMPLE(feature/dbo dbo-tutorial3)
-   ADD_DBO_EXAMPLE(feature/dbo dbo-tutorial4)
-   ADD_DBO_EXAMPLE(feature/dbo dbo-tutorial5)
-   ADD_DBO_EXAMPLE(feature/dbo dbo-tutorial6)
-   ADD_DBO_EXAMPLE(feature/dbo dbo-tutorial7)
-   ADD_DBO_EXAMPLE(feature/dbo dbo-tutorial8)
-   ADD_DBO_EXAMPLE(feature/dbo dbo-tutorial9)
-
-   INSTALL(FILES ${EXAMPLE_EXES} ${EXAMPLE_BATS} DESTINATION "bin" COMPONENT examples)
-
-else(WIN32)
-
-   FILE(GLOB bzip2_libs "${WINST_PREFIX}/lib/libbz2*")
-   INSTALL(FILES ${bzip2_libs} DESTINATION "lib" COMPONENT binaries)
-
-   FILE(GLOB zlib_libs "${WINST_PREFIX}/lib/libz*")
-   INSTALL(FILES ${zlib_libs} DESTINATION "lib" COMPONENT binaries)
-
-   FILE(GLOB openssl_ssl_libs "${WINST_PREFIX}/lib/libssl*")
-   FILE(GLOB openssl_crypto_libs "${WINST_PREFIX}/lib/libcrypto*")
-   INSTALL(FILES ${openssl_ssl_libs} ${openssl_crypto_libs} DESTINATION "lib" COMPONENT binaries)
-
-   FILE(GLOB mariadb_libs "${WINST_PREFIX}/lib/libmaria*")
-   INSTALL(FILES ${mariadb_libs} DESTINATION "lib" COMPONENT binaries)
-
-   FILE(GLOB png_libs "${WINST_PREFIX}/lib/libpng*")
-   INSTALL(FILES ${png_libs} DESTINATION "lib" COMPONENT binaries)
-
-#   FILE(GLOB postgresql_pq_libs "${WINST_PREFIX}/lib/libpq*")
-#   FILE(GLOB postgresql_ecpg_libs "${WINST_PREFIX}/lib/libecpg*")
-#   FILE(GLOB postgresql_types_libs "${WINST_PREFIX}/lib/libpgtypes*")
-#   FILE(GLOB_RECURSE postgresql_codecs_libs "${WINST_PREFIX}/lib/postgresql")
-#   INSTALL(FILES ${postgresql_pq_libs} ${postgresql_ecpg_libs} ${postgresql_types_libs} DESTINATION "lib" COMPONENT binaries)
-#   INSTALL(DIRECTORY "${WINST_PREFIX}/lib/postgresql" DESTINATION "lib" COMPONENT binaries)
-
-   FILE(GLOB fcgi_libs "${WINST_PREFIX}/lib/libfcgi*")
-   INSTALL(FILES ${fcgi_libs} DESTINATION "lib" COMPONENT binaries)
-   INSTALL(PROGRAMS "${WINST_PREFIX}/bin/cgi-fcgi" DESTINATION "bin" COMPONENT binaries)
-
-   FILE(GLOB ncurses_forms_libs "${WINST_PREFIX}/lib/libform*")
-   FILE(GLOB ncurses_menu_libs "${WINST_PREFIX}/lib/libmenu*")
-   FILE(GLOB ncurses_panel_libs "${WINST_PREFIX}/lib/libpanel*")
-   FILE(GLOB ncurses_terminfo "${WINST_PREFIX}/lib/terminfo*")
-   FILE(GLOB ncurses_libs "${WINST_PREFIX}/lib/libncurses*")
-   INSTALL(FILES ${ncurses_forms_libs} ${ncurses_menu_libs} ${ncurses_panel_libs} ${ncurses_libs} DESTINATION "lib" COMPONENT binaries)
-
-   FILE(GLOB graphicsmagick_libs "${WINST_PREFIX}/lib/libGraphicsMagick*")
-   FILE(GLOB_RECURSE graphicsmagick_config "${WINST_PREFIX}/lib/GraphicsMagick*")
-   INSTALL(FILES ${graphicsmagick_libs} ${graphicsmagick_config} DESTINATION "lib" COMPONENT binaries)
-
-   FILE(GLOB haru_libs "${WINST_PREFIX}/lib/libhpdf*")
-   INSTALL(FILES ${haru_libs} DESTINATION "lib" COMPONENT binaries)
-
-   FILE(GLOB jpeg_libs "${WINST_PREFIX}/lib/libjpeg*")
-   INSTALL(FILES ${jpeg_libs} DESTINATION "lib" COMPONENT binaries)
-
-   FILE(GLOB wt_libs "${WINST_PREFIX}/lib/libwt*")
-   FILE(GLOB_RECURSE wt_examples "${WINST_PREFIX}/lib/Wt")
-   INSTALL(FILES ${wt_libs} ${wt_examples} DESTINATION "lib" COMPONENT binaries)
+    INSTALL(DIRECTORY "${WINST_PREFIX}/include/" DESTINATION "include" COMPONENT binaries
+        FILES_MATCHING
+            PATTERN "boost-*" EXCLUDE
+            PATTERN "libpng*" EXCLUDE
+            PATTERN "mariadb" EXCLUDE
+            PATTERN "openssl" EXCLUDE
+            PATTERN "postgresql" EXCLUDE
+            PATTERN "hpdf*")
+    INSTALL(FILES "${WINST_PREFIX}/lib/libhpdf.lib" "${WINST_PREFIX}/lib/libhpdfd.lib" DESTINATION "lib" COMPONENT binaries)
+    INSTALL(FILES "${WINST_PREFIX}/bin/libhpdf.dll" "${WINST_PREFIX}/bin/libhpdfd.dll" DESTINATION "bin" COMPONENT binaries)
+    INSTALL(FILES "${CMAKE_BINARY_DIR}/libharu-debug-prefix/src/libharu-debug-build/src/libhpdfd.pdb" DESTINATION "bin" COMPONENT symbols)
 
 
-# TODO include, share
-endif(WIN32)
+    set(ALL_DYN_WT_LIBS wt wtdbo wtdbofirebird wtdbomssqlserver wtdbomysql wtdbopostgres wtdbosqlite3 wthttp wttest)
+    set(ALL_WT_LIBS ${ALL_DYN_WT_LIBS} wtisapi)
+    FOREACH(lib ${ALL_DYN_WT_LIBS})
+        INSTALL(FILES "${WINST_PREFIX}/bin/${lib}.dll" "${WINST_PREFIX}/bin/${lib}d.dll" DESTINATION "bin" COMPONENT binaries)
+    ENDFOREACH(lib)
+    FOREACH(lib ${ALL_WT_LIBS})
+        INSTALL(FILES "${WINST_PREFIX}/lib/${lib}.lib" "${WINST_PREFIX}/lib/${lib}d.lib" DESTINATION "lib" COMPONENT binaries)
+    ENDFOREACH(lib)
 
-   INSTALL(DIRECTORY "${WINST_PREFIX}/lib/Wt" DESTINATION "lib" COMPONENT binaries)
-   INSTALL(DIRECTORY "${WINST_PREFIX}/share/Wt" DESTINATION "lib/share" COMPONENT binaries)
-   INSTALL(DIRECTORY "${WINST_PREFIX}/lib/cmake/wt" DESTINATION "lib/cmake" COMPONENT binaries OPTIONAL)
+    INSTALL(FILES
+        "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/wtd.pdb"
+        "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/wtdbod.pdb"
+        "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbofirebirdd.pdb"
+        "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbomysqld.pdb"
+        "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbosqlite3d.pdb"
+        "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbomssqlserverd.pdb"
+        "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbopostgresd.pdb"
+        "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/http/wthttpd.pdb"
+        "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/wttestd.pdb"
+        DESTINATION "bin" COMPONENT symbols
+    )
+
+    SET(EXAMPLE_EXES "")
+    SET(EXAMPLE_BATS "")
+    MACRO(ADD_EXAMPLE path name)
+      LIST(APPEND EXAMPLE_EXES "${WINST_PREFIX}/lib/Wt/examples/${path}/${name}.wt.exe")
+      LIST(APPEND EXAMPLE_BATS "${WINST_PREFIX}/bin/${name}.bat")
+    ENDMACRO(ADD_EXAMPLE)
+    MACRO(ADD_DBO_EXAMPLE path name)
+      LIST(APPEND EXAMPLE_EXES "${WINST_PREFIX}/lib/Wt/examples/${path}/${name}.exe")
+    ENDMACRO(ADD_DBO_EXAMPLE)
+
+    ADD_EXAMPLE(blog blog)
+    IF(NOT MSVC10)
+      ADD_EXAMPLE(chart3D chart3D)
+    ENDIF()
+    ADD_EXAMPLE(charts charts)
+    ADD_EXAMPLE(codeview codingview)
+    ADD_EXAMPLE(composer composer)
+    ADD_EXAMPLE(dialog dialog)
+    ADD_EXAMPLE(dragdrop dragdrop)
+    ADD_EXAMPLE(filedrop filedrop)
+    ADD_EXAMPLE(filetreetable filetreetable)
+    ADD_EXAMPLE(form formexample)
+    ADD_EXAMPLE(hangman hangman)
+    ADD_EXAMPLE(hello hello)
+    ADD_EXAMPLE(javascript javascript)
+    ADD_EXAMPLE(mandelbrot mandelbrot)
+    ADD_EXAMPLE(mission impossible)
+    ADD_EXAMPLE(onethread hello1thread)
+    ADD_EXAMPLE(painting paintexample)
+    ADD_EXAMPLE(planner planner)
+    ADD_EXAMPLE(qrlogin qrlogin)
+    ADD_EXAMPLE(simplechat simplechat)
+    ADD_EXAMPLE(style styleexample)
+    ADD_EXAMPLE(te-benchmark te-benchmark)
+    ADD_EXAMPLE(te-benchmark te-benchmark-pg)
+    ADD_EXAMPLE(treelist demotreelist)
+    ADD_EXAMPLE(treeview treeviewexample)
+    ADD_EXAMPLE(treeview-dragdrop treeviewdragdrop)
+    ADD_EXAMPLE(webgl webgl)
+    IF(NOT MSVC10)
+      ADD_EXAMPLE(widgetgallery widgetgallery)
+    ENDIF()
+    ADD_EXAMPLE(wt-homepage Home)
+
+    ADD_EXAMPLE(feature/auth1 auth1)
+    ADD_EXAMPLE(feature/auth2 auth2)
+    ADD_EXAMPLE(feature/broadcast broadcast)
+    ADD_EXAMPLE(feature/client-ssl-auth client-ssl-auth)
+    ADD_EXAMPLE(feature/locale locale)
+    ADD_EXAMPLE(feature/mediaplayer mediaplayer)
+    ADD_EXAMPLE(feature/miniwebgl miniwebgl)
+    ADD_EXAMPLE(feature/multiple_servers multiple)
+    ADD_EXAMPLE(feature/oauth oauth)
+    ADD_EXAMPLE(feature/oidc oidc)
+    ADD_EXAMPLE(feature/paypal paypal)
+    IF (NOT ${WT_VERSION_MAJOR} STREQUAL "3")
+        ADD_EXAMPLE(feature/postall postall)
+    ENDIF()
+    ADD_EXAMPLE(feature/scrollvisibility scrollvisibility)
+    ADD_EXAMPLE(feature/serverpush serverpush)
+    ADD_EXAMPLE(feature/socketnotifier socketnotifier)
+    ADD_EXAMPLE(feature/suggestionpopup suggestionpopup)
+    ADD_EXAMPLE(feature/template-fun widgetfunction)
+    IF (NOT ${WT_VERSION_MAJOR} STREQUAL "3")
+        ADD_EXAMPLE(feature/urlparams urlparams)
+    ENDIF()
+    ADD_EXAMPLE(feature/video video)
+    ADD_EXAMPLE(feature/widgetset hellowidgetset)
+
+    ADD_DBO_EXAMPLE(feature/dbo dbo-tutorial1)
+    ADD_DBO_EXAMPLE(feature/dbo dbo-tutorial2)
+    ADD_DBO_EXAMPLE(feature/dbo dbo-tutorial3)
+    ADD_DBO_EXAMPLE(feature/dbo dbo-tutorial4)
+    ADD_DBO_EXAMPLE(feature/dbo dbo-tutorial5)
+    ADD_DBO_EXAMPLE(feature/dbo dbo-tutorial6)
+    ADD_DBO_EXAMPLE(feature/dbo dbo-tutorial7)
+    ADD_DBO_EXAMPLE(feature/dbo dbo-tutorial8)
+    ADD_DBO_EXAMPLE(feature/dbo dbo-tutorial9)
+
+    INSTALL(FILES ${EXAMPLE_EXES} ${EXAMPLE_BATS} DESTINATION "bin" COMPONENT examples)
+
+    INSTALL(DIRECTORY "${WINST_PREFIX}/lib/Wt" DESTINATION "lib" COMPONENT binaries)
+    INSTALL(DIRECTORY "${WINST_PREFIX}/share/Wt" DESTINATION "lib/share" COMPONENT binaries)
+    INSTALL(DIRECTORY "${WINST_PREFIX}/lib/cmake/wt" DESTINATION "lib/cmake" COMPONENT binaries OPTIONAL)
 
 
-   # Compose a meaningful compiler string
-   if(MSVC)
-	set(_WT_COMPILER "msvs${FANCY_MSVC_VERSION}")
-   elseif(CMAKE_COMPILER_IS_GNUCC)
-		set(_WT_COMPILER "gcc") # TODO Use the specific mingw version, i. e. the output of uname
-   endif()
+    # Compose a meaningful compiler string
+    set(_WT_COMPILER "msvs${FANCY_MSVC_VERSION}")
 
-   #
-   # Packages/installers
-   #
-   
-   # Put everything in a single ZIP file
-   set(CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE 1)
+    #
+    # Packages/installers
+    #
 
-   set(CMAKE_INSTALL_PREFIX "${WINST_BASEDIR}/build/installation" CACHE PATH "Installation prefix, required for CPack due to absolute paths" FORCE)
-   SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Wt binary build")
-   SET(CPACK_PACKAGE_VENDOR "emweb bvba")
-   SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/ReadMe.txt")
-   SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/Copyright.txt")
-   SET(CPACK_PACKAGE_VERSION_MAJOR ${WT_VERSION_MAJOR})
-   SET(CPACK_PACKAGE_VERSION_MINOR ${WT_VERSION_MINOR})
-   SET(CPACK_PACKAGE_VERSION_PATCH ${WT_VERSION_PATCH})
-   SET(CPACK_PACKAGE_INSTALL_DIRECTORY "Wt ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH} ${_WT_COMPILER} ${_WT_ARCH}")
-   
-   if(WIN32)
-	SET(CPACK_GENERATOR "ZIP;NSIS")
-   elseif(CMAKE_HOST_APPLE)
-    SET(CPACK_GENERATOR "Bundle")
-   else(WIN32)
-    SET(CPACK_GENERATOR "TBZ2")
-   endif(WIN32)
-   
-   set(CPACK_COMPONENTS_ALL binaries documentation examples symbols)
-   
-   set(CPACK_COMPONENT_BINARIES_DISPLAY_NAME "Binaries")
-   set(CPACK_COMPONENT_BINARIES_DESCRIPTION "Wt binaries and third party dependencies. Includes DLLs and import libraries.")
-   set(CPACK_COMPONENT_EXAMPLES_DISPLAY_NAME "Examples")
-   set(CPACK_COMPONENT_EXAMPLES_DESCRIPTION "Examples, ready to run. Source code is not included.")
-   set(CPACK_COMPONENT_DOCUMENTATION_DISPLAY_NAME "Documentation")
-   set(CPACK_COMPONENT_DOCUMENTATION_DESCRIPTION "Wt documentation in HTML format")
-   set(CPACK_COMPONENT_SYMBOLS_DISPLAY_NAME "Debug Symbols")
-   set(CPACK_COMPONENT_SYMBOLS_DESCRIPTION "PDB files for all debug DLLs")
-   
-   set(CPACK_COMPONENT_BINARIES_REQUIRED TRUE)
+    # Put everything in a single ZIP file
+    set(CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE 1)
+
+    set(CMAKE_INSTALL_PREFIX "${WINST_BASEDIR}/build/installation" CACHE PATH "Installation prefix, required for CPack due to absolute paths" FORCE)
+    SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Wt binary build")
+    SET(CPACK_PACKAGE_VENDOR "emweb bvba")
+    SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/ReadMe.txt")
+    SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/Copyright.txt")
+    SET(CPACK_PACKAGE_VERSION_MAJOR ${WT_VERSION_MAJOR})
+    SET(CPACK_PACKAGE_VERSION_MINOR ${WT_VERSION_MINOR})
+    SET(CPACK_PACKAGE_VERSION_PATCH ${WT_VERSION_PATCH})
+    SET(CPACK_PACKAGE_INSTALL_DIRECTORY "Wt ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH} ${_WT_COMPILER} ${_WT_ARCH}")
+
+    SET(CPACK_GENERATOR "ZIP;NSIS")
+
+    set(CPACK_COMPONENTS_ALL binaries documentation examples symbols)
+
+    set(CPACK_COMPONENT_BINARIES_DISPLAY_NAME "Binaries")
+    set(CPACK_COMPONENT_BINARIES_DESCRIPTION "Wt binaries and third party dependencies. Includes DLLs and import libraries.")
+    set(CPACK_COMPONENT_EXAMPLES_DISPLAY_NAME "Examples")
+    set(CPACK_COMPONENT_EXAMPLES_DESCRIPTION "Examples, ready to run. Source code is not included.")
+    set(CPACK_COMPONENT_DOCUMENTATION_DISPLAY_NAME "Documentation")
+    set(CPACK_COMPONENT_DOCUMENTATION_DESCRIPTION "Wt documentation in HTML format")
+    set(CPACK_COMPONENT_SYMBOLS_DISPLAY_NAME "Debug Symbols")
+    set(CPACK_COMPONENT_SYMBOLS_DESCRIPTION "PDB files for all debug DLLs")
+
+    set(CPACK_COMPONENT_BINARIES_REQUIRED TRUE)
    
    #set(CPACK_COMPONENT_EXAMPLES_DEPENDS binaries)
    
-IF(WT_GIT)
-   SET(CPACK_PACKAGE_FILE_NAME "Wt-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}-${_WT_COMPILER}-${CMAKE_SYSTEM_NAME}-${_WT_ARCH}-SDK")
-ELSE(WT_GIT)
-   #want to get release candidate indication in filename version
-   SET(CPACK_PACKAGE_FILE_NAME "Wt-${WT_VERSION}-${_WT_COMPILER}-${CMAKE_SYSTEM_NAME}-${_WT_ARCH}-SDK")
-ENDIF(WT_GIT)
-   
+   IF(WT_GIT)
+       SET(CPACK_PACKAGE_FILE_NAME "Wt-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}-${_WT_COMPILER}-${CMAKE_SYSTEM_NAME}-${_WT_ARCH}-SDK")
+   ELSE(WT_GIT)
+       #want to get release candidate indication in filename version
+       SET(CPACK_PACKAGE_FILE_NAME "Wt-${WT_VERSION}-${_WT_COMPILER}-${CMAKE_SYSTEM_NAME}-${_WT_ARCH}-SDK")
+   ENDIF(WT_GIT)
+
    INCLUDE(CPack)
+
 ENDIF( FETCH_ONLY )
