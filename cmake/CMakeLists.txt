@@ -108,7 +108,7 @@ set( _PACKAGES ${_PACKAGES} mariadb )
 
 set( boost_ver "1_70" )
 set( boost_URL https://dl.bintray.com/boostorg/release/1.70.0/source/boost_${boost_ver}_0.tar.bz2 )
-set( boost_HASH SHA256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 )
+set( boost_HASH SHA256=430ae8354789de4fd19ee52f3b1f739e1fba576f0aded0897c3c2bc00fb38778 )
 set( _PACKAGES ${_PACKAGES} boost )
 
 set( tinymce_URL http://download.tiny.cloud/tinymce/community/tinymce_3.5.12.zip )
