@@ -641,6 +641,7 @@ ELSE ( FETCH_ONLY )
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${boost_URL}
         URL_HASH ${boost_HASH}
+        PATCH_COMMAND ${PATCH_EXECUTABLE} --binary -p1 < ${WINST_BATDIR}/patches/boost-1.70-cmake.patch
         CONFIGURE_COMMAND ${boost_BOOTSTRAP_COMMAND}
         BUILD_COMMAND ${boost_COMMAND}
         BUILD_IN_SOURCE 1
@@ -676,18 +677,25 @@ ELSE ( FETCH_ONLY )
         -DSSL_LIB_NAMES=libssl
         -DSSL_LIB_TOO_NAMES=libcrypto
         -DENABLE_QT4:BOOL=0
+        -DENABLE_QT5:BOOL=0
         -DWTHTTP_CONFIGURATION:PATH=c:/witty/wthttpd
         )
 
     file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/wt)
 
-    IF(STANDALONE_ASIO)
-    set( wt_CMAKE_ARGS
-        ${wt_CMAKE_ARGS}
-        -DASIO_PREFIX:PATH=${WINST_PREFIX}
-        -DWT_ASIO_IMPLEMENTATION=standalone
-    )
-    ENDIF(STANDALONE_ASIO)
+    if(STANDALONE_ASIO)
+        set( wt_CMAKE_ARGS
+            ${wt_CMAKE_ARGS}
+            -DASIO_PREFIX:PATH=${WINST_PREFIX}
+            -DWT_ASIO_IMPLEMENTATION=standalone
+            -DBOOST_DYNAMIC=OFF
+        )
+    else()
+        set( wt_CMAKE_ARGS
+            ${wt_CMAKE_ARGS}
+            -DBOOST_DYNAMIC=ON
+        )
+    endif()
 
     if( WTGIT )
         ExternalProject_Add( wt-fetch
