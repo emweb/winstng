@@ -1,7 +1,5 @@
-diff --git a/build.info b/build.info
-index 3dda4e89bf..72d8e86915 100644
---- a/build.info
-+++ b/build.info
+--- openssl-orig/build.info	2019-06-17 13:15:15.107088156 +0200
++++ openssl/build.info	2019-06-14 16:05:20.352948218 +0200
 @@ -86,8 +86,13 @@ ELSIF[{- $config{target} =~ /^mingw/ -}]
   SHARED_NAME[libcrypto]=libcrypto-{- $sover_filename -}{- $config{target} eq "mingw64" ? "-x64" : "" -}
   SHARED_NAME[libssl]=libssl-{- $sover_filename -}{- $config{target} eq "mingw64" ? "-x64" : "" -}
