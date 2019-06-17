@@ -3,6 +3,8 @@ project( winst )
 
 include (ExternalProject)
 
+find_package(Git REQUIRED)
+
 # This variable is set in the bootstrapping script (winst/winst.bat)
 #set(WINST_PREFIX ${PROJECT_SOURCE_DIR}/prefix)
 #set(WINST_BASEDIR ${PROJECT_SOURCE_DIR}/..
@@ -341,7 +343,7 @@ ELSE ( FETCH_ONLY )
         URL_HASH ${openssl_HASH}
         LIST_SEPARATOR ^^
         UPDATE_COMMAND ""
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/openssl-library-names.patch
+        PATCH_COMMAND ${GIT_EXECUTABLE} patch ${WINST_BATDIR}/patches/openssl-library-names.patch
         CONFIGURE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_CONFIGURE_COMMAND:STRING=${OPENSSL_DEBUG_CONFIGURE_COMMAND} -P ${WINST_BATDIR}/cmake/configure-openssl.cmake
         TEST_COMMAND ${CMAKE_COMMAND} -E rename ${WINST_PREFIX}/lib/libcrypto.lib ${WINST_PREFIX}/lib/libcryptod.lib
         COMMAND ${CMAKE_COMMAND} -E rename ${WINST_PREFIX}/lib/libssl.lib ${WINST_PREFIX}/lib/libssld.lib
@@ -361,7 +363,7 @@ ELSE ( FETCH_ONLY )
         URL_HASH ${openssl_HASH}
         LIST_SEPARATOR ^^
         UPDATE_COMMAND ""
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/openssl-library-names.patch
+        PATCH_COMMAND ${GIT_EXECUTABLE} patch ${WINST_BATDIR}/patches/openssl-library-names.patch
         CONFIGURE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_CONFIGURE_COMMAND:STRING=${OPENSSL_RELEASE_CONFIGURE_COMMAND} -P ${WINST_BATDIR}/cmake/configure-openssl.cmake
         TEST_COMMAND ""
         BUILD_IN_SOURCE 1
@@ -393,7 +395,7 @@ ELSE ( FETCH_ONLY )
         URL ${mariadb_URL}
         URL_HASH ${mariadb_HASH}
         LIST_SEPARATOR ^^
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/mariadb-native-client.patch
+        PATCH_COMMAND ${GIT_EXECUTABLE} patch ${WINST_BATDIR}/patches/mariadb-native-client.patch
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
