@@ -466,7 +466,6 @@ ELSE ( FETCH_ONLY )
 
     file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/postgresql)
     ExternalProject_Add( postgresql-fetch
-        DEPENDS patch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/postgresql-src
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${postgresql_URL}
@@ -563,6 +562,7 @@ ELSE ( FETCH_ONLY )
 
     file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/libharu)
     ExternalProject_Add( libharu-fetch
+        DEPENDS patch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libharu-src
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${libharu_URL}
@@ -577,7 +577,7 @@ ELSE ( FETCH_ONLY )
         )
 
     ExternalProject_Add( libharu-debug
-        DEPENDS libharu-fetch zlib libpng patch
+        DEPENDS libharu-fetch zlib libpng
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libharu-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CMAKE_ARGS 
@@ -589,7 +589,7 @@ ELSE ( FETCH_ONLY )
         )
 
     ExternalProject_Add( libharu-release
-        DEPENDS zlib libpng patch libharu-fetch
+        DEPENDS libharu-fetch zlib libpng
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libharu-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CMAKE_ARGS 
@@ -637,7 +637,7 @@ ELSE ( FETCH_ONLY )
 
     set( boost_COMMAND ${boost_B2} --build-type=minimal ${boost_TOOLSET} ${boost_ADDRESS_MODEL} --variant=release --without-python ${boost_LINKAGE} threading=multi include=${WINST_PREFIX}/include linkflags=-L${WINST_PREFIX}/lib )
     ExternalProject_Add( boost
-        DEPENDS zlib
+        DEPENDS zlib patch
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${boost_URL}
         URL_HASH ${boost_HASH}
