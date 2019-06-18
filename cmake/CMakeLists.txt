@@ -858,6 +858,7 @@ ELSE ( FETCH_ONLY )
 
     INSTALL(FILES "${WINST_PREFIX}/bin/zlibd.dll" "${WINST_PREFIX}/bin/zlib.dll" DESTINATION "bin" COMPONENT binaries)
     INSTALL(FILES "${CMAKE_BINARY_DIR}/zlib-debug-prefix/src/zlib-debug-build/zlibd.pdb" DESTINATION "bin" COMPONENT symbols)
+    INSTALL(FILES "${CMAKE_BINARY_DIR}/zlib-release-prefix/src/zlib-release-build/zlib.pdb" DESTINATION "bin" COMPONENT symbols)
 
     INSTALL(
         FILES
@@ -885,10 +886,11 @@ ELSE ( FETCH_ONLY )
         COMPONENT symbols)
 
     INSTALL(FILES "${WINST_PREFIX}/lib/libmariadbd.dll" "${WINST_PREFIX}/lib/libmariadb.dll" DESTINATION "bin" COMPONENT binaries)
-    INSTALL(FILES "${WINST_PREFIX}/lib/libmariadbd.pdb" DESTINATION "bin" COMPONENT symbols)
+    INSTALL(FILES "${WINST_PREFIX}/lib/libmariadbd.pdb" "${WINST_PREFIX}/lib/libmariadb.pdb" DESTINATION "bin" COMPONENT symbols)
 
     INSTALL(FILES "${WINST_PREFIX}/bin/libpng14.dll" "${WINST_PREFIX}/bin/libpng14d.dll" DESTINATION "bin" COMPONENT binaries)
     INSTALL(FILES "${CMAKE_BINARY_DIR}/libpng-debug-prefix/src/libpng-debug-build/libpng14d.pdb" DESTINATION "bin" COMPONENT symbols)
+    INSTALL(FILES "${CMAKE_BINARY_DIR}/libpng-release-prefix/src/libpng-release-build/libpng14.pdb" DESTINATION "bin" COMPONENT symbols)
 
     INSTALL(DIRECTORY "${WINST_PREFIX}/include/" DESTINATION "include" COMPONENT binaries
         FILES_MATCHING
@@ -901,6 +903,7 @@ ELSE ( FETCH_ONLY )
     INSTALL(FILES "${WINST_PREFIX}/lib/libhpdf.lib" "${WINST_PREFIX}/lib/libhpdfd.lib" DESTINATION "lib" COMPONENT binaries)
     INSTALL(FILES "${WINST_PREFIX}/bin/libhpdf.dll" "${WINST_PREFIX}/bin/libhpdfd.dll" DESTINATION "bin" COMPONENT binaries)
     INSTALL(FILES "${CMAKE_BINARY_DIR}/libharu-debug-prefix/src/libharu-debug-build/src/libhpdfd.pdb" DESTINATION "bin" COMPONENT symbols)
+    INSTALL(FILES "${CMAKE_BINARY_DIR}/libharu-release-prefix/src/libharu-release-build/src/libhpdf.pdb" DESTINATION "bin" COMPONENT symbols)
 
 
     set(ALL_DYN_WT_LIBS wt wtdbo wtdbofirebird wtdbomssqlserver wtdbomysql wtdbopostgres wtdbosqlite3 wthttp wttest)
@@ -922,6 +925,15 @@ ELSE ( FETCH_ONLY )
         "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbopostgresd.pdb"
         "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/http/wthttpd.pdb"
         "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/wttestd.pdb"
+        "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/wt.pdb"
+        "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/Wt/Dbo/wtdbo.pdb"
+        "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/Wt/Dbo/backend/wtdbofirebird.pdb"
+        "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/Wt/Dbo/backend/wtdbomysql.pdb"
+        "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/Wt/Dbo/backend/wtdbosqlite3.pdb"
+        "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/Wt/Dbo/backend/wtdbomssqlserver.pdb"
+        "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/Wt/Dbo/backend/wtdbopostgres.pdb"
+        "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/http/wthttp.pdb"
+        "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/wttest.pdb"
         DESTINATION "bin" COMPONENT symbols
     )
 
