@@ -862,6 +862,7 @@ ELSE ( FETCH_ONLY )
     ENDIF (NOT STANDALONE_ASIO)
 
     INSTALL(FILES "${WINST_PREFIX}/bin/zlibd.dll" "${WINST_PREFIX}/bin/zlib.dll" DESTINATION "bin" COMPONENT binaries)
+    INSTALL(FILES "${WINST_PREFIX}/lib/zlibd.lib" "${WINST_PREFIX}/lib/zlib.lib" DESTINATION "lib" COMPONENT binaries)
     INSTALL(FILES "${CMAKE_BINARY_DIR}/zlib-debug-prefix/src/zlib-debug-build/zlibd.pdb" DESTINATION "bin" COMPONENT symbols)
     INSTALL(FILES "${CMAKE_BINARY_DIR}/zlib-release-prefix/src/zlib-release-build/zlib.pdb" DESTINATION "bin" COMPONENT symbols)
 
@@ -891,9 +892,11 @@ ELSE ( FETCH_ONLY )
         COMPONENT symbols)
 
     INSTALL(FILES "${WINST_PREFIX}/lib/libmariadbd.dll" "${WINST_PREFIX}/lib/libmariadb.dll" DESTINATION "bin" COMPONENT binaries)
+    INSTALL(FILES "${WINST_PREFIX}/lib/libmariadbd.lib" "${WINST_PREFIX}/lib/libmariadb.lib" DESTINATION "lib" COMPONENT binaries)
     INSTALL(FILES "${WINST_PREFIX}/lib/libmariadbd.pdb" "${WINST_PREFIX}/lib/libmariadb.pdb" DESTINATION "bin" COMPONENT symbols)
 
     INSTALL(FILES "${WINST_PREFIX}/bin/libpng14.dll" "${WINST_PREFIX}/bin/libpng14d.dll" DESTINATION "bin" COMPONENT binaries)
+    INSTALL(FILES "${WINST_PREFIX}/lib/libpng14.lib" "${WINST_PREFIX}/lib/libpng14d.lib" DESTINATION "lib" COMPONENT binaries)
     INSTALL(FILES "${CMAKE_BINARY_DIR}/libpng-debug-prefix/src/libpng-debug-build/libpng14d.pdb" DESTINATION "bin" COMPONENT symbols)
     INSTALL(FILES "${CMAKE_BINARY_DIR}/libpng-release-prefix/src/libpng-release-build/libpng14.pdb" DESTINATION "bin" COMPONENT symbols)
 
