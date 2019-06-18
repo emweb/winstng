@@ -783,7 +783,10 @@ ELSE ( FETCH_ONLY )
             ${STANDALONE_ASIO_DEPENDS}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-        CMAKE_ARGS -DCMAKE_BUILD_TYPE=Debug ${wt_CMAKE_ARGS}            
+        CMAKE_ARGS
+            -DCMAKE_BUILD_TYPE=Debug
+            -DBoost_USE_DEBUG_RUNTIME:BOOL=1
+            ${wt_CMAKE_ARGS}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -806,6 +809,7 @@ ELSE ( FETCH_ONLY )
             -DCMAKE_BUILD_TYPE=RelWithDebInfo
             -DINSTALL_EXAMPLES:BOOL=1
             -DINSTALL_DOCUMENTATION:BOOL=1
+            -DBoost_USE_DEBUG_RUNTIME:BOOL=0
             ${wt_CMAKE_ARGS}            
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
