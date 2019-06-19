@@ -745,7 +745,7 @@ ELSE ( FETCH_ONLY )
             LOG_BUILD 1
             LOG_TEST 1
             LOG_INSTALL 1
-            PATCH_COMMAND ${PATCH_EXECUTABLE} --binary -p1 < ${WINST_PREFIX}/patches/${WT_MARIADB_PATCH}
+            PATCH_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR> ${PATCH_EXECUTABLE} --binary -p1 < ${WINST_PREFIX}/patches/${WT_MARIADB_PATCH}
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ""
             INSTALL_COMMAND ""
@@ -763,7 +763,7 @@ ELSE ( FETCH_ONLY )
             LOG_BUILD 1
             LOG_TEST 1
             LOG_INSTALL 1
-            PATCH_COMMAND ${PATCH_EXECUTABLE} --binary -p1 < ${WINST_PREFIX}/patches/${WT_MARIADB_PATCH}
+            PATCH_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR> ${PATCH_EXECUTABLE} --binary -p1 < ${WINST_PREFIX}/patches/${WT_MARIADB_PATCH}
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ""
             INSTALL_COMMAND ""
