@@ -90,8 +90,8 @@ set( libpng_URL https://sourceforge.net/projects/libpng/files/libpng14/1.4.22/li
 set( libpng_HASH SHA256=64b0632f7c528a7afd58c351be416fba3c9348a50a31b465d937e718febe81a7)
 set( _PACKAGES ${_PACKAGES} libpng )
 
-set( postgresql_URL https://ftp.postgresql.org/pub/source/v11.1/postgresql-11.1.tar.bz2 )
-set( postgresql_HASH SHA256=90815e812874831e9a4bf6e1136bf73bc2c5a0464ef142e2dfea40cda206db08)
+set( postgresql_URL https://ftp.postgresql.org/pub/source/v11.3/postgresql-11.3.tar.bz2 )
+set( postgresql_HASH SHA256=2a85e082fc225944821dfd23990e32dfcd2284c19060864b0ad4ca537d30522d )
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 set( openssl_URL https://www.openssl.org/source/openssl-1.1.1c.tar.gz )
