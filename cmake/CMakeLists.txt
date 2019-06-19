@@ -516,7 +516,7 @@ ELSE ( FETCH_ONLY )
         )
 
     ExternalProject_Add( postgresql-release
-        DEPENDS postgresql-fetch zlib openssl
+        DEPENDS postgresql-fetch postgresql-debug zlib openssl
         SOURCE_DIR ${CMAKE_BINARY_DIR}/postgresql-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CONFIGURE_COMMAND ${postgresql_CONFIGURE_COMMAND}
