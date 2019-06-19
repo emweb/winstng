@@ -665,7 +665,7 @@ ELSE ( FETCH_ONLY )
 
     set( boost_COMMAND ${boost_B2} --build-type=minimal ${boost_TOOLSET} ${boost_ADDRESS_MODEL} --variant=release --without-python ${boost_LINKAGE} threading=multi include=${WINST_PREFIX}/include linkflags=-L${WINST_PREFIX}/lib )
     ExternalProject_Add( boost
-        DEPENDS zlib patch
+        DEPENDS patch
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${boost_URL}
         URL_HASH ${boost_HASH}
