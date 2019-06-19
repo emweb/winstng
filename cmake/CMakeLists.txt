@@ -734,7 +734,6 @@ ELSE ( FETCH_ONLY )
     if( WTGIT )
         ExternalProject_Add( wt-fetch
             # git
-            DEPENDS patch
             SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
             DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
             GIT_REPOSITORY ${WTGITREPO}
@@ -745,7 +744,6 @@ ELSE ( FETCH_ONLY )
             LOG_BUILD 1
             LOG_TEST 1
             LOG_INSTALL 1
-            PATCH_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR> ${PATCH_EXECUTABLE} --binary -p1 < ${WINST_PREFIX}/patches/${WT_MARIADB_PATCH}
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ""
             INSTALL_COMMAND ""
@@ -753,7 +751,6 @@ ELSE ( FETCH_ONLY )
         )
     else( WTGIT )
         ExternalProject_Add( wt-fetch
-            DEPENDS patch
             SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
             DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
             URL ${wt_URL}
@@ -763,7 +760,6 @@ ELSE ( FETCH_ONLY )
             LOG_BUILD 1
             LOG_TEST 1
             LOG_INSTALL 1
-            PATCH_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR> ${PATCH_EXECUTABLE} --binary -p1 < ${WINST_PREFIX}/patches/${WT_MARIADB_PATCH}
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ""
             INSTALL_COMMAND ""
