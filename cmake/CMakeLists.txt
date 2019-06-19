@@ -429,7 +429,7 @@ ELSE ( FETCH_ONLY )
         )
 
     ExternalProject_Add( mariadb-debug
-        DEPENDS mariadb-fetch zlib openssl
+        DEPENDS mariadb-fetch zlib
         SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         LIST_SEPARATOR ^^
@@ -450,7 +450,7 @@ ELSE ( FETCH_ONLY )
         )
 
     ExternalProject_Add( mariadb-release
-        DEPENDS mariadb-fetch zlib openssl
+        DEPENDS mariadb-fetch zlib
         SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         LIST_SEPARATOR ^^
