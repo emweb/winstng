@@ -513,7 +513,7 @@ ELSE ( FETCH_ONLY )
         SET(POSTGRES_CPU "i386")
     endif( _WT_ARCH STREQUAL "x64" ) # Win 64-bit
     ExternalProject_Add( postgresql-debug
-        DEPENDS postgresql-fetch zlib openssl
+        DEPENDS postgresql-fetch perl
         SOURCE_DIR ${CMAKE_BINARY_DIR}/postgresql-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CONFIGURE_COMMAND ${postgresql_CONFIGURE_COMMAND}
@@ -532,7 +532,7 @@ ELSE ( FETCH_ONLY )
         )
 
     ExternalProject_Add( postgresql-release
-        DEPENDS postgresql-fetch postgresql-debug zlib openssl
+        DEPENDS postgresql-fetch postgresql-debug perl
         SOURCE_DIR ${CMAKE_BINARY_DIR}/postgresql-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CONFIGURE_COMMAND ${postgresql_CONFIGURE_COMMAND}
