@@ -341,7 +341,7 @@ ELSE ( FETCH_ONLY )
     set( ENV{PATH} "${_NEWPATH}" )
 
     ExternalProject_Add( openssl-debug
-        DEPENDS zlib perl patch nasm
+        DEPENDS perl patch nasm
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${openssl_URL}
         URL_HASH ${openssl_HASH}
@@ -363,7 +363,7 @@ ELSE ( FETCH_ONLY )
         )
 
     ExternalProject_Add( openssl-release
-        DEPENDS zlib perl patch nasm openssl-debug
+        DEPENDS perl patch nasm openssl-debug
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${openssl_URL}
         URL_HASH ${openssl_HASH}
