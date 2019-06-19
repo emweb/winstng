@@ -290,7 +290,13 @@ ELSE ( FETCH_ONLY )
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libpng-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CMAKE_ARGS 
-            -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+            -DCMAKE_BUILD_TYPE=Debug
+            -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH}
+            -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
+            -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+            -DPNG_SHARED:BOOL=OFF
+            -DPNG_STATIC:BOOL=ON
+            -DZLIB_DEBUG_LIBRARY:PATH=${WINST_PREFIX}/lib/zlibstaticd.lib
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -303,7 +309,13 @@ ELSE ( FETCH_ONLY )
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libpng-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CMAKE_ARGS 
-            -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo
+            -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH}
+            -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
+            -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+            -DPNG_SHARED:BOOL=OFF
+            -DPNG_STATIC:BOOL=ON
+            -DZLIB_RELEASE_LIBRARY=${WINST_PREFIX}/lib/zlibstatic.lib
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -427,6 +439,8 @@ ELSE ( FETCH_ONLY )
             -DCMAKE_MODULE_PATH:STRING=${WINST_MODULE_PATH}
             -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
             -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+            -DWITH_EXTERNAL_ZLIB:BOOL=ON
+            -DZLIB_DEBUG_LIBRARY:PATH=${WINST_PREFIX}/lib/zlibstaticd.lib
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -446,6 +460,8 @@ ELSE ( FETCH_ONLY )
             -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
             -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
             -DCMAKE_MODULE_PATH:STRING=${WINST_MODULE_PATH}
+            -DWITH_EXTERNAL_ZLIB:BOOL=ON
+            -DZLIB_RELEASE_LIBRARY=${WINST_PREFIX}/lib/zlibstatic.lib
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -581,7 +597,13 @@ ELSE ( FETCH_ONLY )
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libharu-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CMAKE_ARGS 
-            -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+            -DCMAKE_BUILD_TYPE=Debug
+            -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH}
+            -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
+            -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+            -DZLIB_LIBRARY_DEBUG:PATH=${WINST_PREFIX}/lib/zlibstaticd.lib
+            -DPNG_LIBRARY_DEBUG:PATH=${WINST_PREFIX}/lib/libpng14_staticd.lib
+            -DLIBHPDF_STATIC:BOOL=OFF
         LOG_CONFIGURE 1
         LOG_BUILD 1
         LOG_TEST 1
@@ -593,7 +615,13 @@ ELSE ( FETCH_ONLY )
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libharu-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CMAKE_ARGS 
-            -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH} -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX} -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo
+            -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH}
+            -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
+            -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+            -DZLIB_LIBRARY_RELEASE:PATH=${WINST_PREFIX}/lib/zlibstatic.lib
+            -DPNG_LIBRARY_RELEASE:PATH=${WINST_PREFIX}/lib/libpng14_static.lib
+            -DLIBHPDF_STATIC:BOOL=OFF
         LOG_CONFIGURE 1
         LOG_BUILD 1
         LOG_TEST 1
@@ -696,10 +724,17 @@ ELSE ( FETCH_ONLY )
             -DBOOST_DYNAMIC=ON
         )
     endif()
+    
+    if(WT_VERSION VERSION_LESS 4.0.0)
+        set(WT_MARIADB_PATCH wt_static_mariadbclient.patch)
+    else()
+        set(WT_MARIADB_PATCH wt3_static_mariadbclient.patch)
+    endif()
 
     if( WTGIT )
         ExternalProject_Add( wt-fetch
             # git
+            DEPENDS patch
             SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
             DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
             GIT_REPOSITORY ${WTGITREPO}
@@ -710,6 +745,7 @@ ELSE ( FETCH_ONLY )
             LOG_BUILD 1
             LOG_TEST 1
             LOG_INSTALL 1
+            PATCH_COMMAND ${PATCH_EXECUTABLE} --binary -p1 < ${WINST_PREFIX}/patches/${WT_MARIADB_PATCH}
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ""
             INSTALL_COMMAND ""
@@ -717,6 +753,7 @@ ELSE ( FETCH_ONLY )
         )
     else( WTGIT )
         ExternalProject_Add( wt-fetch
+            DEPENDS patch
             SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
             DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
             URL ${wt_URL}
@@ -726,6 +763,7 @@ ELSE ( FETCH_ONLY )
             LOG_BUILD 1
             LOG_TEST 1
             LOG_INSTALL 1
+            PATCH_COMMAND ${PATCH_EXECUTABLE} --binary -p1 < ${WINST_PREFIX}/patches/${WT_MARIADB_PATCH}
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ""
             INSTALL_COMMAND ""
@@ -786,6 +824,7 @@ ELSE ( FETCH_ONLY )
         CMAKE_ARGS
             -DCMAKE_BUILD_TYPE=Debug
             -DBoost_USE_DEBUG_RUNTIME:BOOL=1
+            -DMYSQL_DEBUG_LIB:FILEPATH=${WINST_PREFIX}/lib/mariadbclientd.lib
             ${wt_CMAKE_ARGS}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -810,6 +849,7 @@ ELSE ( FETCH_ONLY )
             -DINSTALL_EXAMPLES:BOOL=1
             -DINSTALL_DOCUMENTATION:BOOL=1
             -DBoost_USE_DEBUG_RUNTIME:BOOL=0
+            -DMYSQL_LIB:FILEPATH=${WINST_PREFIX}/lib/mariadbclient.lib
             ${wt_CMAKE_ARGS}            
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -849,9 +889,6 @@ ELSE ( FETCH_ONLY )
     endif (STANDALONE_ASIO)
 
     # If we include a dll, we should include the headers
-    INSTALL(DIRECTORY "${WINST_PREFIX}/include/mariadb" DESTINATION "include" COMPONENT binaries)
-    INSTALL(FILES "${WINST_PREFIX}/include/zconf.h" "${WINST_PREFIX}/include/zlib.h" DESTINATION "include" COMPONENT binaries)
-    INSTALL(DIRECTORY "${WINST_PREFIX}/include/libpng14" DESTINATION "include" COMPONENT binaries)
     INSTALL(DIRECTORY "${WINST_PREFIX}/include/openssl" DESTINATION "include" COMPONENT binares)
 
     # Libraries
@@ -860,11 +897,6 @@ ELSE ( FETCH_ONLY )
        INSTALL(DIRECTORY "${WINST_PREFIX}/lib/" DESTINATION "lib" COMPONENT binaries
          FILES_MATCHING PATTERN "libboost*")
     ENDIF (NOT STANDALONE_ASIO)
-
-    INSTALL(FILES "${WINST_PREFIX}/bin/zlibd.dll" "${WINST_PREFIX}/bin/zlib.dll" DESTINATION "bin" COMPONENT binaries)
-    INSTALL(FILES "${WINST_PREFIX}/lib/zlibd.lib" "${WINST_PREFIX}/lib/zlib.lib" DESTINATION "lib" COMPONENT binaries)
-    INSTALL(FILES "${CMAKE_BINARY_DIR}/zlib-debug-prefix/src/zlib-debug-build/zlibd.pdb" DESTINATION "bin" COMPONENT symbols)
-    INSTALL(FILES "${CMAKE_BINARY_DIR}/zlib-release-prefix/src/zlib-release-build/zlib.pdb" DESTINATION "bin" COMPONENT symbols)
 
     INSTALL(
         FILES
@@ -890,15 +922,6 @@ ELSE ( FETCH_ONLY )
             "${WINST_PREFIX}/bin/libssld.pdb"
         DESTINATION "bin"
         COMPONENT symbols)
-
-    INSTALL(FILES "${WINST_PREFIX}/lib/libmariadbd.dll" "${WINST_PREFIX}/lib/libmariadb.dll" DESTINATION "bin" COMPONENT binaries)
-    INSTALL(FILES "${WINST_PREFIX}/lib/libmariadbd.lib" "${WINST_PREFIX}/lib/libmariadb.lib" DESTINATION "lib" COMPONENT binaries)
-    INSTALL(FILES "${WINST_PREFIX}/lib/libmariadbd.pdb" "${WINST_PREFIX}/lib/libmariadb.pdb" DESTINATION "bin" COMPONENT symbols)
-
-    INSTALL(FILES "${WINST_PREFIX}/bin/libpng14.dll" "${WINST_PREFIX}/bin/libpng14d.dll" DESTINATION "bin" COMPONENT binaries)
-    INSTALL(FILES "${WINST_PREFIX}/lib/libpng14.lib" "${WINST_PREFIX}/lib/libpng14d.lib" DESTINATION "lib" COMPONENT binaries)
-    INSTALL(FILES "${CMAKE_BINARY_DIR}/libpng-debug-prefix/src/libpng-debug-build/libpng14d.pdb" DESTINATION "bin" COMPONENT symbols)
-    INSTALL(FILES "${CMAKE_BINARY_DIR}/libpng-release-prefix/src/libpng-release-build/libpng14.pdb" DESTINATION "bin" COMPONENT symbols)
 
     INSTALL(DIRECTORY "${WINST_PREFIX}/include/" DESTINATION "include" COMPONENT binaries
         FILES_MATCHING

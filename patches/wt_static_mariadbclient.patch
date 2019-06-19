@@ -1,0 +1,14 @@
+diff --git a/src/Wt/Dbo/backend/CMakeLists.txt b/src/Wt/Dbo/backend/CMakeLists.txt
+index 7a95a2be..96cb62aa 100755
+--- a/src/Wt/Dbo/backend/CMakeLists.txt
++++ b/src/Wt/Dbo/backend/CMakeLists.txt
+@@ -280,6 +280,9 @@ IF(ENABLE_MYSQL AND MYSQL_FOUND)
+       wtdbo
+     PRIVATE
+       ${MYSQL_LIBRARIES}
++      ${ZLIB_LIBRARIES}
++      ws2_32
++      Shlwapi
+   )
+ 
+   INCLUDE_DIRECTORIES(${MYSQL_INCLUDE})
