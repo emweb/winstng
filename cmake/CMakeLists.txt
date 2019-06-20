@@ -611,7 +611,7 @@ ELSE ( FETCH_ONLY )
         )
 
     ExternalProject_Add( libharu-release
-        DEPENDS libharu-fetch zlib libpng
+        DEPENDS libharu-fetch libharu-debug zlib libpng
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libharu-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CMAKE_ARGS 
