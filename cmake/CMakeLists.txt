@@ -690,6 +690,7 @@ ELSE ( FETCH_ONLY )
         -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
         -DBoost_NO_SYSTEM_PATHS:BOOL=1
         -DBOOST_ROOT:PATH=${WINST_PREFIX}
+        -DBOOST_DYNAMIC:BOOL=0
         -DCONFIGDIR:PATH=c:/witty
         -DWT_WRASTERIMAGE_IMPLEMENTATION=Direct2D
         -DHARU_PREFIX=${WINST_PREFIX}
@@ -717,12 +718,6 @@ ELSE ( FETCH_ONLY )
             ${wt_CMAKE_ARGS}
             -DASIO_PREFIX:PATH=${WINST_PREFIX}
             -DWT_ASIO_IMPLEMENTATION=standalone
-            -DBOOST_DYNAMIC=OFF
-        )
-    else()
-        set( wt_CMAKE_ARGS
-            ${wt_CMAKE_ARGS}
-            -DBOOST_DYNAMIC=ON
         )
     endif()
     
