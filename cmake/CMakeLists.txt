@@ -19,6 +19,14 @@ set(STANDALONE_ASIO ${STANDALONE_ASIO} CACHE BOOL "use standalone version of Asi
 
 set(WTGIT ${WTGIT} CACHE BOOL "build git version instead of release version" FORCE)
 
+if(MSVC_VERSION GREATER_EQUAL 1800)
+    set(_ENABLE_MARIADB_CONNECTOR_C_DEFAULT ON)
+else()
+    set(_ENABLE_MARIADB_CONNECTOR_C_DEFAULT OFF)
+endif()
+option(ENABLE_MARIADB_CONNECTOR_C ${_ENABLE_MARIADB_CONNECTOR_C_DEFAULT})
+set(_ENABLE_MARIADB_CONNECTOR_C_DEFAULT)
+
 IF (NOT WT_VERSION)
     SET(WT_VERSION "4.0.0")
 ENDIF (NOT WT_VERSION)
@@ -77,9 +85,6 @@ if (STANDALONE_ASIO)
     set( asio_URL https://prdownloads.sourceforge.net/asio/asio-${asio_ver}.tar.gz )
     set( asio_HASH SHA1=9fb618d489f9b695c52477660984d9a3e21d8fc3 )
     set( _PACKAGES ${_PACKAGES} asio )
-    set(STANDALONE_ASIO_DEPENDS "asio")
-else()
-    set(STANDALONE_ASIO_DEPENDS "")
 endif()
 
 set( zlib_URL https://prdownloads.sourceforge.net/libpng/zlib-1.2.11.tar.gz )
@@ -407,77 +412,79 @@ ELSE ( FETCH_ONLY )
         TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE ${WINST_PREFIX}/licenses/openssl/
         )
 
-    file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/mariadb)
-    ExternalProject_Add( mariadb-fetch
-        DEPENDS patch
-        SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
-        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-        URL ${mariadb_URL}
-        URL_HASH ${mariadb_HASH}
-        LIST_SEPARATOR ^^
-        PATCH_COMMAND ${PATCH_EXECUTABLE} --binary -p1 < ${WINST_BATDIR}/patches/mariadb-native-client.patch
-        CONFIGURE_COMMAND ""
-        BUILD_COMMAND ""
-        INSTALL_COMMAND ""
-        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/COPYING.LIB ${WINST_PREFIX}/licenses/mariadb/
-        LOG_DOWNLOAD 1
-        LOG_UPDATE 1
-        LOG_CONFIGURE 1
-        LOG_BUILD 1
-        LOG_TEST 1
-        LOG_INSTALL 1
-        )
+    if(ENABLE_MARIADB_CONNECTOR_C)
+        file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/mariadb)
+        ExternalProject_Add( mariadb-fetch
+            DEPENDS patch
+            SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
+            DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
+            URL ${mariadb_URL}
+            URL_HASH ${mariadb_HASH}
+            LIST_SEPARATOR ^^
+            PATCH_COMMAND ${PATCH_EXECUTABLE} --binary -p1 < ${WINST_BATDIR}/patches/mariadb-native-client.patch
+            CONFIGURE_COMMAND ""
+            BUILD_COMMAND ""
+            INSTALL_COMMAND ""
+            TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/COPYING.LIB ${WINST_PREFIX}/licenses/mariadb/
+            LOG_DOWNLOAD 1
+            LOG_UPDATE 1
+            LOG_CONFIGURE 1
+            LOG_BUILD 1
+            LOG_TEST 1
+            LOG_INSTALL 1
+            )
 
-    ExternalProject_Add( mariadb-debug
-        DEPENDS mariadb-fetch zlib
-        SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
-        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-        LIST_SEPARATOR ^^
-        CMAKE_ARGS
-            -DINSTALL_LIBDIR=lib
-            -DCMAKE_BUILD_TYPE=Debug
-            -DCMAKE_MODULE_PATH:STRING=${WINST_MODULE_PATH}
-            -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
-            -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
-            -DWITH_EXTERNAL_ZLIB:BOOL=ON
-            -DZLIB_DEBUG_LIBRARY:PATH=${WINST_PREFIX}/lib/zlibstaticd.lib
-        LOG_DOWNLOAD 1
-        LOG_UPDATE 1
-        LOG_CONFIGURE 1
-        LOG_BUILD 1
-        LOG_TEST 1
-        LOG_INSTALL 1
-        )
+        ExternalProject_Add( mariadb-debug
+            DEPENDS mariadb-fetch zlib
+            SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
+            DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+            LIST_SEPARATOR ^^
+            CMAKE_ARGS
+                -DINSTALL_LIBDIR=lib
+                -DCMAKE_BUILD_TYPE=Debug
+                -DCMAKE_MODULE_PATH:STRING=${WINST_MODULE_PATH}
+                -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
+                -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+                -DWITH_EXTERNAL_ZLIB:BOOL=ON
+                -DZLIB_DEBUG_LIBRARY:PATH=${WINST_PREFIX}/lib/zlibstaticd.lib
+            LOG_DOWNLOAD 1
+            LOG_UPDATE 1
+            LOG_CONFIGURE 1
+            LOG_BUILD 1
+            LOG_TEST 1
+            LOG_INSTALL 1
+            )
 
-    ExternalProject_Add( mariadb-release
-        DEPENDS mariadb-fetch zlib
-        SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
-        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-        LIST_SEPARATOR ^^
-        CMAKE_ARGS
-            -DINSTALL_LIBDIR=lib
-            -DCMAKE_BUILD_TYPE=RelWithDebInfo
-            -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
-            -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
-            -DCMAKE_MODULE_PATH:STRING=${WINST_MODULE_PATH}
-            -DWITH_EXTERNAL_ZLIB:BOOL=ON
-            -DZLIB_RELEASE_LIBRARY=${WINST_PREFIX}/lib/zlibstatic.lib
-        LOG_DOWNLOAD 1
-        LOG_UPDATE 1
-        LOG_CONFIGURE 1
-        LOG_BUILD 1
-        LOG_TEST 1
-        LOG_INSTALL 1
-        )
+        ExternalProject_Add( mariadb-release
+            DEPENDS mariadb-fetch zlib
+            SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
+            DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+            LIST_SEPARATOR ^^
+            CMAKE_ARGS
+                -DINSTALL_LIBDIR=lib
+                -DCMAKE_BUILD_TYPE=RelWithDebInfo
+                -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
+                -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
+                -DCMAKE_MODULE_PATH:STRING=${WINST_MODULE_PATH}
+                -DWITH_EXTERNAL_ZLIB:BOOL=ON
+                -DZLIB_RELEASE_LIBRARY=${WINST_PREFIX}/lib/zlibstatic.lib
+            LOG_DOWNLOAD 1
+            LOG_UPDATE 1
+            LOG_CONFIGURE 1
+            LOG_BUILD 1
+            LOG_TEST 1
+            LOG_INSTALL 1
+            )
 
-    ExternalProject_Add( mariadb
-        DEPENDS mariadb-release mariadb-debug
-        SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
-        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-        CONFIGURE_COMMAND ""
-        BUILD_COMMAND ""
-        INSTALL_COMMAND ""
-        )
+        ExternalProject_Add( mariadb
+            DEPENDS mariadb-release mariadb-debug
+            SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
+            DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+            CONFIGURE_COMMAND ""
+            BUILD_COMMAND ""
+            INSTALL_COMMAND ""
+            )
+    endif()
 
 
     file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/postgresql)
@@ -804,15 +811,26 @@ ELSE ( FETCH_ONLY )
         )
     endif (STANDALONE_ASIO)
 
+    set(wt_DEPENDS
+        tinymce
+        wt-fetch
+        zlib
+        libpng
+        libharu
+        openssl
+        firebirdsql
+        mariadb
+        postgresql
+        boost
+    )
+    if(STANDALONE_ASIO)
+        set(wt_DEPENDS ${wt_DEPENDS} asio)
+    endif()
+    if(ENABLE_MARIADB_CONNECTOR_C)
+        set(wt_DEPENDS ${wt_DEPENDS} mariadb)
+    endif()
     ExternalProject_Add( wt-debug
-        DEPENDS tinymce wt-fetch
-            zlib libpng libharu
-            openssl
-            firebirdsql
-            mariadb
-            postgresql
-            boost
-            ${STANDALONE_ASIO_DEPENDS}
+        DEPENDS ${wt_DEPENDS}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CMAKE_ARGS
@@ -828,14 +846,7 @@ ELSE ( FETCH_ONLY )
         LOG_INSTALL 1
     )
     ExternalProject_Add( wt-release
-        DEPENDS tinymce wt-fetch
-            zlib libpng libharu
-            openssl
-            firebirdsql
-            mariadb
-            postgresql
-            boost
-            ${STANDALONE_ASIO_DEPENDS}
+        DEPENDS ${wt_DEPENDS}
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CMAKE_ARGS
@@ -931,7 +942,10 @@ ELSE ( FETCH_ONLY )
     INSTALL(FILES "${CMAKE_BINARY_DIR}/libharu-release-prefix/src/libharu-release-build/src/libhpdf.pdb" DESTINATION "bin" COMPONENT symbols)
 
 
-    set(ALL_DYN_WT_LIBS wt wtdbo wtdbofirebird wtdbomssqlserver wtdbomysql wtdbopostgres wtdbosqlite3 wthttp wttest)
+    set(ALL_DYN_WT_LIBS wt wtdbo wtdbofirebird wtdbomssqlserver wtdbopostgres wtdbosqlite3 wthttp wttest)
+    if(ENABLE_MARIADB_CONNECTOR_C)
+        set(ALL_DYN_WT_LIBS ${WT_LIBS} wtdbomysql)
+    endif()
     set(ALL_WT_LIBS ${ALL_DYN_WT_LIBS} wtisapi)
     FOREACH(lib ${ALL_DYN_WT_LIBS})
         INSTALL(FILES "${WINST_PREFIX}/bin/${lib}.dll" "${WINST_PREFIX}/bin/${lib}d.dll" DESTINATION "bin" COMPONENT binaries)
@@ -944,7 +958,6 @@ ELSE ( FETCH_ONLY )
         "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/wtd.pdb"
         "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/wtdbod.pdb"
         "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbofirebirdd.pdb"
-        "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbomysqld.pdb"
         "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbosqlite3d.pdb"
         "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbomssqlserverd.pdb"
         "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbopostgresd.pdb"
@@ -953,12 +966,16 @@ ELSE ( FETCH_ONLY )
         "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/wt.pdb"
         "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/Wt/Dbo/wtdbo.pdb"
         "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/Wt/Dbo/backend/wtdbofirebird.pdb"
-        "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/Wt/Dbo/backend/wtdbomysql.pdb"
         "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/Wt/Dbo/backend/wtdbosqlite3.pdb"
         "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/Wt/Dbo/backend/wtdbomssqlserver.pdb"
         "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/Wt/Dbo/backend/wtdbopostgres.pdb"
         "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/http/wthttp.pdb"
         "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/wttest.pdb"
+        DESTINATION "bin" COMPONENT symbols
+    )
+    INSTALL(FILES
+        "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbomysqld.pdb"
+        "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/Wt/Dbo/backend/wtdbomysql.pdb"
         DESTINATION "bin" COMPONENT symbols
     )
 
