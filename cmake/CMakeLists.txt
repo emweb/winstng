@@ -892,9 +892,6 @@ ELSE ( FETCH_ONLY )
         INSTALL(DIRECTORY "${WINST_PREFIX}/include/boost-${boost_ver}/boost" DESTINATION "include" COMPONENT binaries)
     endif (STANDALONE_ASIO)
 
-    # If we include a dll, we should include the headers
-    INSTALL(DIRECTORY "${WINST_PREFIX}/include/openssl" DESTINATION "include" COMPONENT binares)
-
     # Libraries
 
     IF (NOT STANDALONE_ASIO)
