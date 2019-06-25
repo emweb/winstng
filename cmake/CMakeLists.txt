@@ -819,7 +819,6 @@ ELSE ( FETCH_ONLY )
         libharu
         openssl
         firebirdsql
-        mariadb
         postgresql
         boost
     )
