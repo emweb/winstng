@@ -969,11 +969,13 @@ ELSE ( FETCH_ONLY )
         "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/wttest.pdb"
         DESTINATION "bin" COMPONENT symbols
     )
-    INSTALL(FILES
-        "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbomysqld.pdb"
-        "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/Wt/Dbo/backend/wtdbomysql.pdb"
-        DESTINATION "bin" COMPONENT symbols
-    )
+    if (ENABLE_MARIADB_CONNECTOR_C)
+        INSTALL(FILES
+            "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbomysqld.pdb"
+            "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/Wt/Dbo/backend/wtdbomysql.pdb"
+            DESTINATION "bin" COMPONENT symbols
+        )
+    endif()
 
     SET(EXAMPLE_EXES "")
     SET(EXAMPLE_BATS "")
