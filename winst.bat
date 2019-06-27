@@ -52,13 +52,11 @@ setlocal
 @SET BASEDIR=%CD%
 @SET BATDIR=%~dp0
 @SET WGET_FILENAME=wget.exe
-@SET WGET_FTP_SITE=ftp.kfki.hu
-@SET WGET_FTP_DIRECTORY=/pub/w2
+@SET WGET_URL=https://eternallybored.org/misc/wget/1.20.3/64/wget.exe
 
 @IF EXIST downloaddir.txt (SET /p DOWNLOADS=<downloaddir.txt) else (SET DOWNLOADS=%BASEDIR%\downloads)
 @echo Downloading into %DOWNLOADS%
 
-@SET WGET_FTP_PATH=%WGET_FTP_DIRECTORY%/%WGET_FILENAME%
 @SET CMAKE_VERSION=3.14.5
 @SET CMAKE_ZIP=cmake-%CMAKE_VERSION%-win32-x86.zip
 @SET CMAKE_FULLURL=https://www.cmake.org/files/v3.14/%CMAKE_ZIP%
@@ -82,20 +80,13 @@ setlocal
 @IF EXIST build GOTO WGET
 @mkdir build
 
+:: Downloading CMake with PowerShell wouldn't work for some reason,
+:: so we download wget with powershell, and then CMake with wget
 :WGET
 @echo Downloading wget...
 
 @IF EXIST "%DOWNLOADS%\%WGET_FILENAME%" GOTO DOWNLOAD
-@echo open %WGET_FTP_SITE% >> "%DOWNLOADS%\curl.ftp"
-@echo anonymous >> "%DOWNLOADS%\curl.ftp"
-@echo pass ano@nymo.us >> "%DOWNLOADS%\curl.ftp"
-@echo binary >> "%DOWNLOADS%\curl.ftp"
-@echo get %WGET_FTP_PATH% %DOWNLOADS%/%WGET_FILENAME% >> "%DOWNLOADS%\curl.ftp"
-@echo close >> "%DOWNLOADS%\curl.ftp"
-
-@echo quit >> "%DOWNLOADS%\curl.ftp"
-
-@ftp -s:"%DOWNLOADS%\curl.ftp"
+@powershell -Command "(New-Object Net.WebClient).DownloadFile('%WGET_URL%', '%DOWNLOADS%\%WGET_FILENAME%')"
 
 :DOWNLOAD
 @cd %DOWNLOADS%
@@ -103,7 +94,7 @@ setlocal
 :DOWNLOADCMAKE
 @echo Downloading CMake...
 @IF EXIST %CMAKE_ZIP% GOTO INSTALLSTEP
-@wget --no-check-certificate -N -c %CMAKE_FULLURL%
+@wget -N -c %CMAKE_FULLURL%
 
 :INSTALLSTEP
 @echo Setting up prerequisites...
