@@ -940,7 +940,7 @@ ELSE ( FETCH_ONLY )
 
     set(ALL_DYN_WT_LIBS wt wtdbo wtdbofirebird wtdbomssqlserver wtdbopostgres wtdbosqlite3 wthttp wttest)
     if(ENABLE_MARIADB_CONNECTOR_C)
-        set(ALL_DYN_WT_LIBS ${WT_LIBS} wtdbomysql)
+        set(ALL_DYN_WT_LIBS ${ALL_DYN_WT_LIBS} wtdbomysql)
     endif()
     set(ALL_WT_LIBS ${ALL_DYN_WT_LIBS} wtisapi)
     FOREACH(lib ${ALL_DYN_WT_LIBS})
