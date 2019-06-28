@@ -200,12 +200,13 @@ ELSE ( FETCH_ONLY )
         )
 
     # Perl - required for OpenSSL
+    file(MAKE_DIRECTORY ${WINST_PREFIX}/perl)
     ExternalProject_Add( perl
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${perl_URL}
         URL_HASH ${perl_HASH}
         CONFIGURE_COMMAND ""
-        BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/perl ${WINST_PREFIX}/
+        BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/perl ${WINST_PREFIX}/perl
         INSTALL_COMMAND ""
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -340,11 +341,11 @@ ELSE ( FETCH_ONLY )
 
     # OpenSSL requires some extra effort
     if( _WT_ARCH STREQUAL "x64" ) # Windows 64-bit
-        set( OPENSSL_DEBUG_CONFIGURE_COMMAND "${WINST_PREFIX}/bin/perl Configure VC-WIN64A --debug --openssldir=${WINST_PREFIX} --prefix=${WINST_PREFIX}" )
-        set( OPENSSL_RELEASE_CONFIGURE_COMMAND "${WINST_PREFIX}/bin/perl Configure VC-WIN64A --release --openssldir=${WINST_PREFIX} --prefix=${WINST_PREFIX}" )
+        set( OPENSSL_DEBUG_CONFIGURE_COMMAND "${WINST_PREFIX}/perl/bin/perl Configure VC-WIN64A --debug --openssldir=${WINST_PREFIX} --prefix=${WINST_PREFIX}" )
+        set( OPENSSL_RELEASE_CONFIGURE_COMMAND "${WINST_PREFIX}/perl/bin/perl Configure VC-WIN64A --release --openssldir=${WINST_PREFIX} --prefix=${WINST_PREFIX}" )
     else( _WT_ARCH STREQUAL "x86" ) # Windows 32-bit
-        set( OPENSSL_DEBUG_CONFIGURE_COMMAND "${WINST_PREFIX}/bin/perl Configure VC-WIN32 --debug --openssldir=${WINST_PREFIX} --prefix=${WINST_PREFIX}" )
-        set( OPENSSL_RELEASE_CONFIGURE_COMMAND "${WINST_PREFIX}/bin/perl Configure VC-WIN32 --release --openssldir=${WINST_PREFIX} --prefix=${WINST_PREFIX}" )
+        set( OPENSSL_DEBUG_CONFIGURE_COMMAND "${WINST_PREFIX}/perl/bin/perl Configure VC-WIN32 --debug --openssldir=${WINST_PREFIX} --prefix=${WINST_PREFIX}" )
+        set( OPENSSL_RELEASE_CONFIGURE_COMMAND "${WINST_PREFIX}/perl/bin/perl Configure VC-WIN32 --release --openssldir=${WINST_PREFIX} --prefix=${WINST_PREFIX}" )
     endif()
 
     set( OPENSSL_DEBUG_BUILD_COMMAND "nmake" )
@@ -510,8 +511,8 @@ ELSE ( FETCH_ONLY )
     configure_file( ${winst_SOURCE_DIR}/postgresql-11.1-config_default.pl.cmake ${CMAKE_BINARY_DIR}/postgres_config.pl @ONLY )
 
     set(postgresql_CONFIGURE_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/postgres_config.pl <SOURCE_DIR>/src/tools/msvc/config.pl)
-    set(postgresql_BUILD_COMMAND ${CMAKE_COMMAND} -E env MSBFLAGS=-property:ConfigurationType=StaticLibrary ${WINST_BATDIR}/cmake/execute-with-path.bat ${WINST_PREFIX}/bin ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/src/tools/msvc build.bat)
-    set(postgresql_INSTALL_COMMAND ${WINST_BATDIR}/cmake/execute-with-path.bat ${WINST_PREFIX}/bin ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/src/tools/msvc install.bat ${WINST_PREFIX})
+    set(postgresql_BUILD_COMMAND ${CMAKE_COMMAND} -E env MSBFLAGS=-property:ConfigurationType=StaticLibrary ${WINST_BATDIR}/cmake/execute-with-path.bat ${WINST_PREFIX}/perl/bin ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/src/tools/msvc build.bat)
+    set(postgresql_INSTALL_COMMAND ${WINST_BATDIR}/cmake/execute-with-path.bat ${WINST_PREFIX}/perl/bin ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>/src/tools/msvc install.bat ${WINST_PREFIX})
     set(postgresql_TEST_COMMAND ${CMAKE_COMMAND} -E echo)
 
     if( _WT_ARCH STREQUAL "x64" ) # Win 64-bit
