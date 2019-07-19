@@ -99,8 +99,8 @@ set( postgresql_URL https://ftp.postgresql.org/pub/source/v11.3/postgresql-11.3.
 set( postgresql_HASH SHA256=2a85e082fc225944821dfd23990e32dfcd2284c19060864b0ad4ca537d30522d )
 set( _PACKAGES ${_PACKAGES} postgresql )
 
-set( openssl_DLLVER 1.1 )
-set( openssl_URL https://www.openssl.org/source/openssl-${openssl_DLLVER}.1c.tar.gz )
+set( openssl_DLLVER 1_1 )
+set( openssl_URL https://www.openssl.org/source/openssl-1.1.1c.tar.gz )
 set( openssl_HASH SHA256=f6fb3079ad15076154eda9413fed42877d668e7069d9b87396d0804fdb3f4c90 )
 set( _PACKAGES ${_PACKAGES} openssl )
 
@@ -904,9 +904,9 @@ ELSE ( FETCH_ONLY )
     INSTALL(
         FILES
             "${WINST_PREFIX}/bin/libcrypto-${openssl_DLLVER}.dll"
-            "${WINST_PREFIX}/bin/libcryptod-${openssl_DLLVER}.dll"
+            "${WINST_PREFIX}/bin/libcrypto-${openssl_DLLVER}d.dll"
             "${WINST_PREFIX}/bin/libssl-${openssl_DLLVER}.dll"
-            "${WINST_PREFIX}/bin/libssld-${openssl_DLLVER}.dll"
+            "${WINST_PREFIX}/bin/libssl-${openssl_DLLVER}d.dll"
         DESTINATION "bin"
         COMPONENT binaries)
     INSTALL(
@@ -919,10 +919,10 @@ ELSE ( FETCH_ONLY )
         COMPONENT binaries)
     INSTALL(
         FILES
-            "${WINST_PREFIX}/bin/libcrypto.pdb"
-            "${WINST_PREFIX}/bin/libcryptod.pdb"
-            "${WINST_PREFIX}/bin/libssl.pdb"
-            "${WINST_PREFIX}/bin/libssld.pdb"
+            "${WINST_PREFIX}/bin/libcrypto-${openssl_DLLVER}.pdb"
+            "${WINST_PREFIX}/bin/libcrypto-${openssl_DLLVER}d.pdb"
+            "${WINST_PREFIX}/bin/libssl-${openssl_DLLVER}.pdb"
+            "${WINST_PREFIX}/bin/libssl-${openssl_DLLVER}d.pdb"
         DESTINATION "bin"
         COMPONENT symbols)
 
