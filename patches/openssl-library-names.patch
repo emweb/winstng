@@ -7,11 +7,11 @@
 - SHARED_NAME[libcrypto]=libcrypto-{- $sover_filename -}{- $target{multilib} -}
 - SHARED_NAME[libssl]=libssl-{- $sover_filename -}{- $target{multilib} -}
 + IF[{- $config{build_type} eq "debug" -}]
-+  SHARED_NAME[libcrypto]=libcryptod
-+  SHARED_NAME[libssl]=libssld
++  SHARED_NAME[libcrypto]=libcryptod-{- $sover_filename -}
++  SHARED_NAME[libssl]=libssld-{- $sover_filename -}
 + ELSE
-+  SHARED_NAME[libcrypto]=libcrypto
-+  SHARED_NAME[libssl]=libssl
++  SHARED_NAME[libcrypto]=libcrypto-{- $sover_filename -}
++  SHARED_NAME[libssl]=libssl-{- $sover_filename -}
 + ENDIF
  ENDIF
  
