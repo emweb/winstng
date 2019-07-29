@@ -42,9 +42,6 @@ if (NOT WTGITTAG)
 endif (NOT WTGITTAG)
 set(WTGITTAG ${WTGITTAG} CACHE STRING "the branch name, commit id or tag to use when building git version" FORCE)
 
-#our version of FindXXX.cmake
-set(WINST_MODULE_PATH ${WINST_BATDIR}/cmake/Modules)
-
 # Make sure we use bootstrapped dependencies
 set(CMAKE_PREFIX_PATH ${WINST_PREFIX} )
 
