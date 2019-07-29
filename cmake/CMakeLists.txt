@@ -895,7 +895,12 @@ ELSE ( FETCH_ONLY )
 
     IF (NOT STANDALONE_ASIO)
        INSTALL(DIRECTORY "${WINST_PREFIX}/lib/" DESTINATION "lib" COMPONENT binaries
-         FILES_MATCHING PATTERN "libboost*")
+         FILES_MATCHING
+             PATTERN "engines_*" EXCLUDE
+             PATTERN "libpng" EXCLUDE
+             PATTERN "mariadb" EXCLUDE
+             PATTERN "pkgconfig" EXCLUDE
+             PATTERN "libboost*")
     ENDIF (NOT STANDALONE_ASIO)
 
     INSTALL(
