@@ -109,9 +109,9 @@ set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.1.4.z
 set( mariadb_HASH SHA256=8b8a1ab87c3143e3e1437b3446a34e81b2e53696efbe3175af3a9751e2842ecb )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
-set( boost_ver "1_70" )
-set( boost_URL https://dl.bintray.com/boostorg/release/1.70.0/source/boost_${boost_ver}_0.tar.bz2 )
-set( boost_HASH SHA256=430ae8354789de4fd19ee52f3b1f739e1fba576f0aded0897c3c2bc00fb38778 )
+set( boost_ver "1_71" )
+set( boost_URL https://dl.bintray.com/boostorg/release/1.71.0/source/boost_${boost_ver}_0.tar.bz2 )
+set( boost_HASH SHA256=d73a8da01e8bf8c7eda40b4c84915071a8c8a0df4a6734537ddde4a8580524ee )
 set( _PACKAGES ${_PACKAGES} boost )
 
 set( tinymce_URL http://download.tiny.cloud/tinymce/community/tinymce_3.5.12.zip )
