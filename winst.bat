@@ -57,7 +57,7 @@ setlocal
 @IF EXIST downloaddir.txt (SET /p DOWNLOADS=<downloaddir.txt) else (SET DOWNLOADS=%BASEDIR%\downloads)
 @echo Downloading into %DOWNLOADS%
 
-@SET CMAKE_VERSION=3.15.1
+@SET CMAKE_VERSION=3.15.5
 @SET CMAKE_ZIP=cmake-%CMAKE_VERSION%-win32-x86.zip
 @SET CMAKE_FULLURL=https://www.cmake.org/files/v3.15/%CMAKE_ZIP%
 @SET CMAKE_DIRECTORY=%BASEDIR%/prefix/cmake-%CMAKE_VERSION%-win32-x86
