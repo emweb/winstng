@@ -1067,7 +1067,11 @@ ELSE ( FETCH_ONLY )
 
     INSTALL(DIRECTORY "${WINST_PREFIX}/lib/Wt" DESTINATION "lib" COMPONENT binaries)
     INSTALL(DIRECTORY "${WINST_PREFIX}/share/Wt" DESTINATION "lib/share" COMPONENT binaries)
-    INSTALL(DIRECTORY "${WINST_PREFIX}/lib/cmake" DESTINATION "lib" COMPONENT binaries OPTIONAL)
+    IF(STANDALONE_ASIO)
+        INSTALL(DIRECTORY "${WINST_PREFIX}/lib/cmake/wt" DESTINATION "lib/cmake" COMPONENT binaries OPTIONAL)
+    ELSE()
+        INSTALL(DIRECTORY "${WINST_PREFIX}/lib/cmake" DESTINATION "lib" COMPONENT binaries OPTIONAL)
+    ENDIF()
 
 
     # Compose a meaningful compiler string
