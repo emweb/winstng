@@ -734,16 +734,9 @@ ELSE ( FETCH_ONLY )
         set(WT_MARIADB_PATCH wt3_static_mariadbclient.patch)
     endif()
 
-    if(WT_VERSION VERSION_LESS 4.0.0)
-        set(WT_PATCH_COMMAND "")
-    else()
-        set(WT_PATCH_COMMAND ${PATCH_EXECUTABLE} --binary -p1 < ${WINST_BATDIR}/patches/0001-we-only-need-Boost-if-we-re-using-Boost.Asio-or-if-W.patch)
-    endif()
-
     if( WTGIT )
         ExternalProject_Add( wt-fetch
             # git
-            DEPENDS patch
             SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
             DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
             GIT_REPOSITORY ${WTGITREPO}
@@ -753,7 +746,6 @@ ELSE ( FETCH_ONLY )
             LOG_CONFIGURE 1
             LOG_BUILD 1
             LOG_TEST 1
-            PATCH_COMMAND ${WT_PATCH_COMMAND}
             LOG_INSTALL 1
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ""
@@ -762,7 +754,6 @@ ELSE ( FETCH_ONLY )
         )
     else( WTGIT )
         ExternalProject_Add( wt-fetch
-            DEPENDS patch
             SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
             DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
             URL ${wt_URL}
@@ -772,7 +763,6 @@ ELSE ( FETCH_ONLY )
             LOG_BUILD 1
             LOG_TEST 1
             LOG_INSTALL 1
-            PATCH_COMMAND ${WT_PATCH_COMMAND}
             CONFIGURE_COMMAND ""
             BUILD_COMMAND ""
             INSTALL_COMMAND ""
