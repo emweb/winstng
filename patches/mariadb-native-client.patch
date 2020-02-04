@@ -1,6 +1,6 @@
-diff -rupd mariadb-connector-c-3.1.1-orig/cmake/CheckFunctions.cmake mariadb-connector-c-3.1.1/cmake/CheckFunctions.cmake
---- mariadb-connector-c-3.1.1-orig/cmake/CheckFunctions.cmake	2019-06-19 11:24:11.910352257 +0200
-+++ mariadb-connector-c-3.1.1/cmake/CheckFunctions.cmake	2019-06-19 11:24:27.278248335 +0200
+diff -rupd mariadb-connector-c-orig/cmake/CheckFunctions.cmake mariadb-connector-c/cmake/CheckFunctions.cmake
+--- mariadb-connector-c-orig/cmake/CheckFunctions.cmake	2020-02-04 10:44:43.412662789 +0100
++++ mariadb-connector-c/cmake/CheckFunctions.cmake	2020-02-04 10:42:10.424866094 +0100
 @@ -11,6 +11,8 @@
  # You will find the appropriate defines in 
  # include/my_config.h.in
@@ -10,9 +10,9 @@ diff -rupd mariadb-connector-c-3.1.1-orig/cmake/CheckFunctions.cmake mariadb-con
  INCLUDE(CheckFunctionExists)
  
  CHECK_FUNCTION_EXISTS (alloca HAVE_ALLOCA)
-diff -rupd mariadb-connector-c-3.1.1-orig/cmake/version_info.cmake mariadb-connector-c-3.1.1/cmake/version_info.cmake
---- mariadb-connector-c-3.1.1-orig/cmake/version_info.cmake	2019-06-19 11:24:11.910352257 +0200
-+++ mariadb-connector-c-3.1.1/cmake/version_info.cmake	2019-06-19 11:24:27.282248310 +0200
+diff -rupd mariadb-connector-c-orig/cmake/version_info.cmake mariadb-connector-c/cmake/version_info.cmake
+--- mariadb-connector-c-orig/cmake/version_info.cmake	2020-02-04 10:44:43.416662784 +0100
++++ mariadb-connector-c/cmake/version_info.cmake	2020-02-04 10:41:20.600933764 +0100
 @@ -9,14 +9,14 @@ FUNCTION(GET_FILE_VERSION FILE_NAME FILE
  
    # if we build from a git repository, we calculate the file version:
@@ -24,7 +24,7 @@ diff -rupd mariadb-connector-c-3.1.1-orig/cmake/version_info.cmake mariadb-conne
 -    SET(${FILE_VERSION} ${FV} PARENT_SCOPE)
 -  ELSE()
 +  #IF(GIT_EXECUTABLE AND EXISTS ${CC_SOURCE_DIR}/.git)
-+  #  EXECUTE_PROCESS(COMMAND ${GIT_EXECUTABLE} --git-dir=${CC_SOURCE_DIR}/.git --work-tree=${CC_SOURCE_DIR} rev-list HEAD --count -- ${FILE_NAME}
++  #  EXECUTE_PROCESS(COMMAND ${GIT_EXECUTABLE} --git-dir=${CC_SOURCE_DIR}/.git --work-tree=${CC_SOURCE_DIR} rev-list HEAD --count -- ${FILE_NAME} 
 +  #    OUTPUT_VARIABLE FV)
 +  #  STRING(REPLACE "\n" "" FV ${FV})
 +  #  SET(${FILE_VERSION} ${FV} PARENT_SCOPE)
@@ -35,17 +35,22 @@ diff -rupd mariadb-connector-c-3.1.1-orig/cmake/version_info.cmake mariadb-conne
  ENDFUNCTION()
  
  MACRO(SET_VERSION_INFO)
-diff -rupd mariadb-connector-c-3.1.1-orig/CMakeLists.txt mariadb-connector-c-3.1.1/CMakeLists.txt
---- mariadb-connector-c-3.1.1-orig/CMakeLists.txt	2019-06-19 11:24:11.910352257 +0200
-+++ mariadb-connector-c-3.1.1/CMakeLists.txt	2019-06-19 11:24:27.282248310 +0200
-@@ -102,31 +102,33 @@ IF(WIN32)
+diff -rupd mariadb-connector-c-orig/CMakeLists.txt mariadb-connector-c/CMakeLists.txt
+--- mariadb-connector-c-orig/CMakeLists.txt	2020-02-04 10:44:43.412662789 +0100
++++ mariadb-connector-c/CMakeLists.txt	2020-02-04 10:40:28.413004529 +0100
+@@ -103,30 +103,32 @@ IF(WIN32)
    INCLUDE(${CC_SOURCE_DIR}/cmake/version_info.cmake)
  ENDIF()
  
--IF(NOT IS_SUBPROJECT)
--IF(MSVC)
++SET(DEBUG_LIB_POSTFIX "d" CACHE STRING "String appended to debug libraries")
++
+ IF(NOT IS_SUBPROJECT)
+ IF(MSVC)
 -  # Speedup system tests
 -  INCLUDE(${CC_SOURCE_DIR}/cmake/WindowsCache.cmake)
++#  # Speedup system tests
++#  INCLUDE(${CC_SOURCE_DIR}/cmake/WindowsCache.cmake)
+   ADD_DEFINITIONS(-DWIN32_LEAN_AND_MEAN)
 -  IF (MSVC)
 -    SET(CONFIG_TYPES "DEBUG" "RELEASE" "RELWITHDEBINFO")
 -    FOREACH(BUILD_TYPE ${CONFIG_TYPES})
@@ -65,14 +70,6 @@ diff -rupd mariadb-connector-c-3.1.1-orig/CMakeLists.txt mariadb-connector-c-3.1
 -      ENDFOREACH()
 -    ENDFOREACH()
 -  ENDIF()
--ENDIF()
--ENDIF(NOT IS_SUBPROJECT)
-+SET(DEBUG_LIB_POSTFIX "d" CACHE STRING "String appended to debug libraries")
-+
-+#IF(NOT IS_SUBPROJECT)
-+#IF(MSVC)
-+#  # Speedup system tests
-+#  INCLUDE(${CC_SOURCE_DIR}/cmake/WindowsCache.cmake)
 +#  IF (MSVC)
 +#    SET(CONFIG_TYPES "DEBUG" "RELEASE" "RELWITHDEBINFO")
 +#    FOREACH(BUILD_TYPE ${CONFIG_TYPES})
@@ -92,15 +89,13 @@ diff -rupd mariadb-connector-c-3.1.1-orig/CMakeLists.txt mariadb-connector-c-3.1
 +#      ENDFOREACH()
 +#    ENDFOREACH()
 +#  ENDIF()
-+#ENDIF()
-+#ENDIF(NOT IS_SUBPROJECT)
+ ENDIF()
+ ENDIF(NOT IS_SUBPROJECT)
  
- # Disable dbug information for release builds
- SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -DDBUG_OFF")
-diff -rupd mariadb-connector-c-3.1.1-orig/libmariadb/CMakeLists.txt mariadb-connector-c-3.1.1/libmariadb/CMakeLists.txt
---- mariadb-connector-c-3.1.1-orig/libmariadb/CMakeLists.txt	2019-06-19 11:24:11.914352232 +0200
-+++ mariadb-connector-c-3.1.1/libmariadb/CMakeLists.txt	2019-06-19 11:25:06.293984659 +0200
-@@ -421,7 +421,15 @@ ENDIF()
+diff -rupd mariadb-connector-c-orig/libmariadb/CMakeLists.txt mariadb-connector-c/libmariadb/CMakeLists.txt
+--- mariadb-connector-c-orig/libmariadb/CMakeLists.txt	2020-02-04 10:44:43.420662779 +0100
++++ mariadb-connector-c/libmariadb/CMakeLists.txt	2020-02-04 10:38:47.513141018 +0100
+@@ -420,7 +420,15 @@ ENDIF()
  SET_TARGET_PROPERTIES(mariadbclient PROPERTIES IMPORTED_INTERFACE_LINK_LIBRARIES "${SYSTEM_LIBS}")
  SET_TARGET_PROPERTIES(libmariadb PROPERTIES IMPORTED_INTERFACE_LINK_LIBRARIES "${SYSTEM_LIBS}")
  
