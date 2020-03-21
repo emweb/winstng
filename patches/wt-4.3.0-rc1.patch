@@ -11,3 +11,15 @@ index 9aeaba0bd..4bc6bef76 100644
  #  define X3_QUERY_PARSE
  #elif !defined(WT_NO_SPIRIT) && BOOST_VERSION >= 104100
  #  define SPIRIT_QUERY_PARSE
+diff --git a/src/isapi/IsapiRequest.h b/src/isapi/IsapiRequest.h
+index 4c0a2bcdc..028a4115b 100644
+--- a/src/isapi/IsapiRequest.h
++++ b/src/isapi/IsapiRequest.h
+@@ -1,3 +1,7 @@
++#ifndef WIN32_LEAN_AND_MEAN
++#define WIN32_LEAN_AND_MEAN
++#endif
++
+ #include "WebRequest.h"
+ #include <sstream>
+ #include <httpext.h>
