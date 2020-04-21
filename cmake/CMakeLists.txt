@@ -97,8 +97,8 @@ set( postgresql_HASH SHA256=ad1dcc4c4fc500786b745635a9e1eba950195ce20b8913f50345
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 set( openssl_DLLVER 1_1 )
-set( openssl_URL https://www.openssl.org/source/openssl-1.1.1e.tar.gz )
-set( openssl_HASH SHA256=694f61ac11cb51c9bf73f54e771ff6022b0327a43bbdfa1b2f19de1662a6dcbe )
+set( openssl_URL https://www.openssl.org/source/openssl-1.1.1f.tar.gz )
+set( openssl_HASH SHA256=186c6bfe6ecfba7a5b48c47f8a1673d0f3b0e5ba2e25602dd23b629975da3f35 )
 set( _PACKAGES ${_PACKAGES} openssl )
 
 set( libharu_URL http://github.com/libharu/libharu/archive/RELEASE_2_3_0.tar.gz )
