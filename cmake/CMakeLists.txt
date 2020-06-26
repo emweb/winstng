@@ -78,9 +78,9 @@ endif()
 # Files to download
 
 if (STANDALONE_ASIO)
-    set( asio_ver "1.12.2" )
+    set( asio_ver "1.16.1" )
     set( asio_URL https://prdownloads.sourceforge.net/asio/asio-${asio_ver}.tar.gz )
-    set( asio_HASH SHA1=9fb618d489f9b695c52477660984d9a3e21d8fc3 )
+    set( asio_HASH SHA256=f818986015f26002dfade21f7769aff4e6cd1e720373750536e5e5d00cf922af )
     set( _PACKAGES ${_PACKAGES} asio )
 endif()
 
@@ -88,30 +88,30 @@ set( zlib_URL https://prdownloads.sourceforge.net/libpng/zlib-1.2.11.tar.gz )
 set( zlib_HASH SHA256=c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1)
 set( _PACKAGES ${_PACKAGES} zlib )
 
-set( libpng_URL https://sourceforge.net/projects/libpng/files/libpng14/1.4.22/libpng-1.4.22.tar.gz )
-set( libpng_HASH SHA256=64b0632f7c528a7afd58c351be416fba3c9348a50a31b465d937e718febe81a7)
+set( libpng_URL https://download.sourceforge.net/libpng/libpng-1.6.37.tar.gz )
+set( libpng_HASH SHA256=daeb2620d829575513e35fecc83f0d3791a620b9b93d800b763542ece9390fb4 )
 set( _PACKAGES ${_PACKAGES} libpng )
 
-set( postgresql_URL https://ftp.postgresql.org/pub/source/v12.2/postgresql-12.2.tar.bz2 )
-set( postgresql_HASH SHA256=ad1dcc4c4fc500786b745635a9e1eba950195ce20b8913f50345bb7d5369b5de )
+set( postgresql_URL https://ftp.postgresql.org/pub/source/v12.3/postgresql-12.3.tar.bz2 )
+set( postgresql_HASH SHA256=94ed64a6179048190695c86ec707cc25d016056ce10fc9d229267d9a8f1dcf41 )
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 set( openssl_DLLVER 1_1 )
-set( openssl_URL https://www.openssl.org/source/openssl-1.1.1f.tar.gz )
-set( openssl_HASH SHA256=186c6bfe6ecfba7a5b48c47f8a1673d0f3b0e5ba2e25602dd23b629975da3f35 )
+set( openssl_URL https://www.openssl.org/source/openssl-1.1.1g.tar.gz )
+set( openssl_HASH SHA256=ddb04774f1e32f0c49751e21b67216ac87852ceb056b75209af2443400636d46 )
 set( _PACKAGES ${_PACKAGES} openssl )
 
 set( libharu_URL http://github.com/libharu/libharu/archive/RELEASE_2_3_0.tar.gz )
 set( libharu_MD5 4f916aa49c3069b3a10850013c507460 )
 set( _PACKAGES ${_PACKAGES} libharu )
 
-set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.1.7.zip )
-set( mariadb_HASH SHA256=6106d4bd5ea2bd162ba57ba9ffe2d7581870ef1cc903056dd4ba5ec11faed7d7 )
+set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.1.9.zip )
+set( mariadb_HASH SHA256=c7ca07f3deab7e98e2b5c13f76b1cbe3df7c2651342d240c301198516c56de33 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
-set( boost_ver "1_72" )
-set( boost_URL https://dl.bintray.com/boostorg/release/1.72.0/source/boost_${boost_ver}_0.tar.bz2 )
-set( boost_HASH SHA256=59c9b274bc451cf91a9ba1dd2c7fdcaf5d60b1b3aa83f2c9fa143417cc660722 )
+set( boost_ver "1_73" )
+set( boost_URL https://dl.bintray.com/boostorg/release/1.73.0/source/boost_${boost_ver}_0.tar.bz2 )
+set( boost_HASH SHA256=4eb3b8d442b426dc35346235c8733b5ae35ba431690e38c6a8263dce9fcbb402 )
 set( _PACKAGES ${_PACKAGES} boost )
 
 set( tinymce_URL http://download.tiny.cloud/tinymce/community/tinymce_3.5.12.zip )
@@ -608,7 +608,7 @@ ELSE ( FETCH_ONLY )
             -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
             -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
             -DZLIB_LIBRARY_DEBUG:PATH=${WINST_PREFIX}/lib/zlibstaticd.lib
-            -DPNG_LIBRARY_DEBUG:PATH=${WINST_PREFIX}/lib/libpng14_staticd.lib
+            -DPNG_LIBRARY_DEBUG:PATH=${WINST_PREFIX}/lib/libpng16_staticd.lib
             -DLIBHPDF_STATIC:BOOL=OFF
         LOG_CONFIGURE 1
         LOG_BUILD 1
@@ -626,7 +626,7 @@ ELSE ( FETCH_ONLY )
             -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
             -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
             -DZLIB_LIBRARY_RELEASE:PATH=${WINST_PREFIX}/lib/zlibstatic.lib
-            -DPNG_LIBRARY_RELEASE:PATH=${WINST_PREFIX}/lib/libpng14_static.lib
+            -DPNG_LIBRARY_RELEASE:PATH=${WINST_PREFIX}/lib/libpng16_static.lib
             -DLIBHPDF_STATIC:BOOL=OFF
         LOG_CONFIGURE 1
         LOG_BUILD 1
@@ -703,8 +703,8 @@ ELSE ( FETCH_ONLY )
         -DPOSTGRES_PREFIX=${WINST_PREFIX}
         -DZLIB_LIBRARY_DEBUG:PATH=${WINST_PREFIX}/lib/zlibstaticd.lib
         -DZLIB_LIBRARY_RELEASE:PATH=${WINST_PREFIX}/lib/zlibstatic.lib
-        -DPNG_LIBRARY_DEBUG:PATH=${WINST_PREFIX}/lib/libpng14_staticd.lib
-        -DPNG_LIBRARY_RELEASE:PATH=${WINST_PREFIX}/lib/libpng14_static.lib
+        -DPNG_LIBRARY_DEBUG:PATH=${WINST_PREFIX}/lib/libpng16_staticd.lib
+        -DPNG_LIBRARY_RELEASE:PATH=${WINST_PREFIX}/lib/libpng16_static.lib
         -DRUNDIR=${WINST_PREFIX}/var/run/wt
         -DSSL_PREFIX=${WINST_PREFIX}
         -DMYSQL_PREFIX=${WINST_PREFIX}
