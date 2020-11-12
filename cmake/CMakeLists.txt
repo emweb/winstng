@@ -133,18 +133,10 @@ if( _WT_ARCH STREQUAL "x64" ) # Win 64-bit
     set( perl_URL http://strawberryperl.com/download/5.24.1.1/strawberry-perl-5.24.1.1-64bit-portable.zip )
     set( perl_HASH SHA1=5e7bd4d9eecef30e9cfef95f45d4f94237a4d7a4)
     set( _PACKAGES ${_PACKAGES} perl )
-
-    set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.7.27050-0_x64.zip )
-    set( firebirdsql_MD5 aa0bcb781feb25d303520b94d2c0e0df )
-    set( _PACKAGE ${_PACKAGES} firebirdsql )
 elseif( _WT_ARCH STREQUAL "x86" ) # Win 32-bit
     set( perl_URL http://strawberryperl.com/download/5.24.1.1/strawberry-perl-5.24.1.1-32bit-portable.zip )
     set (perl_HASH SHA1=f1e64debc3b61010fe1885a668eaf2272e67153e )
     set( _PACKAGES ${_PACKAGES} perl )
-
-    set( firebirdsql_URL http://prdownloads.sourceforge.net/firebird/Firebird-2.5.7.27050-0_Win32.zip )
-    set( firebirdsql_MD5 2cb088dd11b14d59ee97fd19f2038e99 )
-    set( _PACKAGE ${_PACKAGES} firebirdsql )
 elseif( _WT_ARCH STREQUAL "ia64" ) # Win Itanium
     message( ERROR "${_WT_ARCH} architecture is not supported by the Wt bootstrapper, please build manually." )
 else() #ARM
@@ -564,24 +556,6 @@ ELSE ( FETCH_ONLY )
         INSTALL_COMMAND ${WINST_BATDIR}/cmake/install-postgres-headerfiles.bat <SOURCE_DIR> ${WINST_PREFIX}/include ${CMAKE_COMMAND}
         )
 
-    file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/firebirdsql)
-    # Download and extract firebird binaries. Or build it?
-    ExternalProject_Add( firebirdsql
-        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
-        URL ${firebirdsql_URL}
-        URL_MD5 ${firebirdsql_MD5}
-        CONFIGURE_COMMAND ""
-        BUILD_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> ${WINST_PREFIX}/
-        INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/IPLicense.txt ${WINST_PREFIX}/licenses/firebirdsql/
-        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/IDPLicense.txt ${WINST_PREFIX}/licenses/firebirdsql/
-        LOG_DOWNLOAD 1
-        LOG_UPDATE 1
-        LOG_CONFIGURE 1
-        LOG_BUILD 1
-        LOG_TEST 1
-        LOG_INSTALL 1
-        )
-
     file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/libharu)
     ExternalProject_Add( libharu-fetch
         DEPENDS patch
@@ -816,7 +790,6 @@ ELSE ( FETCH_ONLY )
         libpng
         libharu
         openssl
-        firebirdsql
         postgresql
         boost
     )
@@ -941,7 +914,7 @@ ELSE ( FETCH_ONLY )
     INSTALL(FILES "${CMAKE_BINARY_DIR}/libharu-release-prefix/src/libharu-release-build/src/libhpdf.pdb" DESTINATION "bin" COMPONENT symbols)
 
 
-    set(ALL_DYN_WT_LIBS wt wtdbo wtdbofirebird wtdbomssqlserver wtdbopostgres wtdbosqlite3 wthttp wttest)
+    set(ALL_DYN_WT_LIBS wt wtdbo wtdbomssqlserver wtdbopostgres wtdbosqlite3 wthttp wttest)
     if(ENABLE_MARIADB_CONNECTOR_C)
         set(ALL_DYN_WT_LIBS ${ALL_DYN_WT_LIBS} wtdbomysql)
     endif()
@@ -956,7 +929,6 @@ ELSE ( FETCH_ONLY )
     INSTALL(FILES
         "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/wtd.pdb"
         "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/wtdbod.pdb"
-        "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbofirebirdd.pdb"
         "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbosqlite3d.pdb"
         "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbomssqlserverd.pdb"
         "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/Wt/Dbo/backend/wtdbopostgresd.pdb"
@@ -964,7 +936,6 @@ ELSE ( FETCH_ONLY )
         "${CMAKE_BINARY_DIR}/wt-debug-prefix/src/wt-debug-build/src/wttestd.pdb"
         "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/wt.pdb"
         "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/Wt/Dbo/wtdbo.pdb"
-        "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/Wt/Dbo/backend/wtdbofirebird.pdb"
         "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/Wt/Dbo/backend/wtdbosqlite3.pdb"
         "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/Wt/Dbo/backend/wtdbomssqlserver.pdb"
         "${CMAKE_BINARY_DIR}/wt-release-prefix/src/wt-release-build/src/Wt/Dbo/backend/wtdbopostgres.pdb"
