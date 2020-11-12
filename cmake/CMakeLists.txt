@@ -78,9 +78,9 @@ endif()
 # Files to download
 
 if (STANDALONE_ASIO)
-    set( asio_ver "1.16.1" )
+    set( asio_ver "1.18.0" )
     set( asio_URL https://prdownloads.sourceforge.net/asio/asio-${asio_ver}.tar.gz )
-    set( asio_HASH SHA256=f818986015f26002dfade21f7769aff4e6cd1e720373750536e5e5d00cf922af )
+    set( asio_HASH SHA256=57104cf9d102f283eb484034eb14914d9491f2c2027730ba055fa3639f7cb385 )
     set( _PACKAGES ${_PACKAGES} asio )
 endif()
 
@@ -92,26 +92,26 @@ set( libpng_URL https://download.sourceforge.net/libpng/libpng-1.6.37.tar.gz )
 set( libpng_HASH SHA256=daeb2620d829575513e35fecc83f0d3791a620b9b93d800b763542ece9390fb4 )
 set( _PACKAGES ${_PACKAGES} libpng )
 
-set( postgresql_URL https://ftp.postgresql.org/pub/source/v12.3/postgresql-12.3.tar.bz2 )
-set( postgresql_HASH SHA256=94ed64a6179048190695c86ec707cc25d016056ce10fc9d229267d9a8f1dcf41 )
+set( postgresql_URL https://ftp.postgresql.org/pub/source/v13.0/postgresql-13.0.tar.bz2 )
+set( postgresql_HASH SHA256=80e750be8d436b54197636a02636f8fd3263ba6779bf865b04832495ea592296 )
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 set( openssl_DLLVER 1_1 )
-set( openssl_URL https://www.openssl.org/source/openssl-1.1.1g.tar.gz )
-set( openssl_HASH SHA256=ddb04774f1e32f0c49751e21b67216ac87852ceb056b75209af2443400636d46 )
+set( openssl_URL https://www.openssl.org/source/openssl-1.1.1h.tar.gz )
+set( openssl_HASH SHA256=5c9ca8774bd7b03e5784f26ae9e9e6d749c9da2438545077e6b3d755a06595d9 )
 set( _PACKAGES ${_PACKAGES} openssl )
 
 set( libharu_URL http://github.com/libharu/libharu/archive/RELEASE_2_3_0.tar.gz )
 set( libharu_MD5 4f916aa49c3069b3a10850013c507460 )
 set( _PACKAGES ${_PACKAGES} libharu )
 
-set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.1.9.zip )
-set( mariadb_HASH SHA256=c7ca07f3deab7e98e2b5c13f76b1cbe3df7c2651342d240c301198516c56de33 )
+set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.1.11.zip )
+set( mariadb_HASH SHA256=2cd769afea447231588580234523121268eae7576f75a7bee25a7e6ec04282f8 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
-set( boost_ver "1_73" )
-set( boost_URL https://dl.bintray.com/boostorg/release/1.73.0/source/boost_${boost_ver}_0.tar.bz2 )
-set( boost_HASH SHA256=4eb3b8d442b426dc35346235c8733b5ae35ba431690e38c6a8263dce9fcbb402 )
+set( boost_ver "1_74" )
+set( boost_URL https://dl.bintray.com/boostorg/release/1.74.0/source/boost_${boost_ver}_0.tar.bz2 )
+set( boost_HASH SHA256=83bfc1507731a0906e387fc28b7ef5417d591429e51e788417fe9ff025e116b1 )
 set( _PACKAGES ${_PACKAGES} boost )
 
 set( tinymce_URL http://download.tiny.cloud/tinymce/community/tinymce_3.5.12.zip )
@@ -125,8 +125,8 @@ set( patch_URL http://prdownloads.sourceforge.net/gnuwin32/patch-2.5.9-7-bin.zip
 set( patch_MD5 b9c8b31d62f4b2e4f1887bbb63e8a905)
 set( _PACKAGES ${_PACKAGES} patch )
 
-set( nasm_URL https://www.nasm.us/pub/nasm/releasebuilds/2.14.02/win32/nasm-2.14.02-win32.zip )
-set( nasm_HASH SHA256=250f9b5eeb2111e8c7b494a977490985b8604fe7518a6f5041cde37cc727a067 )
+set( nasm_URL https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/win32/nasm-2.15.05-win32.zip )
+set( nasm_HASH SHA256=258c7d1076e435511cf2fdf94e2281eadbdb9e3003fd57f356f446e2bce3119e )
 set( _PACKAGES ${_PACKAGES} nasm )
 
 if( _WT_ARCH STREQUAL "x64" ) # Win 64-bit
