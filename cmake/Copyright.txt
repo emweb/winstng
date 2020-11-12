@@ -8,23 +8,15 @@ This is the list of included software and its license:
  SOFTWARE			LICENSE
 =======================================
    Wt			GPLv2 + OpenSSL exception / commercial
+   Asio			Boost Software License 1.0
    Boost			Boost Software License 1.0
    OpenSSL		OpenSSL license / SSLeay license
-   bzip2			bzip2 license
    zlib			zlib license
-   libjpeg			libjpeg license
    libpng			libpng license
    libharu			zlib license / libpng license
-   Firebird SQL		Initial Developer's Public License
-   Freetype2		GPLv2 / Freetype License
-   MariaDB client		LGPLv2.1
+   MariaDB Connector/C		LGPLv2.1
    PostgreSQL		PostgreSQL license
-   Pango			LGPLv2
-   HarfBuzz		MIT
-   glib			LGPLv2
-   FCGI			FastCGI license
    TinyMCE		LGPLv2.1
-   skia			BSD License + 3rd party licenses
 
 The full text of the licenses is available in the "licenses" directory 
 in the installed SDK.
