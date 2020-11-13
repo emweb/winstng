@@ -14,7 +14,7 @@ This is the list of included software and its license:
    zlib			zlib license
    libpng			libpng license
    libharu			zlib license / libpng license
-   MariaDB Connector/C		LGPLv2.1
+   MariaDB Connector/C	LGPLv2.1
    PostgreSQL		PostgreSQL license
    TinyMCE		LGPLv2.1
 
