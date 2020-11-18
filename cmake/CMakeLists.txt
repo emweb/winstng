@@ -644,7 +644,7 @@ ELSE ( FETCH_ONLY )
         message( ERROR "${CMAKE_SYSTEM_PROCESSOR} architecture is not supported by the Wt bootstrapper, please build manually." )
     endif( )
 
-    set( boost_COMMAND ${boost_B2} --build-type=minimal ${boost_TOOLSET} ${boost_ADDRESS_MODEL} --variant=release --without-python ${boost_LINKAGE} threading=multi include=${WINST_PREFIX}/include linkflags=-L${WINST_PREFIX}/lib )
+    set( boost_COMMAND ${boost_B2} --build-type=minimal ${boost_TOOLSET} ${boost_ADDRESS_MODEL} --without-python ${boost_LINKAGE} threading=multi include=${WINST_PREFIX}/include linkflags=-L${WINST_PREFIX}/lib )
     ExternalProject_Add( boost
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${boost_URL}
