@@ -860,7 +860,7 @@ ELSE ( FETCH_ONLY )
         INSTALL(DIRECTORY "${WINST_PREFIX}/include/asio" DESTINATION "include" COMPONENT binaries)
         INSTALL(FILES "${WINST_PREFIX}/include/asio.hpp" DESTINATION "include" COMPONENT binaries)
     else (STANDALONE_ASIO)
-        INSTALL(DIRECTORY "${WINST_PREFIX}/include/boost-${boost_ver}/boost" DESTINATION "include" COMPONENT binaries)
+        INSTALL(DIRECTORY "${WINST_PREFIX}/include/boost-${boost_ver}" DESTINATION "include" COMPONENT binaries)
     endif (STANDALONE_ASIO)
 
     # Libraries
