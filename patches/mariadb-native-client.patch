@@ -1,6 +1,6 @@
-diff -rupd mariadb-connector-c-orig/cmake/CheckFunctions.cmake mariadb-connector-c/cmake/CheckFunctions.cmake
---- mariadb-connector-c-orig/cmake/CheckFunctions.cmake	2020-02-04 10:44:43.412662789 +0100
-+++ mariadb-connector-c/cmake/CheckFunctions.cmake	2020-02-04 10:42:10.424866094 +0100
+diff --color -rupd mariadb-connector-c-orig/cmake/CheckFunctions.cmake mariadb-connector-c/cmake/CheckFunctions.cmake
+--- mariadb-connector-c-orig/cmake/CheckFunctions.cmake	2021-05-03 13:58:17.000000000 +0200
++++ mariadb-connector-c/cmake/CheckFunctions.cmake	2021-06-24 16:24:30.937853403 +0200
 @@ -11,6 +11,8 @@
  # You will find the appropriate defines in 
  # include/my_config.h.in
@@ -10,13 +10,20 @@ diff -rupd mariadb-connector-c-orig/cmake/CheckFunctions.cmake mariadb-connector
  INCLUDE(CheckFunctionExists)
  
  CHECK_FUNCTION_EXISTS (alloca HAVE_ALLOCA)
-diff -rupd mariadb-connector-c-orig/cmake/version_info.cmake mariadb-connector-c/cmake/version_info.cmake
---- mariadb-connector-c-orig/cmake/version_info.cmake	2020-02-04 10:44:43.416662784 +0100
-+++ mariadb-connector-c/cmake/version_info.cmake	2020-02-04 10:41:20.600933764 +0100
+@@ -27,4 +29,4 @@ IF(HAVE_FILE_UCONTEXT_H)
+   CHECK_FUNCTION_EXISTS (makecontext HAVE_UCONTEXT_H)
+ ENDIF()
+ 
+-CHECK_FUNCTION_EXISTS (cuserid HAVE_CUSERID)
+\ No newline at end of file
++CHECK_FUNCTION_EXISTS (cuserid HAVE_CUSERID)
+diff --color -rupd mariadb-connector-c-orig/cmake/version_info.cmake mariadb-connector-c/cmake/version_info.cmake
+--- mariadb-connector-c-orig/cmake/version_info.cmake	2021-05-03 13:58:17.000000000 +0200
++++ mariadb-connector-c/cmake/version_info.cmake	2021-06-24 16:24:51.213816945 +0200
 @@ -9,14 +9,14 @@ FUNCTION(GET_FILE_VERSION FILE_NAME FILE
  
    # if we build from a git repository, we calculate the file version:
-   #  Patch number is numer of commits for given file
+   #  Patch number is number of commits for given file
 -  IF(GIT_EXECUTABLE AND EXISTS ${CC_SOURCE_DIR}/.git)
 -    EXECUTE_PROCESS(COMMAND ${GIT_EXECUTABLE} --git-dir=${CC_SOURCE_DIR}/.git --work-tree=${CC_SOURCE_DIR} rev-list HEAD --count -- ${FILE_NAME} 
 -      OUTPUT_VARIABLE FV)
@@ -35,10 +42,10 @@ diff -rupd mariadb-connector-c-orig/cmake/version_info.cmake mariadb-connector-c
  ENDFUNCTION()
  
  MACRO(SET_VERSION_INFO)
-diff -rupd mariadb-connector-c-orig/CMakeLists.txt mariadb-connector-c/CMakeLists.txt
---- mariadb-connector-c-orig/CMakeLists.txt	2020-02-04 10:44:43.412662789 +0100
-+++ mariadb-connector-c/CMakeLists.txt	2020-02-04 10:40:28.413004529 +0100
-@@ -103,30 +103,32 @@ IF(WIN32)
+diff --color -rupd mariadb-connector-c-orig/CMakeLists.txt mariadb-connector-c/CMakeLists.txt
+--- mariadb-connector-c-orig/CMakeLists.txt	2021-05-03 13:58:17.000000000 +0200
++++ mariadb-connector-c/CMakeLists.txt	2021-06-24 16:25:44.741720584 +0200
+@@ -93,30 +93,32 @@ IF(WIN32)
    INCLUDE(${CC_SOURCE_DIR}/cmake/version_info.cmake)
  ENDIF()
  
@@ -46,10 +53,9 @@ diff -rupd mariadb-connector-c-orig/CMakeLists.txt mariadb-connector-c/CMakeList
 +
  IF(NOT IS_SUBPROJECT)
  IF(MSVC)
--  # Speedup system tests
+   # Speedup system tests
 -  INCLUDE(${CC_SOURCE_DIR}/cmake/WindowsCache.cmake)
-+#  # Speedup system tests
-+#  INCLUDE(${CC_SOURCE_DIR}/cmake/WindowsCache.cmake)
++  #INCLUDE(${CC_SOURCE_DIR}/cmake/WindowsCache.cmake)
    ADD_DEFINITIONS(-DWIN32_LEAN_AND_MEAN)
 -  IF (MSVC)
 -    SET(CONFIG_TYPES "DEBUG" "RELEASE" "RELWITHDEBINFO")
@@ -57,45 +63,45 @@ diff -rupd mariadb-connector-c-orig/CMakeLists.txt mariadb-connector-c/CMakeList
 -      FOREACH(COMPILER CXX C)
 -        SET(COMPILER_FLAGS "${CMAKE_${COMPILER}_FLAGS_${BUILD_TYPE}}")
 -        IF (NOT COMPILER_FLAGS STREQUAL "")
--          STRING(REPLACE "/MD" "/MT" COMPILER_FLAGS ${COMPILER_FLAGS})
--          IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
--            SET(COMPILER_FLAGS "${COMPILER_FLAGS} ${RTC_OPTIONS}")
--            STRING(REPLACE "/Zi" "/ZI" COMPILER_FLAGS ${COMPILER_FLAGS})
--          ELSE()
--            STRING(REPLACE "/Zi" "/Z7" COMPILER_FLAGS ${COMPILER_FLAGS})
+-          IF(NOT WITH_ASAN)
+-            STRING(REPLACE "/MD" "/MT" COMPILER_FLAGS ${COMPILER_FLAGS})
+-            IF (BUILD_TYPE STREQUAL "DEBUG")
+-              SET(COMPILER_FLAGS "${COMPILER_FLAGS} ${RTC_OPTIONS}")
+-            ENDIF()
 -          ENDIF()
+-          STRING(REPLACE "/Zi" "/Z7" COMPILER_FLAGS ${COMPILER_FLAGS})
 -          MESSAGE (STATUS "CMAKE_${COMPILER}_FLAGS_${BUILD_TYPE}= ${COMPILER_FLAGS}")
 -          SET(CMAKE_${COMPILER}_FLAGS_${BUILD_TYPE} ${COMPILER_FLAGS})
 -        ENDIF()
 -      ENDFOREACH()
 -    ENDFOREACH()
 -  ENDIF()
-+#  IF (MSVC)
-+#    SET(CONFIG_TYPES "DEBUG" "RELEASE" "RELWITHDEBINFO")
-+#    FOREACH(BUILD_TYPE ${CONFIG_TYPES})
-+#      FOREACH(COMPILER CXX C)
-+#        SET(COMPILER_FLAGS "${CMAKE_${COMPILER}_FLAGS_${BUILD_TYPE}}")
-+#        IF (NOT COMPILER_FLAGS STREQUAL "")
-+#          STRING(REPLACE "/MD" "/MT" COMPILER_FLAGS ${COMPILER_FLAGS})
-+#          IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
-+#            SET(COMPILER_FLAGS "${COMPILER_FLAGS} ${RTC_OPTIONS}")
-+#            STRING(REPLACE "/Zi" "/ZI" COMPILER_FLAGS ${COMPILER_FLAGS})
-+#          ELSE()
-+#            STRING(REPLACE "/Zi" "/Z7" COMPILER_FLAGS ${COMPILER_FLAGS})
-+#          ENDIF()
-+#          MESSAGE (STATUS "CMAKE_${COMPILER}_FLAGS_${BUILD_TYPE}= ${COMPILER_FLAGS}")
-+#          SET(CMAKE_${COMPILER}_FLAGS_${BUILD_TYPE} ${COMPILER_FLAGS})
-+#        ENDIF()
-+#      ENDFOREACH()
-+#    ENDFOREACH()
-+#  ENDIF()
++  #IF (MSVC)
++  #  SET(CONFIG_TYPES "DEBUG" "RELEASE" "RELWITHDEBINFO")
++  #  FOREACH(BUILD_TYPE ${CONFIG_TYPES})
++  #    FOREACH(COMPILER CXX C)
++  #      SET(COMPILER_FLAGS "${CMAKE_${COMPILER}_FLAGS_${BUILD_TYPE}}")
++  #      IF (NOT COMPILER_FLAGS STREQUAL "")
++  #        IF(NOT WITH_ASAN)
++  #          STRING(REPLACE "/MD" "/MT" COMPILER_FLAGS ${COMPILER_FLAGS})
++  #          IF (BUILD_TYPE STREQUAL "DEBUG")
++  #            SET(COMPILER_FLAGS "${COMPILER_FLAGS} ${RTC_OPTIONS}")
++  #          ENDIF()
++  #        ENDIF()
++  #        STRING(REPLACE "/Zi" "/Z7" COMPILER_FLAGS ${COMPILER_FLAGS})
++  #        MESSAGE (STATUS "CMAKE_${COMPILER}_FLAGS_${BUILD_TYPE}= ${COMPILER_FLAGS}")
++  #        SET(CMAKE_${COMPILER}_FLAGS_${BUILD_TYPE} ${COMPILER_FLAGS})
++  #      ENDIF()
++  #    ENDFOREACH()
++  #  ENDFOREACH()
++  #ENDIF()
  ENDIF()
  ENDIF(NOT IS_SUBPROJECT)
  
-diff -rupd mariadb-connector-c-orig/libmariadb/CMakeLists.txt mariadb-connector-c/libmariadb/CMakeLists.txt
---- mariadb-connector-c-orig/libmariadb/CMakeLists.txt	2020-02-04 10:44:43.420662779 +0100
-+++ mariadb-connector-c/libmariadb/CMakeLists.txt	2020-02-04 10:38:47.513141018 +0100
-@@ -420,7 +420,15 @@ ENDIF()
+diff --color -rupd mariadb-connector-c-orig/libmariadb/CMakeLists.txt mariadb-connector-c/libmariadb/CMakeLists.txt
+--- mariadb-connector-c-orig/libmariadb/CMakeLists.txt	2021-05-03 13:58:17.000000000 +0200
++++ mariadb-connector-c/libmariadb/CMakeLists.txt	2021-06-24 16:27:05.653574556 +0200
+@@ -426,7 +426,15 @@ ENDIF()
  SET_TARGET_PROPERTIES(mariadbclient PROPERTIES IMPORTED_INTERFACE_LINK_LIBRARIES "${SYSTEM_LIBS}")
  SET_TARGET_PROPERTIES(libmariadb PROPERTIES IMPORTED_INTERFACE_LINK_LIBRARIES "${SYSTEM_LIBS}")
  
