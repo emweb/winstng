@@ -78,9 +78,9 @@ endif()
 # Files to download
 
 if (STANDALONE_ASIO)
-    set( asio_ver "1.18.0" )
+    set( asio_ver "1.18.2" )
     set( asio_URL https://prdownloads.sourceforge.net/asio/asio-${asio_ver}.tar.gz )
-    set( asio_HASH SHA256=57104cf9d102f283eb484034eb14914d9491f2c2027730ba055fa3639f7cb385 )
+    set( asio_HASH SHA256=3d76241275e1c3a833850f798cc54184a0ac28254d8c32aaed1ae3a8630fa353 )
     set( _PACKAGES ${_PACKAGES} asio )
 endif()
 
@@ -92,26 +92,26 @@ set( libpng_URL https://download.sourceforge.net/libpng/libpng-1.6.37.tar.gz )
 set( libpng_HASH SHA256=daeb2620d829575513e35fecc83f0d3791a620b9b93d800b763542ece9390fb4 )
 set( _PACKAGES ${_PACKAGES} libpng )
 
-set( postgresql_URL https://ftp.postgresql.org/pub/source/v13.0/postgresql-13.0.tar.bz2 )
-set( postgresql_HASH SHA256=80e750be8d436b54197636a02636f8fd3263ba6779bf865b04832495ea592296 )
+set( postgresql_URL https://ftp.postgresql.org/pub/source/v13.3/postgresql-13.3.tar.bz2 )
+set( postgresql_HASH SHA256=3cd9454fa8c7a6255b6743b767700925ead1b9ab0d7a0f9dcb1151010f8eb4a1 )
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 set( openssl_DLLVER 1_1 )
-set( openssl_URL https://www.openssl.org/source/openssl-1.1.1h.tar.gz )
-set( openssl_HASH SHA256=5c9ca8774bd7b03e5784f26ae9e9e6d749c9da2438545077e6b3d755a06595d9 )
+set( openssl_URL https://www.openssl.org/source/openssl-1.1.1k.tar.gz )
+set( openssl_HASH SHA256=892a0875b9872acd04a9fde79b1f943075d5ea162415de3047c327df33fbaee5 )
 set( _PACKAGES ${_PACKAGES} openssl )
 
 set( libharu_URL http://github.com/libharu/libharu/archive/RELEASE_2_3_0.tar.gz )
 set( libharu_MD5 4f916aa49c3069b3a10850013c507460 )
 set( _PACKAGES ${_PACKAGES} libharu )
 
-set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.1.11.zip )
-set( mariadb_HASH SHA256=bcd933f3f6750c0ce8e6db1e41563680b8cc600bcd7188009ac3f962ab03926c )
+set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.1.13.zip )
+set( mariadb_HASH SHA256=7a463e2544069feaf4dd728413ba4f7e7fac882fd9abf33adcbb8488b1515ed5 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
-set( boost_ver "1_74" )
-set( boost_URL https://dl.bintray.com/boostorg/release/1.74.0/source/boost_${boost_ver}_0.tar.bz2 )
-set( boost_HASH SHA256=83bfc1507731a0906e387fc28b7ef5417d591429e51e788417fe9ff025e116b1 )
+set( boost_ver "1_76" )
+set( boost_URL https://dl.bintray.com/boostorg/release/1.76.0/source/boost_${boost_ver}_0.tar.bz2 )
+set( boost_HASH SHA256=f0397ba6e982c4450f27bf32a2a83292aba035b827a5623a14636ea583318c41 )
 set( _PACKAGES ${_PACKAGES} boost )
 
 set( tinymce_URL http://download.tiny.cloud/tinymce/community/tinymce_3.5.12.zip )
