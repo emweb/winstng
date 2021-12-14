@@ -94,8 +94,8 @@ set( libpng_URL https://download.sourceforge.net/libpng/libpng-1.6.37.tar.gz )
 set( libpng_HASH SHA256=daeb2620d829575513e35fecc83f0d3791a620b9b93d800b763542ece9390fb4 )
 set( _PACKAGES ${_PACKAGES} libpng )
 
-set( postgresql_URL https://ftp.postgresql.org/pub/source/v14.0/postgresql-14.0.tar.bz2 )
-set( postgresql_HASH SHA256=ee2ad79126a7375e9102c4db77c4acae6ae6ffe3e082403b88826d96d927a122 )
+set( postgresql_URL https://ftp.postgresql.org/pub/source/v14.1/postgresql-14.1.tar.bz2 )
+set( postgresql_HASH SHA256=4d3c101ea7ae38982f06bdc73758b53727fb6402ecd9382006fa5ecc7c2ca41f )
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 set( openssl_DLLVER 1_1 )
@@ -107,13 +107,13 @@ set( libharu_URL http://github.com/libharu/libharu/archive/RELEASE_2_3_0.tar.gz 
 set( libharu_MD5 4f916aa49c3069b3a10850013c507460 )
 set( _PACKAGES ${_PACKAGES} libharu )
 
-set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.1.14.zip )
-set( mariadb_HASH SHA256=24849123e685957f35c1e14222a80168b46379fee7544d0d231bc7fd3426cb89 )
+set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.2.5.zip )
+set( mariadb_HASH SHA256=a62b48a81d24a872940a60f3924438ba67bcb524f54a889e84ffd01274bd7e5c )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
 set( boost_ver "1_78" )
-set( boost_URL https://boostorg.jfrog.io/artifactory/main/beta/1.78.0.beta1/source/boost_${boost_ver}_0_b1.tar.bz2 )
-set( boost_HASH SHA256=7a3a025451dfa2923129214eef7d16b03c02310a353d02158a549f6caa4284b0 )
+set( boost_URL https://boostorg.jfrog.io/artifactory/main/release/1.78.0/source/boost_${boost_ver}_0.tar.bz2 )
+set( boost_HASH SHA256=8681f175d4bdb26c52222665793eef08490d7758529330f98d3b29dd0735bccc )
 set( _PACKAGES ${_PACKAGES} boost )
 
 set( tinymce_URL http://download.tiny.cloud/tinymce/community/tinymce_3.5.12.zip )
