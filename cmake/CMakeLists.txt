@@ -630,10 +630,13 @@ ELSE ( FETCH_ONLY )
         set( boost_TOOLSET toolset=msvc-12.0 )
     elseif(MSVC_VERSION EQUAL 1900)
         set( boost_TOOLSET toolset=msvc-14.0 )
+        set( boost_BOOTSTRAP_TOOLSET vc14)
     elseif(MSVC_VERSION GREATER_EQUAL 1910 AND MSVC_VERSION LESS 1920)
         set( boost_TOOLSET toolset=msvc-14.1 )
+        set( boost_BOOTSTRAP_TOOLSET vc141)
     elseif(MSVC_VERSION GREATER_EQUAL 1920 AND MSVC_VERSION LESS 1930)
         set( boost_TOOLSET toolset=msvc-14.2 )
+        set( boost_BOOTSTRAP_TOOLSET vc142)
     endif()
 
     if( _WT_ARCH STREQUAL "x64" ) # Win 64-bit
@@ -650,7 +653,7 @@ ELSE ( FETCH_ONLY )
         URL ${boost_URL}
         URL_HASH ${boost_HASH}
         PATCH_COMMAND ""
-        CONFIGURE_COMMAND ${boost_BOOTSTRAP_COMMAND}
+        CONFIGURE_COMMAND ${boost_BOOTSTRAP_COMMAND} ${boost_BOOTSTRAP_TOOLSET}
         BUILD_COMMAND ${boost_COMMAND}
         BUILD_IN_SOURCE 1
         INSTALL_COMMAND ${boost_COMMAND} --prefix=${WINST_PREFIX} install
