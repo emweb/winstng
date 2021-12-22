@@ -92,7 +92,8 @@ set( libpng_URL https://download.sourceforge.net/libpng/libpng-1.6.37.tar.gz )
 set( libpng_HASH SHA256=daeb2620d829575513e35fecc83f0d3791a620b9b93d800b763542ece9390fb4 )
 set( _PACKAGES ${_PACKAGES} libpng )
 
-set( postgresql_URL https://ftp.postgresql.org/pub/source/v13.4/postgresql-13.5.tar.bz2 )
+set( postgres_ver 13.5)
+set( postgresql_URL https://ftp.postgresql.org/pub/source/v${postgres_ver}/postgresql-${postgres_ver}.tar.bz2 )
 set( postgresql_HASH SHA256=9b81067a55edbaabc418aacef457dd8477642827499560b00615a6ea6c13f6b3 )
 set( _PACKAGES ${_PACKAGES} postgresql )
 
