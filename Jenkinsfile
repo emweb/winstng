@@ -43,6 +43,10 @@ pipeline {
   environment {
     EMAIL = credentials('wt-dev-mail')
   }
+  options {
+    buildDiscarder logRotator(numToKeepStr: '5')
+    disableConcurrentBuilds();
+  }
   agent none
   stages {
     stage('ConfigureAndBuild') {
