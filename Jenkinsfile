@@ -44,7 +44,7 @@ pipeline {
     EMAIL = credentials('wt-dev-mail')
   }
   options {
-    buildDiscarder logRotator(numToKeepStr: '5')
+    buildDiscarder logRotator(artifactNumToKeepStr: '3', numToKeepStr: '20')
     disableConcurrentBuilds();
   }
   agent none
