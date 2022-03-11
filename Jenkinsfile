@@ -39,6 +39,16 @@ properties([
   ]),
 ]);
 
+def buildStartedManually() {
+  return currentBuild.getBuildCauses()[0]['_class'] == 'hudson.model.Cause$UserIdCause';
+}
+
+if (!buildStartedManually()) {
+  print "INFO: no automatic builds";
+  currentBuild.result = 'ABORTED';
+  return;
+}
+
 pipeline {
   environment {
     EMAIL = credentials('wt-dev-mail')
