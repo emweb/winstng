@@ -132,7 +132,7 @@ pipeline {
             archiveArtifacts 'build-*/Wt-*-msvs*-Windows-*-SDK.exe,build-*/Wt-*-msvs*-Windows-*-SDK.zip';
           }
           cleanup {
-            cleanWs();
+            cleanWs cleanWhenFailure: false, cleanWhenUnstable: false
           }
         }
       }
