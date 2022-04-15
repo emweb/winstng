@@ -80,14 +80,14 @@ endif()
 # Files to download
 
 if (STANDALONE_ASIO)
-    set( asio_ver "1.22.0" )
+    set( asio_ver "1.22.1" )
     set( asio_URL https://prdownloads.sourceforge.net/asio/asio-${asio_ver}.tar.gz )
-    set( asio_HASH SHA256=de0c6ce99d53cc2aec85e13a14834b8af9a4ffc2430a6c6f0880ad64d41d9fb1 )
+    set( asio_HASH SHA256=dcba16f3ed88a546f61c98ae5584f198f9cb8f4d0c72d704555760e9a7ff79d7 )
     set( _PACKAGES ${_PACKAGES} asio )
 endif()
 
-set( zlib_URL https://prdownloads.sourceforge.net/libpng/zlib-1.2.11.tar.gz )
-set( zlib_HASH SHA256=c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1)
+set( zlib_URL https://prdownloads.sourceforge.net/libpng/zlib-1.2.12.tar.gz )
+set( zlib_HASH SHA256=91844808532e5ce316b3c010929493c0244f3d37593afd6de04f71821d5136d9 )
 set( _PACKAGES ${_PACKAGES} zlib )
 
 set( libpng_URL https://download.sourceforge.net/libpng/libpng-1.6.37.tar.gz )
@@ -99,8 +99,8 @@ set( postgresql_HASH SHA256=2cf78b2e468912f8101d695db5340cf313c2e9f68a612fb71427
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 set( openssl_DLLVER 1_1 )
-set( openssl_URL https://www.openssl.org/source/openssl-1.1.1m.tar.gz )
-set( openssl_HASH SHA256=f89199be8b23ca45fc7cb9f1d8d3ee67312318286ad030f5316aca6462db6c96 )
+set( openssl_URL https://www.openssl.org/source/openssl-1.1.1n.tar.gz )
+set( openssl_HASH SHA256=40dceb51a4f6a5275bde0e6bf20ef4b91bfc32ed57c0552e2e8e15463372b17a )
 set( _PACKAGES ${_PACKAGES} openssl )
 
 set( libharu_URL http://github.com/libharu/libharu/archive/RELEASE_2_3_0.tar.gz )
