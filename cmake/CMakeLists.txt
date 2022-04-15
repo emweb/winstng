@@ -86,7 +86,7 @@ if (STANDALONE_ASIO)
     set( _PACKAGES ${_PACKAGES} asio )
 endif()
 
-set( zlib_URL https://prdownloads.sourceforge.net/libpng/zlib-1.2.12.tar.gz )
+set( zlib_URL https://www.zlib.net/zlib-1.2.12.tar.gz )
 set( zlib_HASH SHA256=91844808532e5ce316b3c010929493c0244f3d37593afd6de04f71821d5136d9 )
 set( _PACKAGES ${_PACKAGES} zlib )
 
