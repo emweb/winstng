@@ -99,8 +99,8 @@ set( postgresql_HASH SHA256=2cf78b2e468912f8101d695db5340cf313c2e9f68a612fb71427
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 set( openssl_DLLVER 1_1 )
-set( openssl_URL https://www.openssl.org/source/openssl-1.1.1n.tar.gz )
-set( openssl_HASH SHA256=40dceb51a4f6a5275bde0e6bf20ef4b91bfc32ed57c0552e2e8e15463372b17a )
+set( openssl_URL https://www.openssl.org/source/openssl-1.1.1o.tar.gz )
+set( openssl_HASH SHA256=9384a2b0570dd80358841464677115df785edb941c71211f75076d72fe6b438f )
 set( _PACKAGES ${_PACKAGES} openssl )
 
 set( libharu_URL http://github.com/libharu/libharu/archive/RELEASE_2_3_0.tar.gz )
@@ -111,9 +111,9 @@ set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.2.6.z
 set( mariadb_HASH SHA256=9fe6a161d1c1ff4f74bb87e4c587bbd2a14146a2bc3ba7b677633bfa0445b8b5 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
-set( boost_ver "1_78" )
-set( boost_URL https://boostorg.jfrog.io/artifactory/main/release/1.78.0/source/boost_${boost_ver}_0.tar.bz2 )
-set( boost_HASH SHA256=8681f175d4bdb26c52222665793eef08490d7758529330f98d3b29dd0735bccc )
+set( boost_ver "1_79" )
+set( boost_URL https://boostorg.jfrog.io/artifactory/main/release/1.79.0/source/boost_${boost_ver}_0.tar.bz2 )
+set( boost_HASH SHA256=475d589d51a7f8b3ba2ba4eda022b170e562ca3b760ee922c146b6c65856ef39 )
 set( _PACKAGES ${_PACKAGES} boost )
 
 set( tinymce_URL http://download.tiny.cloud/tinymce/community/tinymce_3.5.12.zip )
