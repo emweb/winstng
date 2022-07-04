@@ -94,21 +94,21 @@ set( libpng_URL https://download.sourceforge.net/libpng/libpng-1.6.37.tar.gz )
 set( libpng_HASH SHA256=daeb2620d829575513e35fecc83f0d3791a620b9b93d800b763542ece9390fb4 )
 set( _PACKAGES ${_PACKAGES} libpng )
 
-set( postgresql_URL https://ftp.postgresql.org/pub/source/v14.2/postgresql-14.2.tar.bz2 )
-set( postgresql_HASH SHA256=2cf78b2e468912f8101d695db5340cf313c2e9f68a612fb71427524e8c9a977a )
+set( postgresql_URL https://ftp.postgresql.org/pub/source/v14.4/postgresql-14.4.tar.bz2 )
+set( postgresql_HASH SHA256=c23b6237c5231c791511bdc79098617d6852e9e3bdf360efd8b5d15a1a3d8f6a )
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 set( openssl_DLLVER 1_1 )
-set( openssl_URL https://www.openssl.org/source/openssl-1.1.1o.tar.gz )
-set( openssl_HASH SHA256=9384a2b0570dd80358841464677115df785edb941c71211f75076d72fe6b438f )
+set( openssl_URL https://www.openssl.org/source/openssl-1.1.1p.tar.gz )
+set( openssl_HASH SHA256=bf61b62aaa66c7c7639942a94de4c9ae8280c08f17d4eac2e44644d9fc8ace6f )
 set( _PACKAGES ${_PACKAGES} openssl )
 
 set( libharu_URL http://github.com/libharu/libharu/archive/RELEASE_2_3_0.tar.gz )
 set( libharu_MD5 4f916aa49c3069b3a10850013c507460 )
 set( _PACKAGES ${_PACKAGES} libharu )
 
-set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.2.6.zip )
-set( mariadb_HASH SHA256=9fe6a161d1c1ff4f74bb87e4c587bbd2a14146a2bc3ba7b677633bfa0445b8b5 )
+set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.3.1.zip )
+set( mariadb_HASH SHA256=8f791110a85058103775e0090ea458b8555668fec968806e4e69bc479c44cdd6 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
 set( boost_ver "1_79" )
