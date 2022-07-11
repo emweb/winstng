@@ -693,6 +693,7 @@ ELSE ( FETCH_ONLY )
         -DSSL_LIB_TOO_NAMES=libcrypto
         -DENABLE_QT4:BOOL=0
         -DENABLE_QT5:BOOL=0
+        -DENABLE_QT6:BOOL=0
         -DWTHTTP_CONFIGURATION:PATH=c:/witty/wthttpd
         )
 
