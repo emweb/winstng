@@ -80,9 +80,9 @@ endif()
 # Files to download
 
 if (STANDALONE_ASIO)
-    set( asio_ver "1.22.1" )
+    set( asio_ver "1.22.2" )
     set( asio_URL https://prdownloads.sourceforge.net/asio/asio-${asio_ver}.tar.gz )
-    set( asio_HASH SHA256=dcba16f3ed88a546f61c98ae5584f198f9cb8f4d0c72d704555760e9a7ff79d7 )
+    set( asio_HASH SHA256=875fe3f42420edb2335e520d657593b453b13fdb70c58d547bc9915c784fc635 )
     set( _PACKAGES ${_PACKAGES} asio )
 endif()
 
@@ -90,25 +90,25 @@ set( zlib_URL https://www.zlib.net/zlib-1.2.12.tar.gz )
 set( zlib_HASH SHA256=91844808532e5ce316b3c010929493c0244f3d37593afd6de04f71821d5136d9 )
 set( _PACKAGES ${_PACKAGES} zlib )
 
-set( libpng_URL https://download.sourceforge.net/libpng/libpng-1.6.37.tar.gz )
-set( libpng_HASH SHA256=daeb2620d829575513e35fecc83f0d3791a620b9b93d800b763542ece9390fb4 )
+set( libpng_URL https://download.sourceforge.net/libpng/libpng-1.6.38.tar.gz )
+set( libpng_HASH SHA256=e2b5e1b4329650992c041996cf1269681b341191dc07ffed816c555769cceb77 )
 set( _PACKAGES ${_PACKAGES} libpng )
 
-set( postgresql_URL https://ftp.postgresql.org/pub/source/v14.4/postgresql-14.4.tar.bz2 )
-set( postgresql_HASH SHA256=c23b6237c5231c791511bdc79098617d6852e9e3bdf360efd8b5d15a1a3d8f6a )
+set( postgresql_URL https://ftp.postgresql.org/pub/source/v14.5/postgresql-14.5.tar.bz2 )
+set( postgresql_HASH SHA256=d4f72cb5fb857c9a9f75ec8cf091a1771272802f2178f0b2e65b7b6ff64f4a30 )
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 set( openssl_DLLVER 1_1 )
-set( openssl_URL https://www.openssl.org/source/openssl-1.1.1p.tar.gz )
-set( openssl_HASH SHA256=bf61b62aaa66c7c7639942a94de4c9ae8280c08f17d4eac2e44644d9fc8ace6f )
+set( openssl_URL https://www.openssl.org/source/openssl-1.1.1q.tar.gz )
+set( openssl_HASH SHA256=d7939ce614029cdff0b6c20f0e2e5703158a489a72b2507b8bd51bf8c8fd10ca )
 set( _PACKAGES ${_PACKAGES} openssl )
 
 set( libharu_URL http://github.com/libharu/libharu/archive/RELEASE_2_3_0.tar.gz )
 set( libharu_MD5 4f916aa49c3069b3a10850013c507460 )
 set( _PACKAGES ${_PACKAGES} libharu )
 
-set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.3.1.zip )
-set( mariadb_HASH SHA256=8f791110a85058103775e0090ea458b8555668fec968806e4e69bc479c44cdd6 )
+set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.3.2.zip )
+set( mariadb_HASH SHA256=9d3a76aefec32ff75e62a311095557d1718547dbd9de6963feda1e4874a65ba5 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
 set( boost_ver "1_79" )
