@@ -1,6 +1,6 @@
-diff --color -rupd mariadb-connector-c-orig/cmake/CheckFunctions.cmake mariadb-connector-c/cmake/CheckFunctions.cmake
---- mariadb-connector-c-orig/cmake/CheckFunctions.cmake	2021-05-03 13:58:17.000000000 +0200
-+++ mariadb-connector-c/cmake/CheckFunctions.cmake	2021-06-24 16:24:30.937853403 +0200
+diff --color -rupd mariadb-connector-c-3.3.2-orig/cmake/CheckFunctions.cmake mariadb-connector-c-3.3.2/cmake/CheckFunctions.cmake
+--- mariadb-connector-c-3.3.2-orig/cmake/CheckFunctions.cmake	2022-08-11 16:56:06.000000000 +0200
++++ mariadb-connector-c-3.3.2/cmake/CheckFunctions.cmake	2022-09-19 14:22:13.069611661 +0200
 @@ -11,6 +11,8 @@
  # You will find the appropriate defines in 
  # include/my_config.h.in
@@ -17,9 +17,9 @@ diff --color -rupd mariadb-connector-c-orig/cmake/CheckFunctions.cmake mariadb-c
 -CHECK_FUNCTION_EXISTS (cuserid HAVE_CUSERID)
 \ No newline at end of file
 +CHECK_FUNCTION_EXISTS (cuserid HAVE_CUSERID)
-diff --color -rupd mariadb-connector-c-orig/cmake/version_info.cmake mariadb-connector-c/cmake/version_info.cmake
---- mariadb-connector-c-orig/cmake/version_info.cmake	2021-05-03 13:58:17.000000000 +0200
-+++ mariadb-connector-c/cmake/version_info.cmake	2021-06-24 16:24:51.213816945 +0200
+diff --color -rupd mariadb-connector-c-3.3.2-orig/cmake/version_info.cmake mariadb-connector-c-3.3.2/cmake/version_info.cmake
+--- mariadb-connector-c-3.3.2-orig/cmake/version_info.cmake	2022-08-11 16:56:06.000000000 +0200
++++ mariadb-connector-c-3.3.2/cmake/version_info.cmake	2022-09-19 14:22:13.069611661 +0200
 @@ -9,14 +9,14 @@ FUNCTION(GET_FILE_VERSION FILE_NAME FILE
  
    # if we build from a git repository, we calculate the file version:
@@ -42,10 +42,10 @@ diff --color -rupd mariadb-connector-c-orig/cmake/version_info.cmake mariadb-con
  ENDFUNCTION()
  
  MACRO(SET_VERSION_INFO)
-diff --color -rupd mariadb-connector-c-orig/CMakeLists.txt mariadb-connector-c/CMakeLists.txt
---- mariadb-connector-c-orig/CMakeLists.txt	2021-05-03 13:58:17.000000000 +0200
-+++ mariadb-connector-c/CMakeLists.txt	2021-06-24 16:25:44.741720584 +0200
-@@ -93,30 +93,32 @@ IF(WIN32)
+diff --color -rupd mariadb-connector-c-3.3.2-orig/CMakeLists.txt mariadb-connector-c-3.3.2/CMakeLists.txt
+--- mariadb-connector-c-3.3.2-orig/CMakeLists.txt	2022-08-11 16:56:06.000000000 +0200
++++ mariadb-connector-c-3.3.2/CMakeLists.txt	2022-09-19 14:22:13.069611661 +0200
+@@ -93,32 +93,34 @@ IF(WIN32)
    INCLUDE(${CC_SOURCE_DIR}/cmake/version_info.cmake)
  ENDIF()
  
@@ -58,6 +58,8 @@ diff --color -rupd mariadb-connector-c-orig/CMakeLists.txt mariadb-connector-c/C
 +  #INCLUDE(${CC_SOURCE_DIR}/cmake/WindowsCache.cmake)
    ADD_DEFINITIONS(-DWIN32_LEAN_AND_MEAN)
 -  IF (MSVC)
+-    # Treat warnings as errors
+-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -WX")
 -    SET(CONFIG_TYPES "DEBUG" "RELEASE" "RELWITHDEBINFO")
 -    FOREACH(BUILD_TYPE ${CONFIG_TYPES})
 -      FOREACH(COMPILER CXX C)
@@ -77,6 +79,8 @@ diff --color -rupd mariadb-connector-c-orig/CMakeLists.txt mariadb-connector-c/C
 -    ENDFOREACH()
 -  ENDIF()
 +  #IF (MSVC)
++  #  # Treat warnings as errors
++  #  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -WX")
 +  #  SET(CONFIG_TYPES "DEBUG" "RELEASE" "RELWITHDEBINFO")
 +  #  FOREACH(BUILD_TYPE ${CONFIG_TYPES})
 +  #    FOREACH(COMPILER CXX C)
@@ -96,12 +100,12 @@ diff --color -rupd mariadb-connector-c-orig/CMakeLists.txt mariadb-connector-c/C
 +  #  ENDFOREACH()
 +  #ENDIF()
  ENDIF()
- ENDIF(NOT IS_SUBPROJECT)
- 
-diff --color -rupd mariadb-connector-c-orig/libmariadb/CMakeLists.txt mariadb-connector-c/libmariadb/CMakeLists.txt
---- mariadb-connector-c-orig/libmariadb/CMakeLists.txt	2021-05-03 13:58:17.000000000 +0200
-+++ mariadb-connector-c/libmariadb/CMakeLists.txt	2021-06-24 16:27:05.653574556 +0200
-@@ -426,7 +426,15 @@ ENDIF()
+ ELSE()
+   # MDEV-16383
+diff --color -rupd mariadb-connector-c-3.3.2-orig/libmariadb/CMakeLists.txt mariadb-connector-c-3.3.2/libmariadb/CMakeLists.txt
+--- mariadb-connector-c-3.3.2-orig/libmariadb/CMakeLists.txt	2022-08-11 16:56:06.000000000 +0200
++++ mariadb-connector-c-3.3.2/libmariadb/CMakeLists.txt	2022-09-19 14:22:13.069611661 +0200
+@@ -461,7 +461,15 @@ ENDIF()
  SET_TARGET_PROPERTIES(mariadbclient PROPERTIES IMPORTED_INTERFACE_LINK_LIBRARIES "${SYSTEM_LIBS}")
  SET_TARGET_PROPERTIES(libmariadb PROPERTIES IMPORTED_INTERFACE_LINK_LIBRARIES "${SYSTEM_LIBS}")
  
