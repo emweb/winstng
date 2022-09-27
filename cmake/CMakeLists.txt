@@ -706,12 +706,6 @@ ELSE ( FETCH_ONLY )
             -DWT_ASIO_IMPLEMENTATION=standalone
         )
     endif()
-    
-    if(WT_VERSION VERSION_LESS 4.0.0)
-        set(WT_MARIADB_PATCH wt_static_mariadbclient.patch)
-    else()
-        set(WT_MARIADB_PATCH wt3_static_mariadbclient.patch)
-    endif()
 
     if( WTGIT )
         ExternalProject_Add( wt-fetch
