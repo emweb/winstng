@@ -1,0 +1,16 @@
+diff --color -rupdN libharu-2.4.2.old/src/CMakeLists.txt libharu-2.4.2.new/src/CMakeLists.txt
+--- libharu-2.4.2.old/src/CMakeLists.txt	2022-09-11 13:21:37.000000000 +0200
++++ libharu-2.4.2.new/src/CMakeLists.txt	2022-10-06 09:29:12.244365030 +0200
+@@ -87,6 +87,12 @@ if(UNIX AND NOT APPLE)
+     target_link_libraries (hpdf ${M_LIB})
+ endif()
+ 
++set_target_properties(
++  hpdf
++  PROPERTIES
++  DEBUG_POSTFIX d
++)
++
+ install(
+    TARGETS hpdf
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}

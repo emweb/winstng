@@ -80,9 +80,9 @@ endif()
 # Files to download
 
 if (STANDALONE_ASIO)
-    set( asio_ver "1.22.2" )
+    set( asio_ver "1.24.0" )
     set( asio_URL https://prdownloads.sourceforge.net/asio/asio-${asio_ver}.tar.gz )
-    set( asio_HASH SHA256=875fe3f42420edb2335e520d657593b453b13fdb70c58d547bc9915c784fc635 )
+    set( asio_HASH SHA256=2f23ef6eada06ecc1472af5df6365ed4f15452ccd07dc0a6851fa20d571dba94 )
     set( _PACKAGES ${_PACKAGES} asio )
 endif()
 
@@ -103,17 +103,17 @@ set( openssl_URL https://www.openssl.org/source/openssl-1.1.1q.tar.gz )
 set( openssl_HASH SHA256=d7939ce614029cdff0b6c20f0e2e5703158a489a72b2507b8bd51bf8c8fd10ca )
 set( _PACKAGES ${_PACKAGES} openssl )
 
-set( libharu_URL http://github.com/libharu/libharu/archive/RELEASE_2_3_0.tar.gz )
-set( libharu_MD5 4f916aa49c3069b3a10850013c507460 )
+set( libharu_URL https://github.com/libharu/libharu/archive/v2.4.2.tar.gz )
+set( libharu_HASH SHA256=226de46ffb035714f6f3c9ab52f22ca83d95c7af8480f7fd133537f072cda6cc )
 set( _PACKAGES ${_PACKAGES} libharu )
 
 set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.3.2.zip )
 set( mariadb_HASH SHA256=9d3a76aefec32ff75e62a311095557d1718547dbd9de6963feda1e4874a65ba5 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
-set( boost_ver "1_79" )
-set( boost_URL https://boostorg.jfrog.io/artifactory/main/release/1.79.0/source/boost_${boost_ver}_0.tar.bz2 )
-set( boost_HASH SHA256=475d589d51a7f8b3ba2ba4eda022b170e562ca3b760ee922c146b6c65856ef39 )
+set( boost_ver "1_80" )
+set( boost_URL https://boostorg.jfrog.io/artifactory/main/release/1.80.0/source/boost_${boost_ver}_0.tar.bz2 )
+set( boost_HASH SHA256=1e19565d82e43bc59209a168f5ac899d3ba471d55c7610c677d4ccf2c9c500c0 )
 set( _PACKAGES ${_PACKAGES} boost )
 
 set( tinymce_URL http://download.tiny.cloud/tinymce/community/tinymce_3.5.12.zip )
@@ -565,11 +565,11 @@ ELSE ( FETCH_ONLY )
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${libharu_URL}
         URL_MD5 ${libharu_MD5}
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libharu-2.3.0RC3.patch
+        PATCH_COMMAND ${PATCH_EXECUTABLE} --binary -p1 < ${WINST_BATDIR}/patches/libharu-2.4.2.patch
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
-        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/README ${WINST_PREFIX}/licenses/libharu/
+        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE ${WINST_PREFIX}/licenses/libharu/
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         )
@@ -907,10 +907,10 @@ ELSE ( FETCH_ONLY )
             PATTERN "openssl" EXCLUDE
             PATTERN "postgresql" EXCLUDE
             PATTERN "hpdf*")
-    INSTALL(FILES "${WINST_PREFIX}/lib/libhpdf.lib" "${WINST_PREFIX}/lib/libhpdfd.lib" DESTINATION "lib" COMPONENT binaries)
-    INSTALL(FILES "${WINST_PREFIX}/bin/libhpdf.dll" "${WINST_PREFIX}/bin/libhpdfd.dll" DESTINATION "bin" COMPONENT binaries)
-    INSTALL(FILES "${CMAKE_BINARY_DIR}/libharu-debug-prefix/src/libharu-debug-build/src/libhpdfd.pdb" DESTINATION "bin" COMPONENT symbols)
-    INSTALL(FILES "${CMAKE_BINARY_DIR}/libharu-release-prefix/src/libharu-release-build/src/libhpdf.pdb" DESTINATION "bin" COMPONENT symbols)
+    INSTALL(FILES "${WINST_PREFIX}/lib/hpdf.lib" "${WINST_PREFIX}/lib/hpdfd.lib" DESTINATION "lib" COMPONENT binaries)
+    INSTALL(FILES "${WINST_PREFIX}/bin/hpdf.dll" "${WINST_PREFIX}/bin/hpdfd.dll" DESTINATION "bin" COMPONENT binaries)
+    INSTALL(FILES "${CMAKE_BINARY_DIR}/libharu-debug-prefix/src/libharu-debug-build/src/hpdfd.pdb" DESTINATION "bin" COMPONENT symbols)
+    INSTALL(FILES "${CMAKE_BINARY_DIR}/libharu-release-prefix/src/libharu-release-build/src/hpdf.pdb" DESTINATION "bin" COMPONENT symbols)
 
 
     set(ALL_DYN_WT_LIBS wt wtdbo wtdbomssqlserver wtdbopostgres wtdbosqlite3 wthttp wttest)
