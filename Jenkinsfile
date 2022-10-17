@@ -32,6 +32,7 @@ properties([
         'all',
         '14.3',
         '14.2',
+        '14.1',
       ],
       description: 'Which MSVC tool versions to build with',
     ),
@@ -80,7 +81,7 @@ pipeline {
           }
           axis {
             name 'VCVARS_VER'
-            values '14.2', '14.3'
+            values '14.1', '14.2', '14.3'
           }
         }
         stages {
