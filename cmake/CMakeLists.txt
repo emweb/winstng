@@ -243,7 +243,7 @@ ELSE ( FETCH_ONLY )
         )
 
     ExternalProject_Add( zlib-release
-        DEPENDS zlib-fetch
+        DEPENDS zlib-fetch zlib-debug
         SOURCE_DIR ${CMAKE_BINARY_DIR}/zlib-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         LIST_SEPARATOR ^^
@@ -303,7 +303,9 @@ ELSE ( FETCH_ONLY )
         LOG_INSTALL 1
         )
     ExternalProject_Add( libpng-release
-        DEPENDS zlib libpng-fetch
+        # Debug and release don't like to run concurrently, so let's
+        # add debug as a depdendency of release
+        DEPENDS zlib libpng-fetch libpng-debug
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libpng-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CMAKE_ARGS 
@@ -449,7 +451,9 @@ ELSE ( FETCH_ONLY )
             )
 
         ExternalProject_Add( mariadb-release
-            DEPENDS mariadb-fetch zlib
+            # Debug and release don't like to run concurrently, so let's
+            # add debug as a depdendency of release
+            DEPENDS mariadb-fetch mariadb-debug zlib
             SOURCE_DIR ${CMAKE_BINARY_DIR}/mariadb-src
             DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
             LIST_SEPARATOR ^^
@@ -815,7 +819,7 @@ ELSE ( FETCH_ONLY )
         LOG_INSTALL 1
     )
     ExternalProject_Add( wt-release
-        DEPENDS ${wt_DEPENDS}
+        DEPENDS ${wt_DEPENDS} wt-debug
         SOURCE_DIR ${CMAKE_BINARY_DIR}/wt-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
         CMAKE_ARGS
