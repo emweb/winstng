@@ -49,6 +49,12 @@ if (!buildStartedManually()) {
   return;
 }
 
+def user_profile_dir
+
+node('win') {
+  user_profile_dir = bat(returnStdout: true, script: 'echo %UserProfile%').trim().split(' ').last().trim()
+}
+
 pipeline {
   environment {
     EMAIL = credentials('wt-dev-mail')
@@ -62,7 +68,12 @@ pipeline {
     stage('ConfigureAndBuild') {
       matrix {
         agent {
-          label 'win'
+          dockerfile {
+            filename 'Dockerfile'
+            label 'win'
+            additionalBuildArgs '--isolation=hyperv --memory 2G'
+            args "--isolation=process --mount type=bind,source=${user_profile_dir}\\winstng_downloads,target=C:\\winstng_downloads"
+          }
         }
         when {
           anyOf {
@@ -93,11 +104,11 @@ pipeline {
                   gitargs = "-DWTGIT=ON -DWTGITREPO=${params.gitrepo} -DWTGITTAG=${params.gitref}"
                 }
                 bat """
-                      call "%ProgramFiles(x86)%\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Auxiliary\\Build\\vcvarsall.bat" ${env.ARCH} -vcvars_ver=${env.VCVARS_VER}
+                      call C:\\BuildTools\\VC\\Auxiliary\\Build\\vcvarsall.bat ${env.ARCH} -vcvars_ver=${env.VCVARS_VER}
 
-                      set Path=%ProgramFiles%\\Graphviz\\bin;%Path%
                       set Path=%ProgramFiles(x86)%\\NSIS;%Path%
-                      set Path=C:\\Qt\\6.2.3\\msvc2019_64\\bin;%Path%
+                      set Path=C:\\Doxygen;%Path%
+                      set Path=C:\\Qt\\6.4.0\\msvc2019_64\\bin;%Path%
 
                       set BaseDir=%CD%
                       set Prefix=%BaseDir%\\prefix-${env.ARCH}-${env.VCVARS_VER}
@@ -106,7 +117,16 @@ pipeline {
 
                       mkdir %BuildDir%
                       cd %BuildDir%
-                      cmake.exe -DWINST_BASEDIR_:PATH=%BaseDir% -DWINST_BATDIR_:PATH=%BaseDir% -DWINST_PREFIX_:PATH=%Prefix% -DWINST_DOWNLOADS_DIR=%UserProfile%\\winstng_downloads ${gitargs} -DWT_VERSION=${params.version} -GNinja -DSTANDALONE_ASIO=ON %SrcDir%
+                      cmake.exe ^
+                        -DWINST_BASEDIR_:PATH=%BaseDir% ^
+                        -DWINST_BATDIR_:PATH=%BaseDir% ^
+                        -DWINST_PREFIX_:PATH=%Prefix% ^
+                        -DWINST_DOWNLOADS_DIR=C:\\winstng_downloads ^
+                        ${gitargs} ^
+                        -DWT_VERSION=${params.version} ^
+                        -GNinja ^
+                        -DSTANDALONE_ASIO=ON ^
+                        %SrcDir%
                     """;
               }
             }
@@ -115,11 +135,11 @@ pipeline {
             steps {
               dir("build-${env.ARCH}-${env.VCVARS_VER}") {
                 bat """
-                      call "%ProgramFiles(x86)%\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Auxiliary\\Build\\vcvarsall.bat" ${env.ARCH} -vcvars_ver=${env.VCVARS_VER}
+                      call C:\\BuildTools\\VC\\Auxiliary\\Build\\vcvarsall.bat ${env.ARCH} -vcvars_ver=${env.VCVARS_VER}
 
-                      set Path=%ProgramFiles%\\Graphviz\\bin;%Path%
                       set Path=%ProgramFiles(x86)%\\NSIS;%Path%
-                      set Path=C:\\Qt\\6.2.3\\msvc2019_64\\bin;%Path%
+                      set Path=C:\\Doxygen;%Path%
+                      set Path=C:\\Qt\\6.4.0\\msvc2019_64\\bin;%Path%
 
                       ninja -v package
                     """;
@@ -130,9 +150,6 @@ pipeline {
         post {
           success {
             archiveArtifacts 'build-*/Wt-*-msvs*-Windows-*-SDK.exe,build-*/Wt-*-msvs*-Windows-*-SDK.zip';
-          }
-          cleanup {
-            cleanWs cleanWhenFailure: false, cleanWhenUnstable: false
           }
         }
       }
@@ -153,6 +170,11 @@ pipeline {
       mail to: env.EMAIL,
            subject: "Wt ${params.version}: Windows builds ready",
            body: "Windows builds are ready: ${env.BUILD_URL}";
+    }
+    cleanup {
+      node('win') {
+        cleanWs cleanWhenFailure: false, cleanWhenUnstable: false
+      }
     }
   }
 }
