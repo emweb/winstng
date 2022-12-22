@@ -90,12 +90,12 @@ set( zlib_URL https://www.zlib.net/zlib-1.2.13.tar.gz )
 set( zlib_HASH SHA256=b3a24de97a8fdbc835b9833169501030b8977031bcb54b3b3ac13740f846ab30 )
 set( _PACKAGES ${_PACKAGES} zlib )
 
-set( libpng_URL https://download.sourceforge.net/libpng/libpng-1.6.38.tar.gz )
-set( libpng_HASH SHA256=e2b5e1b4329650992c041996cf1269681b341191dc07ffed816c555769cceb77 )
+set( libpng_URL https://download.sourceforge.net/libpng/libpng-1.6.39.tar.gz )
+set( libpng_HASH SHA256=af4fb7f260f839919e5958e5ab01a275d4fe436d45442a36ee62f73e5beb75ba )
 set( _PACKAGES ${_PACKAGES} libpng )
 
-set( postgresql_URL https://ftp.postgresql.org/pub/source/v15.0/postgresql-15.0.tar.bz2 )
-set( postgresql_HASH SHA256=72ec74f4a7c16e684f43ea42e215497fcd4c55d028a68fb72e99e61ff40da4d6 )
+set( postgresql_URL https://ftp.postgresql.org/pub/source/v15.1/postgresql-15.1.tar.bz2 )
+set( postgresql_HASH SHA256=64fdf23d734afad0dfe4077daca96ac51dcd697e68ae2d3d4ca6c45cb14e21ae )
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 set( openssl_DLLVER 1_1 )
@@ -111,9 +111,9 @@ set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.3.3.t
 set( mariadb_HASH SHA256=98b69221b0011da1e658191756668c5e81101f759886290e6ae0a91615589987 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
-set( boost_ver "1_80" )
-set( boost_URL https://boostorg.jfrog.io/artifactory/main/release/1.80.0/source/boost_${boost_ver}_0.tar.bz2 )
-set( boost_HASH SHA256=1e19565d82e43bc59209a168f5ac899d3ba471d55c7610c677d4ccf2c9c500c0 )
+set( boost_ver "1_81" )
+set( boost_URL https://boostorg.jfrog.io/artifactory/main/release/1.81.0/source/boost_${boost_ver}_0.tar.bz2 )
+set( boost_HASH SHA256=71feeed900fbccca04a3b4f2f84a7c217186f28a940ed8b7ed4725986baf99fa )
 set( _PACKAGES ${_PACKAGES} boost )
 
 set( tinymce_URL http://download.tiny.cloud/tinymce/community/tinymce_3.5.12.zip )
