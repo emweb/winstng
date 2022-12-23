@@ -111,9 +111,9 @@ set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.3.3.t
 set( mariadb_HASH SHA256=98b69221b0011da1e658191756668c5e81101f759886290e6ae0a91615589987 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
-set( boost_ver "1_81" )
-set( boost_URL https://boostorg.jfrog.io/artifactory/main/release/1.81.0/source/boost_${boost_ver}_0.tar.bz2 )
-set( boost_HASH SHA256=71feeed900fbccca04a3b4f2f84a7c217186f28a940ed8b7ed4725986baf99fa )
+set( boost_ver "1_80" )
+set( boost_URL https://boostorg.jfrog.io/artifactory/main/release/1.80.0/source/boost_${boost_ver}_0.tar.bz2 )
+set( boost_HASH SHA256=1e19565d82e43bc59209a168f5ac899d3ba471d55c7610c677d4ccf2c9c500c0 )
 set( _PACKAGES ${_PACKAGES} boost )
 
 set( tinymce_URL http://download.tiny.cloud/tinymce/community/tinymce_3.5.12.zip )
