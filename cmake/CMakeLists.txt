@@ -749,7 +749,8 @@ ELSE ( FETCH_ONLY )
         -DBOOST_DYNAMIC:BOOL=0
         -DCONFIGDIR:PATH=c:/witty
         -DWT_WRASTERIMAGE_IMPLEMENTATION=Direct2D
-        -DHARU_PREFIX=${WINST_PREFIX}
+        -DHPDF_ROOT=${WINST_PREFIX}
+        -DHPDF_INCLUDE_DIR=${WINST_PREFIX}/include
         -DHARU_DYNAMIC:BOOL=1
         -DPOSTGRES_PREFIX=${WINST_PREFIX}
         -DZLIB_LIBRARY_DEBUG:PATH=${WINST_PREFIX}/lib/zlibstaticd.lib
@@ -880,6 +881,7 @@ ELSE ( FETCH_ONLY )
             -DCMAKE_BUILD_TYPE=Debug
             -DBoost_USE_DEBUG_RUNTIME:BOOL=1
             -DMYSQL_DEBUG_LIB:FILEPATH=${WINST_PREFIX}/lib/mariadbclientd.lib
+            -DHPDF_LIBRARY:FILEPATH=${WINST_PREFIX}/lib/hpdfd.lib
             ${wt_CMAKE_ARGS}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -898,6 +900,7 @@ ELSE ( FETCH_ONLY )
             -DINSTALL_DOCUMENTATION:BOOL=1
             -DBoost_USE_DEBUG_RUNTIME:BOOL=0
             -DMYSQL_LIB:FILEPATH=${WINST_PREFIX}/lib/mariadbclient.lib
+            -DHPDF_LIBRARY:FILEPATH=${WINST_PREFIX}/lib/hpdf.lib
             ${wt_CMAKE_ARGS}            
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
