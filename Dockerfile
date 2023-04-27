@@ -81,3 +81,9 @@ RUN powershell `
       -NoProfile `
       -ExecutionPolicy Bypass `
       -Command "Expand-Archive -Path C:\TEMP\doxygen.zip -DestinationPath C:\Doxygen"
+
+# Get asciidoctor
+RUN choco install `
+      temurin17jre `
+      asciidoctorj `
+      -y
