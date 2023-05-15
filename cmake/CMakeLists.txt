@@ -116,6 +116,11 @@ set( boost_URL https://boostorg.jfrog.io/artifactory/main/release/1.81.0/source/
 set( boost_HASH SHA256=71feeed900fbccca04a3b4f2f84a7c217186f28a940ed8b7ed4725986baf99fa )
 set( _PACKAGES ${_PACKAGES} boost )
 
+set( glew_ver "2.2.0" )
+set( glew_URL https://github.com/nigels-com/glew/releases/download/glew-${glew_ver}/glew-${glew_ver}.zip)
+set( glew_HASH SHA256=a9046a913774395a095edcc0b0ac2d81c3aacca61787b39839b941e9be14e0d4 )
+set( _PACKAGES ${_PACKAGES} glew )
+
 set( tinymce_URL http://download.tiny.cloud/tinymce/community/tinymce_3.5.12.zip )
 set( tinymce_HASH SHA256=030d133dd3f4c2b092f28d8645a6fa058e8ac0e7e92d552fb8d4e29bdd0020c5 )
 set( _PACKAGES ${_PACKAGES} tinymce )
@@ -623,6 +628,70 @@ ELSE ( FETCH_ONLY )
         INSTALL_COMMAND ""
         )
 
+    file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/glew)
+    ExternalProject_Add( glew-fetch
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/glew-src
+        DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
+        URL ${glew_URL}
+	URL_HASH ${glew_HASH}
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
+        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE.txt ${WINST_PREFIX}/licenses/glew
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+	LOG_CONFIGURE 1
+	LOG_BUILD 1
+	LOG_TEST 1
+	LOG_INSTALL 1
+        )
+
+    set(GLEW_SOURCE_SUBDIR "build/cmake")
+    ExternalProject_Add( glew-debug
+        DEPENDS glew-fetch
+	SOURCE_DIR ${CMAKE_BINARY_DIR}/glew-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+	SOURCE_SUBDIR ${GLEW_SOURCE_SUBDIR}
+        CMAKE_ARGS
+            -DCMAKE_BUILD_TYPE=Debug
+            -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
+	    -DBUILD_UTILS=OFF
+	    -DBUILD_SHARED_LIBS=OFF
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+	LOG_CONFIGURE 1
+	LOG_BUILD 1
+	LOG_TEST 1
+	LOG_INSTALL 1
+        )
+
+    ExternalProject_Add( glew-release
+        DEPENDS glew-fetch glew-debug
+	SOURCE_DIR ${CMAKE_BINARY_DIR}/glew-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+	SOURCE_SUBDIR ${GLEW_SOURCE_SUBDIR}
+        CMAKE_ARGS
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo
+            -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
+	    -DBUILD_UTILS=OFF
+	    -DBUILD_SHARED_LIBS=OFF
+        LOG_DOWNLOAD 1
+        LOG_UPDATE 1
+	LOG_CONFIGURE 1
+	LOG_BUILD 1
+	LOG_TEST 1
+	LOG_INSTALL 1
+        )
+
+    ExternalProject_Add( glew
+        DEPENDS glew-release glew-debug
+        SOURCE_DIR ${CMAKE_BINARY_DIR}/glew-src
+        DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
+        )
+
     file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/boost)
     set( boost_BOOTSTRAP_COMMAND "bootstrap.bat" )
     set( boost_B2 "b2" )
@@ -787,7 +856,8 @@ ELSE ( FETCH_ONLY )
     endif (STANDALONE_ASIO)
 
     set(wt_DEPENDS
-        tinymce
+        glew
+	tinymce
         wt-fetch
         zlib
         libpng
