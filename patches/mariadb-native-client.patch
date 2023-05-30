@@ -56,7 +56,7 @@ diff --color -rupd mariadb-connector-c-3.3.2-orig/CMakeLists.txt mariadb-connect
    # Speedup system tests
 -  INCLUDE(${CC_SOURCE_DIR}/cmake/WindowsCache.cmake)
 +  #INCLUDE(${CC_SOURCE_DIR}/cmake/WindowsCache.cmake)
-   ADD_DEFINITIONS(-DWIN32_LEAN_AND_MEAN)
+   ADD_DEFINITIONS(-DWIN32_LEAN_AND_MEAN -DNOGDI)
 -  IF (MSVC)
 -    # Treat warnings as errors
 -    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -WX")
