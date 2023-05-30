@@ -1,6 +1,6 @@
-diff --color -rupd mariadb-connector-c-3.3.2-orig/cmake/CheckFunctions.cmake mariadb-connector-c-3.3.2/cmake/CheckFunctions.cmake
---- mariadb-connector-c-3.3.2-orig/cmake/CheckFunctions.cmake	2022-08-11 16:56:06.000000000 +0200
-+++ mariadb-connector-c-3.3.2/cmake/CheckFunctions.cmake	2022-09-19 14:22:13.069611661 +0200
+diff --color -rupd mariadb-connector-c-3.3.2-orig/cmake/check_functions.cmake mariadb-connector-c-3.3.2/cmake/check_functions.cmake
+--- mariadb-connector-c-3.3.2-orig/cmake/check_functions.cmake	2022-08-11 16:56:06.000000000 +0200
++++ mariadb-connector-c-3.3.2/cmake/check_functions.cmake	2022-09-19 14:22:13.069611661 +0200
 @@ -11,6 +11,8 @@
  # You will find the appropriate defines in 
  # include/my_config.h.in
