@@ -1,0 +1,16 @@
+diff -urN libharu-src-orig/src/CMakeLists.txt libharu-src/src/CMakeLists.txt
+--- libharu-src-orig/src/CMakeLists.txt	2014-01-27 16:24:44.031782700 +0100
++++ libharu-src/src/CMakeLists.txt	2014-01-27 16:49:31.667188400 +0100
+@@ -80,7 +80,10 @@
+     RUNTIME DESTINATION bin
+   )
+   if(WIN32 AND NOT CYGWIN)
+-		foreach(addlib ${ADDITIONAL_LIBRARIES})
++		set(INSTALL_ADDLIB ${ADDITIONAL_LIBRARIES})
++		list(REMOVE_ITEM INSTALL_ADDLIB debug)
++		list(REMOVE_ITEM INSTALL_ADDLIB optimized)
++		foreach(addlib ${INSTALL_ADDLIB})
+ 			install(FILES ${addlib} DESTINATION lib)
+ 		endforeach(addlib)
+   endif(WIN32 AND NOT CYGWIN)
+

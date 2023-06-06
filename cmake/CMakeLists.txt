@@ -103,8 +103,8 @@ set( openssl_URL https://www.openssl.org/source/openssl-1.1.1t.tar.gz )
 set( openssl_HASH SHA256=8dee9b24bdb1dcbf0c3d1e9b02fb8f6bf22165e807f45adeb7c9677536859d3b )
 set( _PACKAGES ${_PACKAGES} openssl )
 
-set( libharu_URL https://github.com/libharu/libharu/archive/v2.4.3.tar.gz )
-set( libharu_HASH SHA256=a2c3ae4261504a0fda25b09e7babe5df02b21803dd1308fdf105588f7589d255 )
+set( libharu_URL https://github.com/libharu/libharu/archive/refs/tags/RELEASE_2_3_0.tar.gz )
+set( libharu_HASH SHA256=8f9e68cc5d5f7d53d1bc61a1ed876add1faf4f91070dbc360d8b259f46d9a4d2 )
 set( _PACKAGES ${_PACKAGES} libharu )
 
 set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.3.5.tar.gz )
@@ -574,11 +574,11 @@ ELSE ( FETCH_ONLY )
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${libharu_URL}
         URL_MD5 ${libharu_MD5}
-        PATCH_COMMAND ${PATCH_EXECUTABLE} --binary -p1 < ${WINST_BATDIR}/patches/libharu-2.4.2.patch
+        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libharu-2.3.0.patch
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
-        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE ${WINST_PREFIX}/licenses/libharu/
+        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/README ${WINST_PREFIX}/licenses/libharu/
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         )
@@ -881,7 +881,7 @@ ELSE ( FETCH_ONLY )
             -DCMAKE_BUILD_TYPE=Debug
             -DBoost_USE_DEBUG_RUNTIME:BOOL=1
             -DMYSQL_DEBUG_LIB:FILEPATH=${WINST_PREFIX}/lib/mariadbclientd.lib
-            -DHPDF_LIBRARY:FILEPATH=${WINST_PREFIX}/lib/hpdfd.lib
+            -DHPDF_LIBRARY:FILEPATH=${WINST_PREFIX}/lib/libhpdfd.lib
             ${wt_CMAKE_ARGS}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -900,7 +900,7 @@ ELSE ( FETCH_ONLY )
             -DINSTALL_DOCUMENTATION:BOOL=1
             -DBoost_USE_DEBUG_RUNTIME:BOOL=0
             -DMYSQL_LIB:FILEPATH=${WINST_PREFIX}/lib/mariadbclient.lib
-            -DHPDF_LIBRARY:FILEPATH=${WINST_PREFIX}/lib/hpdf.lib
+            -DHPDF_LIBRARY:FILEPATH=${WINST_PREFIX}/lib/libhpdf.lib
             ${wt_CMAKE_ARGS}            
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -984,10 +984,10 @@ ELSE ( FETCH_ONLY )
             PATTERN "openssl" EXCLUDE
             PATTERN "postgresql" EXCLUDE
             PATTERN "hpdf*")
-    INSTALL(FILES "${WINST_PREFIX}/lib/hpdf.lib" "${WINST_PREFIX}/lib/hpdfd.lib" DESTINATION "lib" COMPONENT binaries)
-    INSTALL(FILES "${WINST_PREFIX}/bin/hpdf.dll" "${WINST_PREFIX}/bin/hpdfd.dll" DESTINATION "bin" COMPONENT binaries)
-    INSTALL(FILES "${CMAKE_BINARY_DIR}/libharu-debug-prefix/src/libharu-debug-build/src/hpdfd.pdb" DESTINATION "bin" COMPONENT symbols)
-    INSTALL(FILES "${CMAKE_BINARY_DIR}/libharu-release-prefix/src/libharu-release-build/src/hpdf.pdb" DESTINATION "bin" COMPONENT symbols)
+    INSTALL(FILES "${WINST_PREFIX}/lib/libhpdf.lib" "${WINST_PREFIX}/lib/libhpdfd.lib" DESTINATION "lib" COMPONENT binaries)
+    INSTALL(FILES "${WINST_PREFIX}/bin/libhpdf.dll" "${WINST_PREFIX}/bin/libhpdfd.dll" DESTINATION "bin" COMPONENT binaries)
+    INSTALL(FILES "${CMAKE_BINARY_DIR}/libharu-debug-prefix/src/libharu-debug-build/src/libhpdfd.pdb" DESTINATION "bin" COMPONENT symbols)
+    INSTALL(FILES "${CMAKE_BINARY_DIR}/libharu-release-prefix/src/libharu-release-build/src/libhpdf.pdb" DESTINATION "bin" COMPONENT symbols)
 
 
     set(ALL_DYN_WT_LIBS wt wtdbo wtdbomssqlserver wtdbopostgres wtdbosqlite3 wthttp wttest)
