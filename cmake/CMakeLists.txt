@@ -80,9 +80,9 @@ endif()
 # Files to download
 
 if (STANDALONE_ASIO)
-    set( asio_ver "1.28.0" )
+    set( asio_ver "1.28.1" )
     set( asio_URL https://prdownloads.sourceforge.net/asio/asio-${asio_ver}.tar.gz )
-    set( asio_HASH SHA256=e854a53cc6fe599bdf830e3c607f1d22fe74eee892f64c81d3ca997a80ddca97 )
+    set( asio_HASH SHA256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 )
     set( _PACKAGES ${_PACKAGES} asio )
 endif()
 
@@ -94,21 +94,21 @@ set( libpng_URL https://download.sourceforge.net/libpng/libpng-1.6.39.tar.gz )
 set( libpng_HASH SHA256=af4fb7f260f839919e5958e5ab01a275d4fe436d45442a36ee62f73e5beb75ba )
 set( _PACKAGES ${_PACKAGES} libpng )
 
-set( postgresql_URL https://ftp.postgresql.org/pub/source/v15.3/postgresql-15.3.tar.bz2 )
-set( postgresql_HASH SHA256=ffc7d4891f00ffbf5c3f4eab7fbbced8460b8c0ee63c5a5167133b9e6599d932 )
+set( postgresql_URL https://ftp.postgresql.org/pub/source/v15.4/postgresql-15.4.tar.bz2 )
+set( postgresql_HASH SHA256=baec5a4bdc4437336653b6cb5d9ed89be5bd5c0c58b94e0becee0a999e63c8f9 )
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 set( openssl_DLLVER 1_1 )
-set( openssl_URL https://www.openssl.org/source/openssl-1.1.1t.tar.gz )
-set( openssl_HASH SHA256=8dee9b24bdb1dcbf0c3d1e9b02fb8f6bf22165e807f45adeb7c9677536859d3b )
+set( openssl_URL https://www.openssl.org/source/openssl-1.1.1w.tar.gz )
+set( openssl_HASH SHA256=cf3098950cb4d853ad95c0841f1f9c6d3dc102dccfcacd521d93925208b76ac8 )
 set( _PACKAGES ${_PACKAGES} openssl )
 
 set( libharu_URL https://github.com/libharu/libharu/archive/refs/tags/RELEASE_2_3_0.tar.gz )
 set( libharu_HASH SHA256=8f9e68cc5d5f7d53d1bc61a1ed876add1faf4f91070dbc360d8b259f46d9a4d2 )
 set( _PACKAGES ${_PACKAGES} libharu )
 
-set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.3.5.tar.gz )
-set( mariadb_HASH SHA256=c0fda1fa6e52dc85de27156cd847088a72d40d9de6514f7efa57c8d93134a54c )
+set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.3.7.tar.gz )
+set( mariadb_HASH SHA256=029b91473a42f822611e92e01b7af05c3ed8def7ab14665ffbb78947ccf0d6a5 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
 set( boost_ver "1_82" )
