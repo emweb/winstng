@@ -76,7 +76,7 @@ RUN aqt install-qt windows desktop 6.4.0 win64_msvc2019_64 `
       --archives qtbase qttools
 
 # Download Doxygen 1.9.1 (matching the version we have on Ubuntu 22.04)
-ARG DOXYGEN_URL=https://www.doxygen.nl/files/doxygen-1.9.1.windows.x64.bin.zip
+ARG DOXYGEN_URL=https://github.com/doxygen/doxygen/releases/download/Release_1_9_1/doxygen-1.9.1.windows.x64.bin.zip
 RUN powershell `
       -NoProfile `
       -ExecutionPolicy Bypass `
