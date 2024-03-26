@@ -45,7 +45,7 @@ diff --color -rupd mariadb-connector-c-3.3.2-orig/cmake/version_info.cmake maria
 diff --color -rupd mariadb-connector-c-3.3.2-orig/CMakeLists.txt mariadb-connector-c-3.3.2/CMakeLists.txt
 --- mariadb-connector-c-3.3.2-orig/CMakeLists.txt	2022-08-11 16:56:06.000000000 +0200
 +++ mariadb-connector-c-3.3.2/CMakeLists.txt	2022-09-19 14:22:13.069611661 +0200
-@@ -93,32 +93,34 @@ IF(WIN32)
+@@ -93,30 +93,32 @@ IF(WIN32)
    INCLUDE(${CC_SOURCE_DIR}/cmake/version_info.cmake)
  ENDIF()
  
@@ -58,8 +58,6 @@ diff --color -rupd mariadb-connector-c-3.3.2-orig/CMakeLists.txt mariadb-connect
 +  #INCLUDE(${CC_SOURCE_DIR}/cmake/WindowsCache.cmake)
    ADD_DEFINITIONS(-DWIN32_LEAN_AND_MEAN -DNOGDI)
 -  IF (MSVC)
--    # Treat warnings as errors
--    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -WX")
 -    SET(CONFIG_TYPES "DEBUG" "RELEASE" "RELWITHDEBINFO")
 -    FOREACH(BUILD_TYPE ${CONFIG_TYPES})
 -      FOREACH(COMPILER CXX C)
@@ -79,8 +77,6 @@ diff --color -rupd mariadb-connector-c-3.3.2-orig/CMakeLists.txt mariadb-connect
 -    ENDFOREACH()
 -  ENDIF()
 +  #IF (MSVC)
-+  #  # Treat warnings as errors
-+  #  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -WX")
 +  #  SET(CONFIG_TYPES "DEBUG" "RELEASE" "RELWITHDEBINFO")
 +  #  FOREACH(BUILD_TYPE ${CONFIG_TYPES})
 +  #    FOREACH(COMPILER CXX C)
