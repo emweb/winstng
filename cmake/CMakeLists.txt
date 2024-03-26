@@ -82,7 +82,7 @@ endif()
 if (STANDALONE_ASIO)
     set( asio_ver "1.28.1" )
     set( asio_URL https://prdownloads.sourceforge.net/asio/asio-${asio_ver}.tar.gz )
-    set( asio_HASH SHA256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 )
+    set( asio_HASH SHA256=eef0eddce419827876f4929c6d7523e010528031e5289ec57914e89fb9ab9d8d)
     set( _PACKAGES ${_PACKAGES} asio )
 endif()
 
