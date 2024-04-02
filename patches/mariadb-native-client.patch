@@ -101,7 +101,7 @@ diff --color -rupd mariadb-connector-c-3.3.2-orig/CMakeLists.txt mariadb-connect
 diff --color -rupd mariadb-connector-c-3.3.2-orig/libmariadb/CMakeLists.txt mariadb-connector-c-3.3.2/libmariadb/CMakeLists.txt
 --- mariadb-connector-c-3.3.2-orig/libmariadb/CMakeLists.txt	2022-08-11 16:56:06.000000000 +0200
 +++ mariadb-connector-c-3.3.2/libmariadb/CMakeLists.txt	2022-09-19 14:22:13.069611661 +0200
-@@ -461,7 +461,15 @@ ENDIF()
+@@ -470,7 +470,15 @@ ENDIF()
  SET_TARGET_PROPERTIES(mariadbclient PROPERTIES IMPORTED_INTERFACE_LINK_LIBRARIES "${SYSTEM_LIBS}")
  SET_TARGET_PROPERTIES(libmariadb PROPERTIES IMPORTED_INTERFACE_LINK_LIBRARIES "${SYSTEM_LIBS}")
  
@@ -116,5 +116,3 @@ diff --color -rupd mariadb-connector-c-3.3.2-orig/libmariadb/CMakeLists.txt mari
 +  DEBUG_POSTFIX ${DEBUG_LIB_POSTFIX}
 +)
  
- #
- # Installation
