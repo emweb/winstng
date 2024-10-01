@@ -80,22 +80,22 @@ endif()
 # Files to download
 
 if (STANDALONE_ASIO)
-    set( asio_ver "1.28.1" )
+    set( asio_ver "1.30.2" )
     set( asio_URL https://prdownloads.sourceforge.net/asio/asio-${asio_ver}.tar.gz )
-    set( asio_HASH SHA256=eef0eddce419827876f4929c6d7523e010528031e5289ec57914e89fb9ab9d8d)
+    set( asio_HASH SHA256=12e7bb4dada8bc1191de9d550a59ee658ce4e645ffc97c911c099ab4e8699d55)
     set( _PACKAGES ${_PACKAGES} asio )
 endif()
 
-set( zlib_URL https://www.zlib.net/zlib-1.2.13.tar.gz )
-set( zlib_HASH SHA256=b3a24de97a8fdbc835b9833169501030b8977031bcb54b3b3ac13740f846ab30 )
+set( zlib_URL https://www.zlib.net/zlib-1.3.1.tar.gz )
+set( zlib_HASH SHA256=9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23)
 set( _PACKAGES ${_PACKAGES} zlib )
 
-set( libpng_URL https://download.sourceforge.net/libpng/libpng-1.6.43.tar.gz )
-set( libpng_HASH SHA256=e804e465d4b109b5ad285a8fb71f0dd3f74f0068f91ce3cdfde618180c174925)
+set( libpng_URL https://download.sourceforge.net/libpng/libpng-1.6.44.tar.gz )
+set( libpng_HASH SHA256=8c25a7792099a0089fa1cc76c94260d0bb3f1ec52b93671b572f8bb61577b732)
 set( _PACKAGES ${_PACKAGES} libpng )
 
-set( postgresql_URL https://ftp.postgresql.org/pub/source/v15.6/postgresql-15.6.tar.bz2 )
-set( postgresql_HASH SHA256=8455146ed9c69c93a57de954aead0302cafad035c2b242175d6aa1e17ebcb2fb)
+set( postgresql_URL https://ftp.postgresql.org/pub/source/v16.4/postgresql-16.4.tar.bz2 )
+set( postgresql_HASH SHA256=971766d645aa73e93b9ef4e3be44201b4f45b5477095b049125403f9f3386d6f)
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 set( openssl_DLLVER 1_1 )
@@ -111,9 +111,9 @@ set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.3.9.t
 set( mariadb_HASH SHA256=062b9ec5c26cbb236a78f0ba26981272053f59bdfc113040bab904a9da36d31f)
 set( _PACKAGES ${_PACKAGES} mariadb )
 
-set( boost_ver "1_84" )
-set( boost_URL https://boostorg.jfrog.io/artifactory/main/release/1.84.0/source/boost_${boost_ver}_0.tar.bz2 )
-set( boost_HASH SHA256=cc4b893acf645c9d4b698e9a0f08ca8846aa5d6c68275c14c3e7949c24109454)
+set( boost_ver "1_86" )
+set( boost_URL https://boostorg.jfrog.io/artifactory/main/release/1.86.0/source/boost_${boost_ver}_0.tar.bz2 )
+set( boost_HASH SHA256=1bed88e40401b2cb7a1f76d4bab499e352fa4d0c5f31c0dbae64e24d34d7513b)
 set( _PACKAGES ${_PACKAGES} boost )
 
 set( glew_ver "2.2.0" )
@@ -132,8 +132,8 @@ set( patch_URL http://prdownloads.sourceforge.net/gnuwin32/patch-2.5.9-7-bin.zip
 set( patch_MD5 b9c8b31d62f4b2e4f1887bbb63e8a905)
 set( _PACKAGES ${_PACKAGES} patch )
 
-set( nasm_URL https://www.nasm.us/pub/nasm/releasebuilds/2.16.01/win32/nasm-2.16.01-win32.zip )
-set( nasm_HASH SHA256=e289fa70c88594b092c916344bb8bfcd6896b604bfab284ab57b1372997c820c )
+set( nasm_URL https://www.nasm.us/pub/nasm/releasebuilds/2.16.03/win32/nasm-2.16.03-win32.zip )
+set( nasm_HASH SHA256=1881d062da8a2f02d832c3d47262697817541bcbb853126638ad209ea6ffe5b0)
 set( _PACKAGES ${_PACKAGES} nasm )
 
 if( _WT_ARCH STREQUAL "x64" ) # Win 64-bit
