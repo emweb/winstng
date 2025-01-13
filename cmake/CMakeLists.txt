@@ -112,7 +112,7 @@ set( mariadb_HASH SHA256=062b9ec5c26cbb236a78f0ba26981272053f59bdfc113040bab904a
 set( _PACKAGES ${_PACKAGES} mariadb )
 
 set( boost_ver "1_86" )
-set( boost_URL https://boostorg.jfrog.io/artifactory/main/release/1.86.0/source/boost_${boost_ver}_0.tar.bz2 )
+set( boost_URL https://archives.boost.io/release/1.86.0/source/boost_${boost_ver}_0.tar.bz2 )
 set( boost_HASH SHA256=1bed88e40401b2cb7a1f76d4bab499e352fa4d0c5f31c0dbae64e24d34d7513b)
 set( _PACKAGES ${_PACKAGES} boost )
 
