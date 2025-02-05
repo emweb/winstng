@@ -98,9 +98,9 @@ set( postgresql_URL https://ftp.postgresql.org/pub/source/v16.8/postgresql-16.8.
 set( postgresql_HASH SHA256=9468083a56ce0ee7d294601b74dad3dd9fc69d87aff61f0a9fb63c813ff7efd8)
 set( _PACKAGES ${_PACKAGES} postgresql )
 
-set( openssl_DLLVER 1_1 )
-set( openssl_URL https://www.openssl.org/source/openssl-1.1.1w.tar.gz )
-set( openssl_HASH SHA256=cf3098950cb4d853ad95c0841f1f9c6d3dc102dccfcacd521d93925208b76ac8 )
+set( openssl_DLLVER 3 )
+set( openssl_URL https://www.openssl.org/source/openssl-3.4.0.tar.gz )
+set( openssl_HASH SHA256=e15dda82fe2fe8139dc2ac21a36d4ca01d5313c75f99f46c4e8a27709b7294bf )
 set( _PACKAGES ${_PACKAGES} openssl )
 
 set( libharu_URL https://github.com/libharu/libharu/archive/refs/tags/RELEASE_2_3_0.tar.gz )
@@ -340,10 +340,10 @@ ELSE ( FETCH_ONLY )
 
     # OpenSSL requires some extra effort
     if( _WT_ARCH STREQUAL "x64" ) # Windows 64-bit
-        set( OPENSSL_DEBUG_CONFIGURE_COMMAND "${WINST_PREFIX}/perl/bin/perl Configure VC-WIN64A --debug --openssldir=${WINST_PREFIX} --prefix=${WINST_PREFIX}" )
+        set( OPENSSL_DEBUG_CONFIGURE_COMMAND "${WINST_PREFIX}/perl/bin/perl Configure VC-WIN64A-debug --debug --openssldir=${WINST_PREFIX} --prefix=${WINST_PREFIX}" )
         set( OPENSSL_RELEASE_CONFIGURE_COMMAND "${WINST_PREFIX}/perl/bin/perl Configure VC-WIN64A --release --openssldir=${WINST_PREFIX} --prefix=${WINST_PREFIX}" )
     else( _WT_ARCH STREQUAL "x86" ) # Windows 32-bit
-        set( OPENSSL_DEBUG_CONFIGURE_COMMAND "${WINST_PREFIX}/perl/bin/perl Configure VC-WIN32 --debug --openssldir=${WINST_PREFIX} --prefix=${WINST_PREFIX}" )
+        set( OPENSSL_DEBUG_CONFIGURE_COMMAND "${WINST_PREFIX}/perl/bin/perl Configure VC-WIN32-debug --debug --openssldir=${WINST_PREFIX} --prefix=${WINST_PREFIX}" )
         set( OPENSSL_RELEASE_CONFIGURE_COMMAND "${WINST_PREFIX}/perl/bin/perl Configure VC-WIN32 --release --openssldir=${WINST_PREFIX} --prefix=${WINST_PREFIX}" )
     endif()
 
@@ -364,7 +364,7 @@ ELSE ( FETCH_ONLY )
         URL_HASH ${openssl_HASH}
         LIST_SEPARATOR ^^
         UPDATE_COMMAND ""
-        PATCH_COMMAND ${PATCH_EXECUTABLE} --binary -p1 < ${WINST_BATDIR}/patches/openssl-library-names.patch
+        PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${WINST_BATDIR}/patches/openssl-debug.conf Configurations/
         CONFIGURE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_CONFIGURE_COMMAND:STRING=${OPENSSL_DEBUG_CONFIGURE_COMMAND} -P ${WINST_BATDIR}/cmake/configure-openssl.cmake
         BUILD_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_BUILD_COMMAND:STRING=${OPENSSL_DEBUG_BUILD_COMMAND} -P ${WINST_BATDIR}/cmake/build-openssl.cmake
         INSTALL_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_INSTALL_COMMAND:STRING=${OPENSSL_DEBUG_INSTALL_COMMAND} -P ${WINST_BATDIR}/cmake/install-openssl.cmake
@@ -386,7 +386,7 @@ ELSE ( FETCH_ONLY )
         URL_HASH ${openssl_HASH}
         LIST_SEPARATOR ^^
         UPDATE_COMMAND ""
-        PATCH_COMMAND ${PATCH_EXECUTABLE} --binary -p1 < ${WINST_BATDIR}/patches/openssl-library-names.patch
+        PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${WINST_BATDIR}/patches/openssl-debug.conf Configurations/
         CONFIGURE_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_CONFIGURE_COMMAND:STRING=${OPENSSL_RELEASE_CONFIGURE_COMMAND} -P ${WINST_BATDIR}/cmake/configure-openssl.cmake
         BUILD_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_BUILD_COMMAND:STRING=${OPENSSL_RELEASE_BUILD_COMMAND} -P ${WINST_BATDIR}/cmake/build-openssl.cmake
         INSTALL_COMMAND ${CMAKE_COMMAND} -DWINST_DIR:PATH=${WINST_PREFIX} -DOPENSSL_SOURCE_DIR:PATH=<SOURCE_DIR> -DOPENSSL_INSTALL_COMMAND:STRING=${OPENSSL_RELEASE_INSTALL_COMMAND} -P ${WINST_BATDIR}/cmake/install-openssl.cmake
@@ -409,7 +409,7 @@ ELSE ( FETCH_ONLY )
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
-        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE ${WINST_PREFIX}/licenses/openssl/
+        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE.txt ${WINST_PREFIX}/licenses/openssl/
         )
 
     if(ENABLE_MARIADB_CONNECTOR_C)
