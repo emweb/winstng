@@ -90,12 +90,12 @@ set( zlib_URL https://www.zlib.net/zlib-1.3.1.tar.gz )
 set( zlib_HASH SHA256=9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23)
 set( _PACKAGES ${_PACKAGES} zlib )
 
-set( libpng_URL https://download.sourceforge.net/libpng/libpng-1.6.45.tar.gz )
-set( libpng_HASH SHA256=7dee9e1ca8152bf52f919456f4190330aee48209887f2ec0b3d9f0ad571df11b)
+set( libpng_URL https://download.sourceforge.net/libpng/libpng-1.6.47.tar.gz )
+set( libpng_HASH SHA256=084115c62fe023e3d88cd78764a4d8e89763985ee4b4a085825f7a00d85eafbb)
 set( _PACKAGES ${_PACKAGES} libpng )
 
-set( postgresql_URL https://ftp.postgresql.org/pub/source/v16.7/postgresql-16.7.tar.bz2 )
-set( postgresql_HASH SHA256=62e02f77ebfc4a37f1700c20cc3ccd85ff797b5613766ebf949a7899bb2113fe)
+set( postgresql_URL https://ftp.postgresql.org/pub/source/v16.8/postgresql-16.8.tar.bz2 )
+set( postgresql_HASH SHA256=9468083a56ce0ee7d294601b74dad3dd9fc69d87aff61f0a9fb63c813ff7efd8)
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 set( openssl_DLLVER 1_1 )
