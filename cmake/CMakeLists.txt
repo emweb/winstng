@@ -121,8 +121,8 @@ set( glew_URL https://github.com/nigels-com/glew/releases/download/glew-${glew_v
 set( glew_HASH SHA256=a9046a913774395a095edcc0b0ac2d81c3aacca61787b39839b941e9be14e0d4 )
 set( _PACKAGES ${_PACKAGES} glew )
 
-set( tinymce_URL http://download.tiny.cloud/tinymce/community/tinymce_3.5.12.zip )
-set( tinymce_HASH SHA256=030d133dd3f4c2b092f28d8645a6fa058e8ac0e7e92d552fb8d4e29bdd0020c5 )
+set( tinymce_URL http://download.tiny.cloud/tinymce/community/tinymce_6.8.5.zip )
+set( tinymce_HASH SHA256=7d88d13eb6764f107ece39d2da0dec9a6dbfb7c2d401dadc664e6617fc617ef3 )
 set( _PACKAGES ${_PACKAGES} tinymce )
 
 set( wt_URL https://github.com/emweb/wt/archive/${WT_VERSION}.tar.gz )
@@ -292,7 +292,7 @@ ELSE ( FETCH_ONLY )
         DEPENDS zlib libpng-fetch
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libpng-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-        CMAKE_ARGS 
+        CMAKE_ARGS
             -DCMAKE_BUILD_TYPE=Debug
             -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH}
             -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
@@ -313,7 +313,7 @@ ELSE ( FETCH_ONLY )
         DEPENDS zlib libpng-fetch libpng-debug
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libpng-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-        CMAKE_ARGS 
+        CMAKE_ARGS
             -DCMAKE_BUILD_TYPE=RelWithDebInfo
             -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH}
             -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
@@ -587,7 +587,7 @@ ELSE ( FETCH_ONLY )
         DEPENDS libharu-fetch zlib libpng
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libharu-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-        CMAKE_ARGS 
+        CMAKE_ARGS
             -DCMAKE_BUILD_TYPE=Debug
             -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH}
             -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
@@ -605,7 +605,7 @@ ELSE ( FETCH_ONLY )
         DEPENDS libharu-fetch libharu-debug zlib libpng
         SOURCE_DIR ${CMAKE_BINARY_DIR}/libharu-src
         DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E echo
-        CMAKE_ARGS 
+        CMAKE_ARGS
             -DCMAKE_BUILD_TYPE=RelWithDebInfo
             -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH}
             -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
@@ -825,10 +825,10 @@ ELSE ( FETCH_ONLY )
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${tinymce_URL}
         URL_HASH ${tinymce_HASH}
-        CONFIGURE_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/jscripts/ ${source_dir}/resources/
-        BUILD_COMMAND ${CMAKE_COMMAND} -E remove ${source_dir}/resources/tiny_mce/tiny_mce_src.js
-        INSTALL_COMMAND ${CMAKE_COMMAND} -E remove ${source_dir}/resources/tiny_mce/license.txt
-        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/jscripts/tiny_mce/license.txt ${WINST_PREFIX}/licenses/tinymce/
+        CONFIGURE_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/js/ ${source_dir}/resources/
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ${CMAKE_COMMAND} -E remove ${source_dir}/resources/tinymce/license.txt
+        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/js/tinymce/license.txt ${WINST_PREFIX}/licenses/tinymce/
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -901,7 +901,7 @@ ELSE ( FETCH_ONLY )
             -DBoost_USE_DEBUG_RUNTIME:BOOL=0
             -DMYSQL_LIB:FILEPATH=${WINST_PREFIX}/lib/mariadbclient.lib
             -DHPDF_LIBRARY:FILEPATH=${WINST_PREFIX}/lib/libhpdf.lib
-            ${wt_CMAKE_ARGS}            
+            ${wt_CMAKE_ARGS}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -1155,9 +1155,9 @@ ELSE ( FETCH_ONLY )
     set(CPACK_COMPONENT_SYMBOLS_DESCRIPTION "PDB files for all debug DLLs")
 
     set(CPACK_COMPONENT_BINARIES_REQUIRED TRUE)
-   
+
    #set(CPACK_COMPONENT_EXAMPLES_DEPENDS binaries)
-   
+
    IF(WT_GIT)
        SET(CPACK_PACKAGE_FILE_NAME "Wt-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}-${_WT_COMPILER}-${CMAKE_SYSTEM_NAME}-${_WT_ARCH}-SDK")
    ELSE(WT_GIT)
