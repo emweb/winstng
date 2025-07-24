@@ -951,12 +951,20 @@ ELSE ( FETCH_ONLY )
              PATTERN "libboost*")
     ENDIF (NOT STANDALONE_ASIO)
 
+    # OpenSSL will name x64 binaries with the "-x64" suffix.
+    # The x86 ones are not changed from the default naming scheme.
+    if (_WT_ARCH STREQUAL "x64")
+      set(OPENSSL_BIN_SUFFIX "-x64")
+    else()
+      set(OPENSSL_BIN_SUFFIX "")
+    endif()
+
     INSTALL(
         FILES
-            "${WINST_PREFIX}/bin/libcrypto-${openssl_DLLVER}.dll"
-            "${WINST_PREFIX}/bin/libcrypto-${openssl_DLLVER}d.dll"
-            "${WINST_PREFIX}/bin/libssl-${openssl_DLLVER}.dll"
-            "${WINST_PREFIX}/bin/libssl-${openssl_DLLVER}d.dll"
+            "${WINST_PREFIX}/bin/libcrypto-${openssl_DLLVER}${OPENSSL_BIN_SUFFIX}.dll"
+            "${WINST_PREFIX}/bin/libcrypto-${openssl_DLLVER}${OPENSSL_BIN_SUFFIX}d.dll"
+            "${WINST_PREFIX}/bin/libssl-${openssl_DLLVER}${OPENSSL_BIN_SUFFIX}.dll"
+            "${WINST_PREFIX}/bin/libssl-${openssl_DLLVER}${OPENSSL_BIN_SUFFIX}d.dll"
         DESTINATION "bin"
         COMPONENT binaries)
     INSTALL(
@@ -969,10 +977,10 @@ ELSE ( FETCH_ONLY )
         COMPONENT binaries)
     INSTALL(
         FILES
-            "${WINST_PREFIX}/bin/libcrypto-${openssl_DLLVER}.pdb"
-            "${WINST_PREFIX}/bin/libcrypto-${openssl_DLLVER}d.pdb"
-            "${WINST_PREFIX}/bin/libssl-${openssl_DLLVER}.pdb"
-            "${WINST_PREFIX}/bin/libssl-${openssl_DLLVER}d.pdb"
+            "${WINST_PREFIX}/bin/libcrypto-${openssl_DLLVER}${OPENSSL_BIN_SUFFIX}.pdb"
+            "${WINST_PREFIX}/bin/libcrypto-${openssl_DLLVER}${OPENSSL_BIN_SUFFIX}d.pdb"
+            "${WINST_PREFIX}/bin/libssl-${openssl_DLLVER}${OPENSSL_BIN_SUFFIX}.pdb"
+            "${WINST_PREFIX}/bin/libssl-${openssl_DLLVER}${OPENSSL_BIN_SUFFIX}d.pdb"
         DESTINATION "bin"
         COMPONENT symbols)
 
