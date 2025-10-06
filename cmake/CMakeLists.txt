@@ -932,6 +932,7 @@ ELSE ( FETCH_ONLY )
     # Headers
 
     INSTALL(DIRECTORY "${WINST_PREFIX}/include/Wt" DESTINATION "include" COMPONENT binaries)
+    INSTALL(DIRECTORY "${WINST_PREFIX}/include/thirdparty" DESTINATION "include" COMPONENT binaries)
     if (STANDALONE_ASIO)
         INSTALL(DIRECTORY "${WINST_PREFIX}/include/asio" DESTINATION "include" COMPONENT binaries)
         INSTALL(FILES "${WINST_PREFIX}/include/asio.hpp" DESTINATION "include" COMPONENT binaries)
