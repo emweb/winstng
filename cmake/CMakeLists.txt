@@ -80,9 +80,9 @@ endif()
 # Files to download
 
 if (STANDALONE_ASIO)
-    set( asio_ver "1.34.2" )
+    set( asio_ver "1.30.2" )
     set( asio_URL https://prdownloads.sourceforge.net/asio/asio-${asio_ver}.tar.gz )
-    set( asio_HASH SHA256=30ab18dc58b864f4087967a47b2645c34090b419faab724598dcea07feb84193)
+    set( asio_HASH SHA256=12e7bb4dada8bc1191de9d550a59ee658ce4e645ffc97c911c099ab4e8699d55)
     set( _PACKAGES ${_PACKAGES} asio )
 endif()
 
