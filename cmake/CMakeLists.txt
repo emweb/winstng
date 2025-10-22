@@ -103,8 +103,8 @@ set( openssl_URL https://www.openssl.org/source/openssl-3.6.2.tar.gz )
 set( openssl_HASH SHA256=aaf51a1fe064384f811daeaeb4ec4dce7340ec8bd893027eee676af31e83a04f )
 set( _PACKAGES ${_PACKAGES} openssl )
 
-set( libharu_URL https://github.com/libharu/libharu/archive/refs/tags/RELEASE_2_3_0.tar.gz )
-set( libharu_HASH SHA256=8f9e68cc5d5f7d53d1bc61a1ed876add1faf4f91070dbc360d8b259f46d9a4d2 )
+set( libharu_URL https://github.com/libharu/libharu/archive/refs/tags/v2.4.6.tar.gz )
+set( libharu_HASH SHA256=ec8f327520d1d354ce58b5d2af75b64f380cddc522437c169463b39760921348 )
 set( _PACKAGES ${_PACKAGES} libharu )
 
 set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.3.18.tar.gz )
@@ -574,11 +574,11 @@ ELSE ( FETCH_ONLY )
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${libharu_URL}
         URL_MD5 ${libharu_MD5}
-        PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libharu-2.3.0.patch
+        #PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libharu-2.3.0.patch
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
-        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/README ${WINST_PREFIX}/licenses/libharu/
+        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/README.md ${WINST_PREFIX}/licenses/libharu/
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         )
@@ -594,7 +594,7 @@ ELSE ( FETCH_ONLY )
             -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
             -DZLIB_LIBRARY_DEBUG:PATH=${WINST_PREFIX}/lib/zlibstaticd.lib
             -DPNG_LIBRARY_DEBUG:PATH=${WINST_PREFIX}/lib/libpng16_staticd.lib
-            -DLIBHPDF_STATIC:BOOL=OFF
+            -DBUILD_SHARED_LIBS:BOOL=ON
         LOG_CONFIGURE 1
         LOG_BUILD 1
         LOG_TEST 1
@@ -612,7 +612,7 @@ ELSE ( FETCH_ONLY )
             -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
             -DZLIB_LIBRARY_RELEASE:PATH=${WINST_PREFIX}/lib/zlibstatic.lib
             -DPNG_LIBRARY_RELEASE:PATH=${WINST_PREFIX}/lib/libpng16_static.lib
-            -DLIBHPDF_STATIC:BOOL=OFF
+            -DBUILD_SHARED_LIBS:BOOL=ON
         LOG_CONFIGURE 1
         LOG_BUILD 1
         LOG_TEST 1
@@ -747,6 +747,7 @@ ELSE ( FETCH_ONLY )
         -DBoost_NO_SYSTEM_PATHS:BOOL=1
         -DBOOST_ROOT:PATH=${WINST_PREFIX}
         -DBOOST_DYNAMIC:BOOL=0
+        -DBoost_ADDITIONAL_VERSIONS:STRING=${boost_ver}
         -DCONFIGDIR:PATH=c:/witty
         -DWT_WRASTERIMAGE_IMPLEMENTATION=Direct2D
         -DHPDF_ROOT=${WINST_PREFIX}
