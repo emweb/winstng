@@ -574,11 +574,11 @@ ELSE ( FETCH_ONLY )
         DOWNLOAD_DIR ${WINST_DOWNLOADS_DIR}
         URL ${libharu_URL}
         URL_MD5 ${libharu_MD5}
-        #PATCH_COMMAND ${PATCH_EXECUTABLE} -p1 < ${WINST_BATDIR}/patches/libharu-2.3.0.patch
+        PATCH_COMMAND ${PATCH_EXECUTABLE} --binary -p1 < ${WINST_BATDIR}/patches/libharu-2.4.2.patch
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
-        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/README.md ${WINST_PREFIX}/licenses/libharu/
+        TEST_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE ${WINST_PREFIX}/licenses/libharu/
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         )
@@ -882,7 +882,7 @@ ELSE ( FETCH_ONLY )
             -DCMAKE_BUILD_TYPE=Debug
             -DBoost_USE_DEBUG_RUNTIME:BOOL=1
             -DMYSQL_DEBUG_LIB:FILEPATH=${WINST_PREFIX}/lib/mariadbclientd.lib
-            -DHPDF_LIBRARY:FILEPATH=${WINST_PREFIX}/lib/libhpdfd.lib
+            -DHPDF_LIBRARY:FILEPATH=${WINST_PREFIX}/lib/hpdfd.lib
             ${wt_CMAKE_ARGS}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -901,7 +901,7 @@ ELSE ( FETCH_ONLY )
             -DINSTALL_DOCUMENTATION:BOOL=1
             -DBoost_USE_DEBUG_RUNTIME:BOOL=0
             -DMYSQL_LIB:FILEPATH=${WINST_PREFIX}/lib/mariadbclient.lib
-            -DHPDF_LIBRARY:FILEPATH=${WINST_PREFIX}/lib/libhpdf.lib
+            -DHPDF_LIBRARY:FILEPATH=${WINST_PREFIX}/lib/hpdf.lib
             ${wt_CMAKE_ARGS}
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
@@ -994,10 +994,10 @@ ELSE ( FETCH_ONLY )
             PATTERN "openssl" EXCLUDE
             PATTERN "postgresql" EXCLUDE
             PATTERN "hpdf*")
-    INSTALL(FILES "${WINST_PREFIX}/lib/libhpdf.lib" "${WINST_PREFIX}/lib/libhpdfd.lib" DESTINATION "lib" COMPONENT binaries)
-    INSTALL(FILES "${WINST_PREFIX}/bin/libhpdf.dll" "${WINST_PREFIX}/bin/libhpdfd.dll" DESTINATION "bin" COMPONENT binaries)
-    INSTALL(FILES "${CMAKE_BINARY_DIR}/libharu-debug-prefix/src/libharu-debug-build/src/libhpdfd.pdb" DESTINATION "bin" COMPONENT symbols)
-    INSTALL(FILES "${CMAKE_BINARY_DIR}/libharu-release-prefix/src/libharu-release-build/src/libhpdf.pdb" DESTINATION "bin" COMPONENT symbols)
+    INSTALL(FILES "${WINST_PREFIX}/lib/hpdf.lib" "${WINST_PREFIX}/lib/hpdfd.lib" DESTINATION "lib" COMPONENT binaries)
+    INSTALL(FILES "${WINST_PREFIX}/bin/hpdf.dll" "${WINST_PREFIX}/bin/hpdfd.dll" DESTINATION "bin" COMPONENT binaries)
+    INSTALL(FILES "${CMAKE_BINARY_DIR}/libharu-debug-prefix/src/libharu-debug-build/src/hpdfd.pdb" DESTINATION "bin" COMPONENT symbols)
+    INSTALL(FILES "${CMAKE_BINARY_DIR}/libharu-release-prefix/src/libharu-release-build/src/hpdf.pdb" DESTINATION "bin" COMPONENT symbols)
 
 
     set(ALL_DYN_WT_LIBS wt wtdbo wtdbomssqlserver wtdbopostgres wtdbosqlite3 wthttp wttest)
