@@ -90,25 +90,25 @@ set( zlib_URL https://www.zlib.net/zlib-1.3.1.tar.gz )
 set( zlib_HASH SHA256=9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23)
 set( _PACKAGES ${_PACKAGES} zlib )
 
-set( libpng_URL https://download.sourceforge.net/libpng/libpng-1.6.50.tar.gz )
-set( libpng_HASH SHA256=708f4398f996325819936d447f982e0db90b6b8212b7507e7672ea232210949a)
+set( libpng_URL https://download.sourceforge.net/libpng/libpng-1.6.54.tar.gz )
+set( libpng_HASH SHA256=472db714567391842e410090df5a37e0f5b2ec67148a3007678b0482d2ba5219)
 set( _PACKAGES ${_PACKAGES} libpng )
 
-set( postgresql_URL https://ftp.postgresql.org/pub/source/v16.10/postgresql-16.10.tar.bz2 )
-set( postgresql_HASH SHA256=de8485f4ce9c32e3ddfeef0b7c261eed1cecb54c9bcd170e437ff454cb292b42)
+set( postgresql_URL https://ftp.postgresql.org/pub/source/v16.11/postgresql-16.11.tar.bz2 )
+set( postgresql_HASH SHA256=6deb08c23d03d77d8f8bd1c14049eeef64aef8968fd8891df2dfc0b42f178eac)
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 set( openssl_DLLVER 3 )
-set( openssl_URL https://www.openssl.org/source/openssl-3.4.3.tar.gz )
-set( openssl_HASH SHA256=fa727ed1399a64e754030a033435003991aee36bda9a5b080995cb2ac5cf7f37)
+set( openssl_URL https://www.openssl.org/source/openssl-3.4.4.tar.gz )
+set( openssl_HASH SHA256=7bdf55ac20f2779e99e5eca306f824fad2b37dee5a06cc35ed5a8b85a6060010)
 set( _PACKAGES ${_PACKAGES} openssl )
 
 set( libharu_URL https://github.com/libharu/libharu/archive/refs/tags/RELEASE_2_3_0.tar.gz )
 set( libharu_HASH SHA256=8f9e68cc5d5f7d53d1bc61a1ed876add1faf4f91070dbc360d8b259f46d9a4d2 )
 set( _PACKAGES ${_PACKAGES} libharu )
 
-set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.3.17.tar.gz )
-set( mariadb_HASH SHA256=963ae98462c8937e307d577dfa42a019fb8a0c273b53d83f9af602c04f946503)
+set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.3.18.tar.gz )
+set( mariadb_HASH SHA256=6fda1028b8f93a6600b9bb630889d699280f5dfe9a77c65b5c8fba7af0326459 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
 set( boost_ver "1_89" )
