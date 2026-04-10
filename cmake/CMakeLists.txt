@@ -80,27 +80,27 @@ endif()
 # Files to download
 
 if (STANDALONE_ASIO)
-    set( asio_ver "1.30.2" )
+    set( asio_ver "1.36.0" )
     set( asio_URL https://prdownloads.sourceforge.net/asio/asio-${asio_ver}.tar.gz )
-    set( asio_HASH SHA256=12e7bb4dada8bc1191de9d550a59ee658ce4e645ffc97c911c099ab4e8699d55)
+    set( asio_HASH SHA256=55d5c64e78b1bedd0004423e695c2cfc191fc71914eaaa7f042329ff99ee6155 )
     set( _PACKAGES ${_PACKAGES} asio )
 endif()
 
 set( zlib_URL https://www.zlib.net/zlib-1.3.1.tar.gz )
-set( zlib_HASH SHA256=9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23)
+set( zlib_HASH SHA256=9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23 )
 set( _PACKAGES ${_PACKAGES} zlib )
 
-set( libpng_URL https://download.sourceforge.net/libpng/libpng-1.6.54.tar.gz )
-set( libpng_HASH SHA256=472db714567391842e410090df5a37e0f5b2ec67148a3007678b0482d2ba5219)
+set( libpng_URL https://download.sourceforge.net/libpng/libpng-1.6.56.tar.gz )
+set( libpng_HASH SHA256=8f91e941a07fb1069ebb3855278f82a849e6af14ca05821e14ec3d5348697ea5 )
 set( _PACKAGES ${_PACKAGES} libpng )
 
-set( postgresql_URL https://ftp.postgresql.org/pub/source/v16.11/postgresql-16.11.tar.bz2 )
-set( postgresql_HASH SHA256=6deb08c23d03d77d8f8bd1c14049eeef64aef8968fd8891df2dfc0b42f178eac)
+set( postgresql_URL https://ftp.postgresql.org/pub/source/v16.13/postgresql-16.13.tar.bz2 )
+set( postgresql_HASH SHA256=dc2ddbbd245c0265a689408e3d2f2f3f9ba2da96bd19318214b313cdd9797287 )
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 set( openssl_DLLVER 3 )
-set( openssl_URL https://www.openssl.org/source/openssl-3.4.4.tar.gz )
-set( openssl_HASH SHA256=7bdf55ac20f2779e99e5eca306f824fad2b37dee5a06cc35ed5a8b85a6060010)
+set( openssl_URL https://www.openssl.org/source/openssl-3.6.2.tar.gz )
+set( openssl_HASH SHA256=aaf51a1fe064384f811daeaeb4ec4dce7340ec8bd893027eee676af31e83a04f )
 set( _PACKAGES ${_PACKAGES} openssl )
 
 set( libharu_URL https://github.com/libharu/libharu/archive/refs/tags/RELEASE_2_3_0.tar.gz )
@@ -111,18 +111,18 @@ set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.3.18.
 set( mariadb_HASH SHA256=6fda1028b8f93a6600b9bb630889d699280f5dfe9a77c65b5c8fba7af0326459 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
-set( boost_ver "1_89" )
-set( boost_URL https://archives.boost.io/release/1.89.0/source/boost_${boost_ver}_0.tar.bz2 )
-set( boost_HASH SHA256=85a33fa22621b4f314f8e85e1a5e2a9363d22e4f4992925d4bb3bc631b5a0c7a)
+set( boost_ver "1_90" )
+set( boost_URL https://archives.boost.io/release/1.90.0/source/boost_${boost_ver}_0.tar.bz2 )
+set( boost_HASH SHA256=49551aff3b22cbc5c5a9ed3dbc92f0e23ea50a0f7325b0d198b705e8ee3fc305 )
 set( _PACKAGES ${_PACKAGES} boost )
 
-set( glew_ver "2.2.0" )
+set( glew_ver "2.3.1" )
 set( glew_URL https://github.com/nigels-com/glew/releases/download/glew-${glew_ver}/glew-${glew_ver}.zip)
-set( glew_HASH SHA256=a9046a913774395a095edcc0b0ac2d81c3aacca61787b39839b941e9be14e0d4 )
+set( glew_HASH SHA256=09e0083ae46930aba9b53e72c92ee1a557e24ed393526fec26cb0ebabd834720 )
 set( _PACKAGES ${_PACKAGES} glew )
 
-set( tinymce_URL http://download.tiny.cloud/tinymce/community/tinymce_6.8.5.zip )
-set( tinymce_HASH SHA256=7d88d13eb6764f107ece39d2da0dec9a6dbfb7c2d401dadc664e6617fc617ef3 )
+set( tinymce_URL http://download.tiny.cloud/tinymce/community/tinymce_6.8.6.zip )
+set( tinymce_HASH SHA256=57e04ed2ae8205f8840f4e410f3ffde5328e231d0eebad132ab8301e17399752 )
 set( _PACKAGES ${_PACKAGES} tinymce )
 
 set( wt_URL https://github.com/emweb/wt/archive/${WT_VERSION}.tar.gz )
@@ -132,8 +132,8 @@ set( patch_URL http://prdownloads.sourceforge.net/gnuwin32/patch-2.5.9-7-bin.zip
 set( patch_MD5 b9c8b31d62f4b2e4f1887bbb63e8a905)
 set( _PACKAGES ${_PACKAGES} patch )
 
-set( nasm_URL https://www.nasm.us/pub/nasm/releasebuilds/2.16.03/win32/nasm-2.16.03-win32.zip )
-set( nasm_HASH SHA256=1881d062da8a2f02d832c3d47262697817541bcbb853126638ad209ea6ffe5b0)
+set( nasm_URL https://www.nasm.us/pub/nasm/releasebuilds/3.01/win32/nasm-3.01-win32.zip )
+set( nasm_HASH SHA256=aea1a327ae163c5b1df066d5e3c7ce5c574fbea997731d11417b9e10dca4d9b1 )
 set( _PACKAGES ${_PACKAGES} nasm )
 
 if( _WT_ARCH STREQUAL "x64" ) # Win 64-bit
