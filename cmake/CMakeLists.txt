@@ -86,8 +86,8 @@ if (STANDALONE_ASIO)
     set( _PACKAGES ${_PACKAGES} asio )
 endif()
 
-set( zlib_URL https://www.zlib.net/zlib-1.3.1.tar.gz )
-set( zlib_HASH SHA256=9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23 )
+set( zlib_URL https://www.zlib.net/zlib-1.3.2.tar.gz )
+set( zlib_HASH SHA256=bb329a0a2cd0274d05519d61c667c062e06990d72e125ee2dfa8de64f0119d16 )
 set( _PACKAGES ${_PACKAGES} zlib )
 
 set( libpng_URL https://download.sourceforge.net/libpng/libpng-1.6.56.tar.gz )
@@ -220,7 +220,7 @@ ELSE ( FETCH_ONLY )
         URL ${zlib_URL}
         URL_HASH ${zlib_HASH}
         LIST_SEPARATOR ^^
-        PATCH_COMMAND ${CMAKE_COMMAND} -E remove zconf.h
+        PATCH_COMMAND ""
         CONFIGURE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
@@ -299,7 +299,7 @@ ELSE ( FETCH_ONLY )
             -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
             -DPNG_SHARED:BOOL=OFF
             -DPNG_STATIC:BOOL=ON
-            -DZLIB_DEBUG_LIBRARY:PATH=${WINST_PREFIX}/lib/zlibstaticd.lib
+            -DZLIB_DEBUG_LIBRARY:PATH=${WINST_PREFIX}/lib/zsd.lib
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -320,7 +320,7 @@ ELSE ( FETCH_ONLY )
             -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
             -DPNG_SHARED:BOOL=OFF
             -DPNG_STATIC:BOOL=ON
-            -DZLIB_RELEASE_LIBRARY=${WINST_PREFIX}/lib/zlibstatic.lib
+            -DZLIB_RELEASE_LIBRARY=${WINST_PREFIX}/lib/zs.lib
         LOG_DOWNLOAD 1
         LOG_UPDATE 1
         LOG_CONFIGURE 1
@@ -446,7 +446,7 @@ ELSE ( FETCH_ONLY )
                 -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
                 -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
                 -DWITH_EXTERNAL_ZLIB:BOOL=ON
-                -DZLIB_DEBUG_LIBRARY:PATH=${WINST_PREFIX}/lib/zlibstaticd.lib
+                -DZLIB_DEBUG_LIBRARY:PATH=${WINST_PREFIX}/lib/zsd.lib
             LOG_DOWNLOAD 1
             LOG_UPDATE 1
             LOG_CONFIGURE 1
@@ -469,7 +469,7 @@ ELSE ( FETCH_ONLY )
                 -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
                 -DCMAKE_MODULE_PATH:STRING=${WINST_MODULE_PATH}
                 -DWITH_EXTERNAL_ZLIB:BOOL=ON
-                -DZLIB_RELEASE_LIBRARY=${WINST_PREFIX}/lib/zlibstatic.lib
+                -DZLIB_RELEASE_LIBRARY=${WINST_PREFIX}/lib/zs.lib
             LOG_DOWNLOAD 1
             LOG_UPDATE 1
             LOG_CONFIGURE 1
@@ -592,7 +592,7 @@ ELSE ( FETCH_ONLY )
             -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH}
             -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
             -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
-            -DZLIB_LIBRARY_DEBUG:PATH=${WINST_PREFIX}/lib/zlibstaticd.lib
+            -DZLIB_LIBRARY_DEBUG:PATH=${WINST_PREFIX}/lib/zsd.lib
             -DPNG_LIBRARY_DEBUG:PATH=${WINST_PREFIX}/lib/libpng16_staticd.lib
             -DBUILD_SHARED_LIBS:BOOL=ON
         LOG_CONFIGURE 1
@@ -610,7 +610,7 @@ ELSE ( FETCH_ONLY )
             -DCMAKE_MODULE_PATH:PATH=${WINST_MODULE_PATH}
             -DCMAKE_INSTALL_PREFIX:PATH=${WINST_PREFIX}
             -DCMAKE_PREFIX_PATH:PATH=${WINST_PREFIX}
-            -DZLIB_LIBRARY_RELEASE:PATH=${WINST_PREFIX}/lib/zlibstatic.lib
+            -DZLIB_LIBRARY_RELEASE:PATH=${WINST_PREFIX}/lib/zs.lib
             -DPNG_LIBRARY_RELEASE:PATH=${WINST_PREFIX}/lib/libpng16_static.lib
             -DBUILD_SHARED_LIBS:BOOL=ON
         LOG_CONFIGURE 1
@@ -754,8 +754,8 @@ ELSE ( FETCH_ONLY )
         -DHPDF_INCLUDE_DIR=${WINST_PREFIX}/include
         -DHARU_DYNAMIC:BOOL=1
         -DPOSTGRES_PREFIX=${WINST_PREFIX}
-        -DZLIB_LIBRARY_DEBUG:PATH=${WINST_PREFIX}/lib/zlibstaticd.lib
-        -DZLIB_LIBRARY_RELEASE:PATH=${WINST_PREFIX}/lib/zlibstatic.lib
+        -DZLIB_LIBRARY_DEBUG:PATH=${WINST_PREFIX}/lib/zsd.lib
+        -DZLIB_LIBRARY_RELEASE:PATH=${WINST_PREFIX}/lib/zs.lib
         -DPNG_LIBRARY_DEBUG:PATH=${WINST_PREFIX}/lib/libpng16_staticd.lib
         -DPNG_LIBRARY_RELEASE:PATH=${WINST_PREFIX}/lib/libpng16_static.lib
         -DRUNDIR=${WINST_PREFIX}/var/run/wt
