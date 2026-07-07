@@ -1,6 +1,6 @@
-diff --color -rupd mariadb-connector-c-3.3.2-orig/cmake/check_functions.cmake mariadb-connector-c-3.3.2/cmake/check_functions.cmake
---- mariadb-connector-c-3.3.2-orig/cmake/check_functions.cmake	2022-08-11 16:56:06.000000000 +0200
-+++ mariadb-connector-c-3.3.2/cmake/check_functions.cmake	2022-09-19 14:22:13.069611661 +0200
+diff -ru mariadb-connector-c-3.4.9.orig/cmake/check_functions.cmake mariadb-connector-c-3.4.9.new/cmake/check_functions.cmake
+--- mariadb-connector-c-3.4.9.orig/cmake/check_functions.cmake	2026-05-06 10:12:37.000000000 +0200
++++ mariadb-connector-c-3.4.9.new/cmake/check_functions.cmake	2026-07-10 12:01:39.068791869 +0200
 @@ -11,6 +11,8 @@
  # You will find the appropriate defines in 
  # include/my_config.h.in
@@ -10,17 +10,17 @@ diff --color -rupd mariadb-connector-c-3.3.2-orig/cmake/check_functions.cmake ma
  INCLUDE(CheckFunctionExists)
  
  CHECK_FUNCTION_EXISTS (alloca HAVE_ALLOCA)
-@@ -27,4 +29,4 @@ IF(HAVE_FILE_UCONTEXT_H)
+@@ -27,4 +29,4 @@
    CHECK_FUNCTION_EXISTS (makecontext HAVE_UCONTEXT_H)
  ENDIF()
  
 -CHECK_FUNCTION_EXISTS (cuserid HAVE_CUSERID)
 \ No newline at end of file
 +CHECK_FUNCTION_EXISTS (cuserid HAVE_CUSERID)
-diff --color -rupd mariadb-connector-c-3.3.2-orig/cmake/version_info.cmake mariadb-connector-c-3.3.2/cmake/version_info.cmake
---- mariadb-connector-c-3.3.2-orig/cmake/version_info.cmake	2022-08-11 16:56:06.000000000 +0200
-+++ mariadb-connector-c-3.3.2/cmake/version_info.cmake	2022-09-19 14:22:13.069611661 +0200
-@@ -9,14 +9,14 @@ FUNCTION(GET_FILE_VERSION FILE_NAME FILE
+diff -ru mariadb-connector-c-3.4.9.orig/cmake/version_info.cmake mariadb-connector-c-3.4.9.new/cmake/version_info.cmake
+--- mariadb-connector-c-3.4.9.orig/cmake/version_info.cmake	2026-05-06 10:12:37.000000000 +0200
++++ mariadb-connector-c-3.4.9.new/cmake/version_info.cmake	2026-07-10 12:01:39.092792087 +0200
+@@ -9,14 +9,14 @@
  
    # if we build from a git repository, we calculate the file version:
    #  Patch number is number of commits for given file
@@ -42,10 +42,10 @@ diff --color -rupd mariadb-connector-c-3.3.2-orig/cmake/version_info.cmake maria
  ENDFUNCTION()
  
  MACRO(SET_VERSION_INFO)
-diff --color -rupd mariadb-connector-c-3.3.2-orig/CMakeLists.txt mariadb-connector-c-3.3.2/CMakeLists.txt
---- mariadb-connector-c-3.3.2-orig/CMakeLists.txt	2022-08-11 16:56:06.000000000 +0200
-+++ mariadb-connector-c-3.3.2/CMakeLists.txt	2022-09-19 14:22:13.069611661 +0200
-@@ -93,30 +93,32 @@ IF(WIN32)
+diff -ru mariadb-connector-c-3.4.9.orig/CMakeLists.txt mariadb-connector-c-3.4.9.new/CMakeLists.txt
+--- mariadb-connector-c-3.4.9.orig/CMakeLists.txt	2026-05-06 10:12:37.000000000 +0200
++++ mariadb-connector-c-3.4.9.new/CMakeLists.txt	2026-07-10 12:04:57.693598752 +0200
+@@ -96,30 +96,32 @@
    INCLUDE(${CC_SOURCE_DIR}/cmake/version_info.cmake)
  ENDIF()
  
@@ -56,7 +56,7 @@ diff --color -rupd mariadb-connector-c-3.3.2-orig/CMakeLists.txt mariadb-connect
    # Speedup system tests
 -  INCLUDE(${CC_SOURCE_DIR}/cmake/WindowsCache.cmake)
 +  #INCLUDE(${CC_SOURCE_DIR}/cmake/WindowsCache.cmake)
-   ADD_DEFINITIONS(-DWIN32_LEAN_AND_MEAN -DNOGDI)
+   add_compile_definitions(WIN32_LEAN_AND_MEAN NOGDI)
 -  IF (MSVC)
 -    SET(CONFIG_TYPES "DEBUG" "RELEASE" "RELWITHDEBINFO")
 -    FOREACH(BUILD_TYPE ${CONFIG_TYPES})
@@ -98,10 +98,10 @@ diff --color -rupd mariadb-connector-c-3.3.2-orig/CMakeLists.txt mariadb-connect
  ENDIF()
  ELSE()
    # MDEV-16383
-diff --color -rupd mariadb-connector-c-3.3.2-orig/libmariadb/CMakeLists.txt mariadb-connector-c-3.3.2/libmariadb/CMakeLists.txt
---- mariadb-connector-c-3.3.2-orig/libmariadb/CMakeLists.txt	2022-08-11 16:56:06.000000000 +0200
-+++ mariadb-connector-c-3.3.2/libmariadb/CMakeLists.txt	2022-09-19 14:22:13.069611661 +0200
-@@ -470,7 +470,15 @@ ENDIF()
+diff -ru mariadb-connector-c-3.4.9.orig/libmariadb/CMakeLists.txt mariadb-connector-c-3.4.9.new/libmariadb/CMakeLists.txt
+--- mariadb-connector-c-3.4.9.orig/libmariadb/CMakeLists.txt	2026-05-06 10:12:37.000000000 +0200
++++ mariadb-connector-c-3.4.9.new/libmariadb/CMakeLists.txt	2026-07-10 12:01:39.093792096 +0200
+@@ -466,7 +466,15 @@
  SET_TARGET_PROPERTIES(mariadbclient PROPERTIES IMPORTED_INTERFACE_LINK_LIBRARIES "${SYSTEM_LIBS}")
  SET_TARGET_PROPERTIES(libmariadb PROPERTIES IMPORTED_INTERFACE_LINK_LIBRARIES "${SYSTEM_LIBS}")
  
@@ -116,3 +116,6 @@ diff --color -rupd mariadb-connector-c-3.3.2-orig/libmariadb/CMakeLists.txt mari
 +  DEBUG_POSTFIX ${DEBUG_LIB_POSTFIX}
 +)
  
+ #
+ # Installation
+Only in mariadb-connector-c-3.4.9.new/libmariadb: CMakeLists.txt.orig
