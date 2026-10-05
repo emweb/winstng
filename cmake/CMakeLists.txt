@@ -80,9 +80,9 @@ endif()
 # Files to download
 
 if (STANDALONE_ASIO)
-    set( asio_ver "1.36.0" )
+    set( asio_ver "1.38.2" )
     set( asio_URL https://prdownloads.sourceforge.net/asio/asio-${asio_ver}.tar.gz )
-    set( asio_HASH SHA256=55d5c64e78b1bedd0004423e695c2cfc191fc71914eaaa7f042329ff99ee6155 )
+    set( asio_HASH SHA256=4893ad026013d1f64bf111c606e6abd857bb953823a4744e449969f1063fd9ce )
     set( _PACKAGES ${_PACKAGES} asio )
 endif()
 
@@ -90,30 +90,30 @@ set( zlib_URL https://www.zlib.net/zlib-1.3.2.tar.gz )
 set( zlib_HASH SHA256=bb329a0a2cd0274d05519d61c667c062e06990d72e125ee2dfa8de64f0119d16 )
 set( _PACKAGES ${_PACKAGES} zlib )
 
-set( libpng_URL https://download.sourceforge.net/libpng/libpng-1.6.58.tar.gz )
-set( libpng_HASH SHA256=8c9b05b675ca7301a458df2c2e46f26e1d41ff36b8863f8c33530bc58c2e6225 )
+set( libpng_URL https://download.sourceforge.net/libpng/libpng-1.6.59.tar.gz )
+set( libpng_HASH SHA256=86a3e4b501f7f50e392c4e456ea158893e9a595b1c63eb88c7bb9f6cf8772dad )
 set( _PACKAGES ${_PACKAGES} libpng )
 
-set( postgresql_URL https://ftp.postgresql.org/pub/source/v16.14/postgresql-16.14.tar.bz2 )
-set( postgresql_HASH SHA256=f6d077142737920858ce958ccdb75c6ee137a63b5b0853c70693d401ac7e3471 )
+set( postgresql_URL https://ftp.postgresql.org/pub/source/v16.15/postgresql-16.15.tar.bz2 )
+set( postgresql_HASH SHA256=c1575341fa7bd40f5274ea465b34390f4dc64cdd0770af327005caaeb9f6b7ed )
 set( _PACKAGES ${_PACKAGES} postgresql )
 
 set( openssl_DLLVER 4 )
-set( openssl_URL https://www.openssl.org/source/openssl-4.0.1.tar.gz )
-set( openssl_HASH SHA256=2db3f3a0d6ea4b59e1f094ace2c8cd536dffb87cdc39084c5afa1e6f7f37dd09 )
+set( openssl_URL https://www.openssl.org/source/openssl-4.0.3.tar.gz )
+set( openssl_HASH SHA256=325b5c806167c13b40b1ffeadfe0248197c00eccc4cf123ec1e28d2d2fd216d9 )
 set( _PACKAGES ${_PACKAGES} openssl )
 
 set( libharu_URL https://github.com/libharu/libharu/archive/refs/tags/v2.4.6.tar.gz )
 set( libharu_HASH SHA256=ec8f327520d1d354ce58b5d2af75b64f380cddc522437c169463b39760921348 )
 set( _PACKAGES ${_PACKAGES} libharu )
 
-set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.4.9.tar.gz )
-set( mariadb_HASH SHA256=2c70b74393d589df0bde9b3e17cb7b571d30a45aaf006eda7a273120fb660f3a )
+set( mariadb_URL https://github.com/MariaDB/mariadb-connector-c/archive/v3.4.11.tar.gz )
+set( mariadb_HASH SHA256=7cdb35c571dd0c187f806f569285829d31b4aba4feb93957a034b0b1e887e276 )
 set( _PACKAGES ${_PACKAGES} mariadb )
 
-set( boost_ver "1_91" )
-set( boost_URL https://archives.boost.io/release/1.91.0/source/boost_${boost_ver}_0.tar.bz2 )
-set( boost_HASH SHA256=de5e6b0e4913395c6bdfa90537febd9028ea4c0735d2cdb0cd9b45d5f51264f5 )
+set( boost_ver "1_92" )
+set( boost_URL https://archives.boost.io/release/1.92.0/source/boost_${boost_ver}_0.tar.bz2 )
+set( boost_HASH SHA256=5c1d40cb8e19adbf740a4ec2da35b3e58f3f5804b1dce44deb53df72193cbc6c )
 set( _PACKAGES ${_PACKAGES} boost )
 
 set( glew_ver "2.3.1" )
