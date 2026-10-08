@@ -770,6 +770,7 @@ ELSE ( FETCH_ONLY )
         -DENABLE_QT5:BOOL=0
         -DENABLE_QT6:BOOL=0
         -DWTHTTP_CONFIGURATION:PATH=c:/witty/wthttpd
+        -DSUPPORT_WINDOWS_VISTA:BOOL=0
         )
 
     file(MAKE_DIRECTORY ${WINST_PREFIX}/licenses/wt)
